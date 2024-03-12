@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles/styles.css">
+    <title>Niner Thrift</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/"><img src="/static/images/niner_thrift_logo.png" alt="Niner Thrift"></a>
+        </nav>
+    </header>
+    <main>
+        <div class="search-and-sort-container">
+            <form action="/" method="POST">
+                <input type="text" name="search" id="search" placeholder="Search"><br><br>
+                <select title="sort-by" name="sort-by" id="sort-by">
+                    <option value="0">Sort by</option>
+                    <option value="1">Low to High</option>
+                    <option value="2">High to Low</option>
+                    <option value="3">Most Recent</option>
+                </select><br><br>
+            </form>
+        </div>
+        <div class="post">
+            {% if images %}
+            {% else: %}
+                <h3>There is nothing to display!</h3>
+            {% endif %}
+        </div>
+    </main>
+    <footer>
+        <nav>
+            <a href="/profile"><img src="/static/images/profile_icon.png" alt="Profile"></a>
+            <a href="/search"><img src="/static/images/search_icon.png" alt="Search"></a>
+            <a href="/post/create"><img src="../static/images/create_icon.png" alt="Create Post"></a>
+            <a href="/loved"><img src="/static/images/loved_icon.png" alt="Loved"></a>
+            <a href="/messages"><img src="/static/images/messages_icon.png" alt="Messages"></a>
+        </nav>
+    </footer>
+</body>
+</html>
