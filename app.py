@@ -4,6 +4,7 @@ from random import randint
 app = Flask(__name__)
 users = {}
 
+# Anessa's signup/login feature
 @app.route('/')
 def index():
     if request.method == 'GET' and request.form.get('signup'):
@@ -51,7 +52,3 @@ def login():
         error_message = "Invalid email or password"
         return render_template('index.html', is_user=1, error=True, error_message=error_message)
     return render_template('index.html', is_user=1, error=False)
-
-@app.route('/profile')
-def profile():
-    return render_template('profile.html')
