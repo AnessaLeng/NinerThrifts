@@ -1,8 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for
-from random import randint
+from flask import Flask, redirect, render_template, request
+
 
 app = Flask(__name__)
 users = {}
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -52,3 +56,20 @@ def login():
         error_message = "Invalid email or password"
         return render_template('index.html', is_user=1, error=True, error_message=error_message)
     return render_template('index.html', is_user=1, error=False)
+  
+# Cindy's create a post feature
+@app.route('/create_post', methods=['GET', 'POST'])
+def create_post():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        price = request.form.get('price')
+        hashtags = request.form.get('hashtags')
+        description = request.form.get('description')
+
+        print("Title:", title)
+        print("Price:", price)
+        print("Hashtags:", hashtags)
+        print("Description:", description)
+        return "You have succesfully created a listing!"
+
+    return render_template('create_post.html')
