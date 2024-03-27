@@ -4,11 +4,11 @@ app = Flask(__name__)
 
 profile_info = {}
 
-# @app.route('/')
-# def index():
-#     return render_template('index.html')
-
 @app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/profile')
 def show_profile():
     user_pic = "static/user_icon.png"
     username = "username here"
