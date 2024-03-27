@@ -4,9 +4,6 @@ from random import random
 app = Flask(__name__)
 profile_info = {}
 
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 # Anessa's signup/login feature
 @app.route('/')
