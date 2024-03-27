@@ -4,9 +4,6 @@ from flask import Flask, redirect, render_template, request
 app = Flask(__name__)
 users = {}
 
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 # Anessa's signup/login feature
 @app.route('/')
