@@ -1,0 +1,74 @@
+{% extends "_layout.html" %}
+
+{% block title %}Niner Thrift | Explore{% endblock %}
+
+{% block content %}
+<style>
+    h1 {
+        background-color: #8CB854;
+        width: 100%;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    body {
+        background-color: #D5F3B0;
+    }
+
+    .container .col {
+        margin-bottom: 10px;
+    }
+    
+    form {
+        padding: 6px;
+        margin-left: 20px;
+        margin-right: 20px;
+        text-align: center;
+    }
+
+    input {
+        width: 90%;
+        background-color: white;  
+        color: black;
+        border: none;
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+    }
+
+    .search-bar {
+        display: block;
+        position: relative;
+    }
+
+    i {
+        position: absolute;
+        right: 80px;
+        top: 5px;
+    }
+
+    h2 {
+        text-align: center;
+    }
+
+</style>
+<h1>Niner Thrift</h1>
+<form action="/search" method="POST">
+    <div class="search-bar">
+        <input type="text" name="query" placeholder="Search.."><i class="fas fa-search"></i>
+    </div>
+</form>
+
+{% if results %}
+<div class="container">
+    <div class="row row-cols-4">
+        {% for post in results %}
+        <div class="col"><img src="{{ post }}" height="250px" width="250px"></div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div>
+    <h2>No Results Found!</h2>
+</div>
+{% endif %}
+
+{% endblock %}
