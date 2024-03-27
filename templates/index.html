@@ -1,0 +1,50 @@
+{% extends '_layout.html' %}
+
+{% block title %}Niner Thrift | Welcome{% endblock %}
+
+{% block content %}
+<!-- Anessa's Signup/Login Page -->
+{% if is_user == 1 %}
+    <div class="text-center">
+        <h2 class="mt-5 mb-5">Login</h2>
+        <form action="/login" method="POST">
+            <label for="email">Email</label><br>
+            <input type="email" name="email" id="email" class="w-50" required><br><br>
+            <label for="password">Password</label><br>
+            <input type="text" name="password" id="password" class="w-50" required minLength="12"><br><br>
+            <button type="submit" name="login" id="login" class="btn w-50 btn-primary">Login</button>
+        </form>
+    </div>
+    {% if error %}
+        <h3>{{ error. message }}</h3>
+    {% endif %}
+{% elif is_user == 2 %}
+    <div class="text-center">
+        <h2 class="mt-5 mb-5">Sign Up</h2>
+        <form action="/signup" method="POST">
+            <label for="first_name">First Name</label><br>
+            <input type="text" name="first_name" id="first_name" class="w-50" required><br><br>
+            <label for="last_name">Last Name</label><br>
+            <input type="text" name="last_name" id="last_name" class="w-50" required><br><br>
+            <label for="password">Password</label><br>
+            <input type="text" name="password" id="password" class="w-50" required minLength="12"><br><br>
+            <label for="email">Email</label><br>
+            <input type="email" name="email" id="email" class="w-50" required><br><br>
+            <label for="dob">Date of Birth</label><br>
+            <input type="date" name="dob" id="dob" class="w-50" required><br><br>
+            <label for="profile_image">Profile Image</label><br>
+            <input type="file" name="profile_image" id="profile_image" class="w-50"><br><br>
+            <button type="reset" name="reset" id="reset" class="btn w-50 mb-3 btn-danger">Reset</button>
+            <button type="submit" name="signup" id="signup" class="btn w-50 btn-primary">Create Account</button>
+        </form>
+    </div>
+{% elif is_user == 0 %}
+    <div class="text-center">
+        <h2 class="mt-5 mb-5">Niner Thrift</h2>
+        <form>
+            <button type="submit" name="signup" class="btn w-50 btn-primary" formaction="/signup" formmethod="GET">Sign Up</button><br><br>
+            <button type="submit" name="login" class="btn w-50 btn-primary" formaction="/login" formmethod="GET">Login</button>
+        </form>
+    </div>
+{% endif %}
+{% endblock %}
