@@ -1,12 +1,9 @@
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, render_template, request, url_for
+from random import randint
 
 
 app = Flask(__name__)
 users = {}
-
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -26,8 +23,8 @@ def signup():
         email = request.form.get('email')
         dob = request.form.get('dob')
         profile_image = request.form.get('profile_image')
-        with open(profile_image, 'rb') as file:
-            image_data = file.read()
+        #with open(profile_image, 'rb') as file:
+        #    image_data = file.read()
         uid = randint(1, 9999)
 
         new_user = {
@@ -37,7 +34,7 @@ def signup():
             "password": password, 
             "email": email,
             "dob": dob,
-            "profile_image": image_data,
+            "profile_image": profile_image#image_data
         }
 
         users[uid] = new_user
@@ -50,12 +47,16 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        for user in users:
+        for uid, user in users.items():
             if user['email'] == email and user['password'] == password:
                 return redirect(url_for('profile'))
         error_message = "Invalid email or password"
         return render_template('index.html', is_user=1, error=True, error_message=error_message)
     return render_template('index.html', is_user=1, error=False)
+
+@app.route('/profile', methods=['POST', 'GET'])
+def profile():
+    return render_template('profile.html')
   
 # Cindy's create a post feature
 @app.route('/create_post', methods=['GET', 'POST'])
