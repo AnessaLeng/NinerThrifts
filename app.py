@@ -3,7 +3,23 @@ from random import random
 
 app = Flask(__name__)
 profile_info = {}
+users = {}
 
+@app.route('/profile')
+def show_profile():
+    user_pic = "static/user_icon.png"
+    username = "username here"
+    bio = "bio here"
+    followers = "###"
+    following = "###"
+    posts= ['static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png',
+            'static/placeholder.png','static/placeholder.png','static/placeholder.png','static/placeholder.png']
+    profile_info[username] = []
+    profile_info[username].append(user_pic)
+    profile_info[username].append(bio)
+    profile_info[username].append(followers)
+    profile_info[username].append(following)
+    return render_template("profile.html", profile_info = profile_info, posts = posts)
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -81,7 +97,7 @@ def show_post():
 
 postGrid = {}
 
-@app.route('/explore', method=["GET"])
+@app.route('/explore', methods=["GET"])
 def explore():
     # will change this after pulling posts from database
     post = "static/blankpost.jpg"
