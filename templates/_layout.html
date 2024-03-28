@@ -17,7 +17,7 @@
             background-color: rgb(156, 203, 122);
         }
         h1{
-            background-color: rgb(91, 165, 91);
+            /* background-color: rgb(91, 165, 91); */
             margin-bottom: 0;
         }
         p{
@@ -58,40 +58,44 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">Niner Thrift</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link{% if list_movies_active %} active{% endif %}" href="/signup">Sign Up</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link{% if create_rating_active %} active{% endif %}" href="/movies/new">Profile</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link{% if search_active %} active{% endif %}" href="/create_post">Create a Listing</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-  <div class="container">
-    {% block body %}{% endblock %}
-  </div>
-  <footer class="text-center">
-    <br>
-    <p>
-        <a href="index.html">
-            <i class="fas fa-user fa-2x"></i>
+        <a class="navbar-brand" href="/">
+            <img src="/static/logo.png" alt="Niner Thrift Logo" width="300" height="auto">
         </a>
-        <i class="fas fa-search fa-2x"></i>
-        <i class="fas fa-plus-circle fa-2x"></i>
-        <i class="fas fa-heart fa-2x"></i>
-        <i class="fas fa-comment-alt fa-2x"></i>
-    </p>
-    <br>
-</footer>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="navbar-toggler-icon"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="/signup">Sign Up</a></li>
+                        <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                        <li><a class="dropdown-item" href="/create_post">Create a Listing</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</nav>
+    <div class="container">
+        {% block body %}{% endblock %}
+    </div>
+    <!-- <footer class="text-center">
+        <br>
+        <p>
+            <a href="index.html">
+                <i class="fas fa-user fa-2x"></i>
+            </a>
+            <i class="fas fa-search fa-2x"></i>
+            <i class="fas fa-plus-circle fa-2x"></i>
+            <i class="fas fa-heart fa-2x"></i>
+            <i class="fas fa-comment-alt fa-2x"></i>
+        </p>
+        <br> -->
+    </footer>
 </body>
+
 </html>
