@@ -1,0 +1,23 @@
+{% extends "_layout.html" %}
+
+{% block title %}Individual Post{% endblock %}
+
+{% block body %}
+
+<h1>Individual Post</h1><br><br>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="{{ post_image }}" class="img-fluid" alt="Post Image">
+            </div>
+            <div class="col-md-8">
+                <h2>{{ post_title }}</h2>
+                <p><strong>Price:</strong> {{ post_price }}</p>
+                <p><strong>Description:</strong> {{ post_description }}</p>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}
+
