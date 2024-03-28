@@ -90,3 +90,30 @@ def create_post():
         return "You have succesfully created a listing!"
 
     return render_template('create_post.html')
+
+@app.route('/individual_post')
+def show_post():
+    post_image = 'static/placeholder.png'
+    post_title = "Placeholder Title"
+    post_price = "$Placeholder Price"
+    post_description = "Placeholder Description"
+    return render_template('individual_post.html', post_image=post_image, post_title=post_title, post_price=post_price, post_description=post_description)
+
+postGrid = {}
+
+@app.route('/explore', methods=["GET"])
+def explore():
+    # will change this after pulling posts from database
+    post = "static/blankpost.jpg"
+    post_id = "post id"
+    posts = ["static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", 
+             "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg"]
+    postGrid[post_id] = []
+    postGrid[post_id].append(post)
+    return render_template("explore.html", postGrid = postGrid, posts = posts)
+
+@app.route('/search', methods=["POST"])
+def search():
+    search_result = request.form['query']
+    #to do: get results from database
+    return render_template("search.html", search_result = search_result)
