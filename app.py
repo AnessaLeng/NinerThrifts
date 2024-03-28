@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from flask import Flask, render_template, request
 app = Flask(__name__)
 
@@ -24,7 +23,6 @@ def show_profile():
     profile_info[username].append(followers)
     profile_info[username].append(following)
     return render_template("profile.html", profile_info = profile_info, posts = posts)
-=======
 from flask import Flask, redirect, render_template, request
 
 
@@ -96,4 +94,11 @@ def create_post():
         return "You have succesfully created a listing!"
 
     return render_template('create_post.html')
->>>>>>> 095002145253dd1e409492fbc943da1d4930b840
+
+@app.route('/individual_post')
+def show_post():
+    post_image = 'static/placeholder.png'
+    post_title = "Placeholder Title"
+    post_price = "$Placeholder Price"
+    post_description = "Placeholder Description"
+    return render_template('individual_post.html', post_image=post_image, post_title=post_title, post_price=post_price, post_description=post_description)
