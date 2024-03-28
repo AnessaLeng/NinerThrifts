@@ -3,10 +3,7 @@ from random import randint
 
 app = Flask(__name__)
 profile_info = {}
-
-@app.route('/')
-def index():
-    return render_template('index.html')
+users = {}
 
 @app.route('/profile')
 def show_profile():
@@ -23,8 +20,6 @@ def show_profile():
     profile_info[username].append(followers)
     profile_info[username].append(following)
     return render_template("profile.html", profile_info = profile_info, posts = posts)
-
-users = {}
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -60,7 +55,7 @@ def signup():
 
         users[uid] = new_user
 
-        return redirect(url_for('profile'))
+        return redirect(url_for('show_profile'))
     return render_template('index.html', is_user=2)
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -70,14 +65,14 @@ def login():
         password = request.form.get('password')
         for uid, user in users.items():
             if user['email'] == email and user['password'] == password:
-                return redirect(url_for('profile'))
+                return redirect(url_for('show_profile'))
         error_message = "Invalid email or password"
         return render_template('index.html', is_user=1, error=True, error_message=error_message)
     return render_template('index.html', is_user=1, error=False)
 
-@app.route('/profile', methods=['POST', 'GET'])
-def profile():
-    return render_template('profile.html')
+#@app.route('/profile', methods=['POST', 'GET'])
+#def profile():
+#    return render_template('profile.html')
 
 # Cindy's create a post feature
 @app.route('/create_post', methods=['GET', 'POST'])
