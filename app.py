@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from flask import Flask, render_template, request
 app = Flask(__name__)
 
@@ -9,6 +8,7 @@ profile_info = {}
 def index():
     return render_template('index.html')
 
+##Jaidens profile page
 @app.route('/profile')
 def show_profile():
     user_pic = "static/user_icon.png"
@@ -24,11 +24,9 @@ def show_profile():
     profile_info[username].append(followers)
     profile_info[username].append(following)
     return render_template("profile.html", profile_info = profile_info, posts = posts)
-=======
 from flask import Flask, redirect, render_template, request
 
 
-app = Flask(__name__)
 users = {}
 
 # Anessa's signup/login feature
@@ -96,4 +94,3 @@ def create_post():
         return "You have succesfully created a listing!"
 
     return render_template('create_post.html')
->>>>>>> 095002145253dd1e409492fbc943da1d4930b840
