@@ -1,8 +1,10 @@
 {% extends "_layout.html" %}
 
-{% block title %}Niner Thrift | Explore{% endblock %}
+{% block title %}Niner Thrift | Favorites{% endblock %}
 
 {% block body %}
+
+
 <style>
     h1 {
         background-color: #8CB854;
@@ -50,16 +52,12 @@
         display: block; 
         margin: 0 auto; 
         height: auto;
-        width: 350px;
+        width: 400px;
     }
 
 </style>
-<br><img src="/static/explore.png" alt="explore" class="logosmall"><br>
-<form action="/search" method="POST">
-    <div class="search-bar">
-        <input type="text" name="query" placeholder="Search.."><i class="fas fa-search"></i>
-    </div>
-</form>
+
+<br><img src="/static/favorites.png" alt="favorites" class="logosmall"><br>
 
 <div class="container">
     <div class="row row-cols-4">
@@ -67,5 +65,7 @@
         <div class="col"><img src="{{ post }}" height="250px" width="250px"></div>
         {% endfor %}
     </div>
-</div> 
+</div>
+
+
 {% endblock %}
