@@ -1,11 +1,12 @@
-from flask import Flask, render_template, request
-from random import random
+from flask import Flask, render_template, request, redirect
+from random import random,randint
 
 app = Flask(__name__)
 profile_info = {}
 users = {}
 
-@app.route('/profile')
+##Jaidens profile page
+@app.get('/profile')
 def show_profile():
     user_pic = "static/user_icon.png"
     username = "username here"
@@ -19,6 +20,11 @@ def show_profile():
     profile_info[username].append(bio)
     profile_info[username].append(followers)
     profile_info[username].append(following)
+
+    #use this instead for when database is implemented
+    #all_profiles = profile_repo.get_profile_info()
+    #return render_template('profile.html', profiles = all_profiles)
+
     return render_template("profile.html", profile_info = profile_info, posts = posts)
 
 # Anessa's signup/login feature
