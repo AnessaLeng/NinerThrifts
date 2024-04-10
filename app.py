@@ -6,7 +6,8 @@ app = Flask(__name__)
 profile_info = {}
 users = {}
 
-@app.route('/profile')
+##Jaidens profile page
+@app.get('/profile')
 def show_profile():
     user_pic = "static/user_icon.png"
     username = "username here"
@@ -20,6 +21,11 @@ def show_profile():
     profile_info[username].append(bio)
     profile_info[username].append(followers)
     profile_info[username].append(following)
+
+    #use this instead for when database is implemented
+    #all_profiles = profile_repo.get_profile_info()
+    #return render_template('profile.html', profiles = all_profiles)
+
     return render_template("profile.html", profile_info = profile_info, posts = posts)
 
 # Anessa's signup/login feature
@@ -90,11 +96,12 @@ def create_post():
 
 @app.route('/individual_post')
 def show_post():
-    post_image = 'static/placeholder.png'
+    post_image = 'static/blankpost.jpg'
     post_title = "Placeholder Title"
     post_price = "$Placeholder Price"
     post_description = "Placeholder Description"
-    return render_template('individual_post.html', post_image=post_image, post_title=post_title, post_price=post_price, post_description=post_description)
+    post_seller = " "
+    return render_template('individual_post.html', post_image=post_image, post_title=post_title, post_price=post_price, post_description=post_description, post_seller=post_seller)
 
 postGrid = {}
 # Nhu's explore feature
@@ -120,3 +127,15 @@ def search():
     #to do: get results from database4
     #search_result = post_repo.get_searched_posts()
     return render_template("search.html", search_result = search_result)
+
+
+@app.route('/favorites', methods=["GET"])
+def favorites():
+    # will change this after pulling posts from database
+    post = "static/blankpost.jpg"
+    post_id = "post id"
+    posts = ["static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", 
+            "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg"]
+    postGrid[post_id] = []
+    postGrid[post_id].append(post)
+    return render_template("favorites.html", postGrid = postGrid, posts = posts)

@@ -83,10 +83,17 @@
     .remove-button:hover {
         background-color: #c00;
     }
+
+    .logosmall {
+        display: block; 
+        margin: 0 auto; 
+        height: auto;
+        width: 400px;
+    }
 </style>
 
 <div class="form-container">
-<br><br><br><h1>Create a Listing</h1><br>
+<br><img src="/static/createpost.png" alt="create a post" class="logosmall"><br>
 
 <form action="/create_post" method="POST" enctype="multipart/form-data">
     <div class="form-group">
@@ -103,6 +110,18 @@
         <label for="hashtags">Hashtags</label>
         <input type="text" id="hashtags" name="hashtags" required>
     </div>
+
+    <div class="form-group">
+        <label for="condition">Condition</label>
+        <select id="condition" name="condition" required>
+            <option value="new">New</option>
+            <option value="like_new">Like New</option>
+            <option value="good">Good</option>
+            <option value="fair">Fair</option>
+            <option value="poor">Poor</option>
+        </select>
+    </div>
+    
 
     <div class="form-group">
         <label for="description">Description</label>

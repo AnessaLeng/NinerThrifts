@@ -46,6 +46,7 @@
         height: 90%;
     }
 </style>
+<br><img src="/static/explore.png" alt="explore" class="logosmall"><br>
 <form action="/search" method="POST">
     <div class="search-bar">
         <input type="text" name="query" placeholder="Search"><i class="fas fa-search"></i>
@@ -55,6 +56,11 @@
 <div class="container">
     <div class="row row-cols-4">
         {% for post in posts %}
+            <div class="col">
+                <a href="/individual_post">
+                    <img src="{{ post }}" height="250px" width="250px">
+                </a>
+            </div>
         <!--<div class="col"><img src="{{ post.post_id }}" height="250px" width="250px"></div>-->
         <div class="col"><img src="{{ post }}" height="250px" width="250px"></div>
         {% endfor %}
