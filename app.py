@@ -20,6 +20,11 @@ def show_profile():
     profile_info[username].append(bio)
     profile_info[username].append(followers)
     profile_info[username].append(following)
+
+    #use this instead for when database is implemented
+    #all_profiles = profile_repo.get_profile_info()
+    #return render_template('profile.html', profiles = all_profiles)
+
     return render_template("profile.html", profile_info = profile_info, posts = posts)
 
 # Anessa's signup/login feature

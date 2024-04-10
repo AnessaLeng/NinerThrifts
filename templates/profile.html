@@ -42,4 +42,56 @@
     </div>
 </div>
 
+
+
+
+
+<!--USE THIS FOR WHEN THE DATABASE IS IMPLEMENTED (replace top code with this)-->
+
+<!--
+    <h1><img src="static/logo.png" width="550px" height="125px"></h1>
+{% for profile in profiles %}
+    <br>
+    <div class="container">
+        <div class="row"> 
+            <div class="col-sm"><p><img src="{{ profile.profile_picture }}" height="200px" width="300px"></p></div>
+            <div class="col-sm">
+                <p class="text-center">{{ profile.followers }}</p>
+                <b><p class="text-center">Followers</p></b>
+            </div>
+            <div class="col-sm">
+                <p class="text-center">{{ profile.following }}</p> 
+                <b><p class="text-center">Following</p></b>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <p>{{ profile.username }}</p> 
+                <div> <p>{{ profile.biography }}</p> </div>
+            </div>
+            <div class="col-4">
+               <p class="text-end"><button type="button" class="btn btn-primary">Follow</button></p>
+               <br>
+                <p class="text-end"><button type="button" class="btn btn-primary">Message</button></p>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+<br>
+<h3>Listings</h3>
+<br>
+<div class="container">
+    <div class="row row-cols-4">
+        {% for post in posts %}
+        <div class="col"><img src="{{ post }}" height="250px" width="250px"></div>
+        {% endfor %}
+    </div>
+</div>
+
+-->
+
+
 {% endblock %}
