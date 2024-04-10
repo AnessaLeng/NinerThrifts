@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from random import random
+#from repositories import post_repo
 
 app = Flask(__name__)
 profile_info = {}
@@ -96,10 +97,10 @@ def show_post():
     return render_template('individual_post.html', post_image=post_image, post_title=post_title, post_price=post_price, post_description=post_description)
 
 postGrid = {}
-
+# Nhu's explore feature
 @app.route('/explore', methods=["GET"])
 def explore():
-    # will change this after pulling posts from database
+    # delete this after implementing database
     post = "static/blankpost.jpg"
     post_id = "post id"
     posts = ["static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", 
@@ -108,8 +109,14 @@ def explore():
     postGrid[post_id].append(post)
     return render_template("explore.html", postGrid = postGrid, posts = posts)
 
+    # use this after implementing database
+    #all_posts = post_repo.get_all_posts()
+    #return render_template("explore.html", posts = all_posts)
+
+# Nhu's search feature
 @app.route('/search', methods=["POST"])
 def search():
     search_result = request.form['query']
-    #to do: get results from database
+    #to do: get results from database4
+    #search_result = post_repo.get_searched_posts()
     return render_template("search.html", search_result = search_result)
