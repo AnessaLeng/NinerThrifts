@@ -89,11 +89,12 @@ def create_post():
 
 @app.route('/individual_post')
 def show_post():
-    post_image = 'static/placeholder.png'
+    post_image = 'static/blankpost.jpg'
     post_title = "Placeholder Title"
     post_price = "$Placeholder Price"
     post_description = "Placeholder Description"
-    return render_template('individual_post.html', post_image=post_image, post_title=post_title, post_price=post_price, post_description=post_description)
+    post_seller = " "
+    return render_template('individual_post.html', post_image=post_image, post_title=post_title, post_price=post_price, post_description=post_description, post_seller=post_seller)
 
 postGrid = {}
 
