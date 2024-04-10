@@ -4,18 +4,12 @@
 
 {% block body %}
 <style>
-    h1 {
-        background-color: #8CB854;
-        width: 100%;
-        margin-top: 20px;
-        text-align: center;
-    }
-
     body {
-        background-color: #D5F3B0;
+        background-color: white;
     }
 
     .container .col {
+        margin-top: 10px;
         margin-bottom: 10px;
     }
     
@@ -27,11 +21,12 @@
     }
 
     input {
-        width: 90%;
-        background-color: white;  
+        width: 60%; 
         color: black;
         border: none;
-        box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+        border-radius: 15px;
+        height: 40px;
+        background-color: rgb(209, 207, 207);
     }
 
     .search-bar {
@@ -39,21 +34,32 @@
         position: relative;
     }
 
+    .search-bar input {
+        padding-left: 40px;
+    }
+
     i {
+        color: grey;
         position: absolute;
-        right: 80px;
-        top: 5px;
+        left: 225px;
+        top: 10px;
     }
 
     h2 {
         text-align: center;
     }
 
+    .logosmall {
+        display: block; 
+        margin: 0 auto; 
+        height: auto;
+        width: 350px;
+    }
+
 </style>
-<h1>Niner Thrift</h1>
 <form action="/search" method="POST">
     <div class="search-bar">
-        <input type="text" name="query" placeholder="Search.."><i class="fas fa-search"></i>
+        <input type="text" name="query" placeholder="Search"><i class="fas fa-search"></i>
     </div>
 </form>
 
@@ -61,6 +67,7 @@
 <div class="container">
     <div class="row row-cols-4">
         {% for post in results %}
+        <!--<div class="col"><img src="{{ post.post_id }}" height="250px" width="250px"></div>-->
         <div class="col"><img src="{{ post }}" height="250px" width="250px"></div>
         {% endfor %}
     </div>
