@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, send_from_directory, url_for
 from random import randint, random
 #from repositories import post_repo
 
@@ -156,10 +156,16 @@ chat_logs = [
     {'chat_id': 2, 'message': 'What are you up to?'},
 ]
 
-@app.route('/directmessages')
+@app.route('/directmessages', methods=['GET', 'POST'])
 def direct_messages():
-    return render_template('directmessages.html')
+    if request.method == 'POST':
+        # Handle clicks on users here if needed
+        pass
+    return render_template('directmessages.html', chats=chats, chat_logs=chat_logs)
 
+@app.route('/static/<path:path>')
+def send_static(path):
+    return send_from_directory('static', path)
 
 if __name__ == '__main__':
     app.run(debug=True)
