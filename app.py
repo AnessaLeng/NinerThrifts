@@ -1,14 +1,10 @@
-from flask import Flask, redirect, render_template, request, url_for
-from flask_socketio import SocketIO, emit
-from random import randint
-import secrets
+from flask import Flask, render_template, request
+from random import random
+#from repositories import post_repo
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = secrets.token_hex(16)  # Set Flask's secret key for DMs
-socketio = SocketIO(app, secret_key=app.config['SECRET_KEY'])  # Set Flask-SocketIO's secret key for DMs
-
-users = {} #DMs
-messages = {} #Dms
+profile_info = {}
+users = {}
 
 # Anessa's signup/login feature
 @app.route('/')
