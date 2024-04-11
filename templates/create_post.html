@@ -1,8 +1,16 @@
-<!-- #Cindy's create post template -->
+
 {% extends "_layout.html" %}
 {% block title %}Create a Listing{% endblock %}
 {% block body %}
 <style>
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh; 
+    }
+
     .form-group {
         margin-bottom: 10px; 
     }
@@ -75,9 +83,17 @@
     .remove-button:hover {
         background-color: #c00;
     }
+
+    .logosmall {
+        display: block; 
+        margin: 0 auto; 
+        height: auto;
+        width: 400px;
+    }
 </style>
 
-<h1>Create a Listing</h1><br><br>
+<div class="form-container">
+<br><img src="/static/createpost.png" alt="create a post" class="logosmall"><br>
 
 <form action="/create_post" method="POST" enctype="multipart/form-data">
     <div class="form-group">
@@ -96,6 +112,18 @@
     </div>
 
     <div class="form-group">
+        <label for="condition">Condition</label>
+        <select id="condition" name="condition" required>
+            <option value="new">New</option>
+            <option value="like_new">Like New</option>
+            <option value="good">Good</option>
+            <option value="fair">Fair</option>
+            <option value="poor">Poor</option>
+        </select>
+    </div>
+    
+
+    <div class="form-group">
         <label for="description">Description</label>
         <textarea id="description" name="description" style="width: 300px; height: 150px;" placeholder="Tell us more..." required></textarea>
     </div>
@@ -106,8 +134,9 @@
     </div>
     <div id="file-list" class="file-list"></div><br><br>
 
-    <button type="submit">Submit</button>
+    <button type="submit">Submit</button><br><br><br>
 </form>
+</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -152,7 +181,7 @@
                         fileItem.appendChild(filePreview);
                     }
 
-                    fileListContainer.appendChild                    (fileItem);
+                    fileListContainer.appendChild(fileItem);
                 });
 
                 // Update the drop zone prompt visibility

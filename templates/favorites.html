@@ -1,0 +1,75 @@
+{% extends "_layout.html" %}
+
+{% block title %}Niner Thrift | Favorites{% endblock %}
+
+{% block body %}
+
+
+<style>
+    h1 {
+        background-color: #8CB854;
+        width: 100%;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    body {
+        background-color: white;
+    }
+
+    .container .col {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    
+    form {
+        padding: 6px;
+        margin-left: 20px;
+        margin-right: 20px;
+        text-align: center;
+    }
+
+    input {
+        width: 90%;
+        background-color: #8CB854;  
+        color: black;
+        border: none;
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+    }
+
+    .search-bar {
+        display: block;
+        position: relative;
+    }
+
+    i {
+        position: absolute;
+        right: 80px;
+        top: 5px;
+    }
+
+    .logosmall {
+        display: block; 
+        margin: 0 auto; 
+        height: auto;
+        width: 400px;
+    }
+
+</style>
+
+<br><img src="/static/favorites.png" alt="favorites" class="logosmall"><br>
+
+<div class="container">
+    <div class="row row-cols-4">
+        {% for post in posts %}
+        <div class="col">
+            <a href="/individual_post">
+                <img src="{{ post }}" height="250px" width="250px">
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

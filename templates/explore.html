@@ -1,0 +1,76 @@
+{% extends "_layout.html" %}
+
+{% block title %}Niner Thrift | Explore{% endblock %}
+
+{% block body %}
+<style>
+    body {
+        background-color: white;
+    }
+
+    .container .col {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    
+    form {
+        padding: 6px;
+        margin-left: 20px;
+        margin-right: 20px;
+        text-align: center;
+    }
+
+    input {
+        width: 60%; 
+        color: black;
+        border: none;
+        border-radius: 15px;
+        height: 40px;
+        background-color: rgb(209, 207, 207);
+    }
+
+    .search-bar {
+        display: block;
+        position: relative;
+    }
+
+    .search-bar input {
+        padding-left: 40px;
+    }
+
+    i {
+        color: grey;
+        position: absolute;
+        left: 225px;
+        top: 10px;
+        height: 90%;
+    }
+
+    .logosmall {
+        display: block; 
+        margin: 0 auto; 
+        height: auto;
+        width: 350px;
+    }
+</style>
+<br><img src="/static/explore.png" alt="explore" class="logosmall"><br>
+<form action="/search" method="POST">
+    <div class="search-bar">
+        <input type="text" name="query" placeholder="Search"><i class="fas fa-search"></i>
+    </div>
+</form>
+
+<div class="container">
+    <div class="row row-cols-4">
+        {% for post in posts %}
+            <div class="col">
+                <a href="/individual_post">
+                    <img src="{{ post }}" height="250px" width="250px">
+                </a>
+            </div>
+        <!--<div class="col"><img src="{{ post.post_id }}" height="250px" width="250px"></div>-->
+        <div class="col"><img src="{{ post }}" height="250px" width="250px"></div>
+        {% endfor %}
+    </div>
+</div> 
+{% endblock %}

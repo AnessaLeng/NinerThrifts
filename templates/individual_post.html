@@ -1,0 +1,33 @@
+{% extends "_layout.html" %}
+
+{% block title %}Individual Post{% endblock %}
+
+{% block body %}
+<style>
+    .container {
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+    .col-md-4 {
+        margin-bottom: 15px;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="{{ post_image }}" class="img-fluid" alt="Post Image">
+            </div>
+            <div class="col-md-8">
+                <h2>{{ post_title }}</h2>
+                <p><strong>Price:</strong> {{ post_price }}</p>
+                <p><strong>Description:</strong> {{ post_description }}</p>
+                <p><strong><a href="/profile">Seller Profile</a></strong> {{ post_seller }}</p>
+            </div>
+        </div>
+        <a href="/explore">Go Back to Explore Page</a>
+    </div>
+</body>
+{% endblock %}
+
