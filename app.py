@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request
-from random import random
+from flask import Flask, redirect, render_template, request, url_for
+from random import randint, random
 #from repositories import post_repo
 
 app = Flask(__name__)
