@@ -1,55 +1,15 @@
-{% extends "_layout.html" %}
+{% extends '_layout.html' %}
 
-{% block body %}
-<div class="container">
+{% block title %}Direct Messages{% endblock %}
+
+{% block content %}
   <h1>Direct Messages</h1>
-  <div id="messages">
-    <!-- Display direct messages here -->
-    {% for message in messages %}
-    <div class="message">
-      <strong>{{ message.sender }}:</strong> {{ message.message }}
-    </div>
+  <ul>
+    <!-- Loop through the list of chats and display each one -->
+    {% for chat in chats %}
+      <li>
+        <a href="{{ url_for('inbox', chat_id=chat.id) }}">{{ chat.user }}</a>
+      </li>
     {% endfor %}
-  </div>
-  <form id="messageForm">
-    <div class="mb-3">
-      <label for="recipient" class="form-label">Recipient:</label>
-      <input type="text" class="form-control" id="recipient" name="recipient" required>
-    </div>
-    <div class="mb-3">
-      <label for="message" class="form-label">Message:</label>
-      <textarea class="form-control" id="message" name="message" required></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Send</button>
-  </form>
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-  var socket = io.connect('http://' + document.domain + ':' + location.port);
-
-  // Function to send a message
-  function sendMessage() {
-    var recipient = document.getElementById('recipient').value;
-    var message = document.getElementById('message').value;
-    var sender = "User"; // You can dynamically get the sender's name or ID here
-    socket.emit('message', {'recipient': recipient, 'message': message, 'sender': sender});
-    // Clear the message input field
-    document.getElementById('message').value = '';
-  }
-
-  // SocketIO event handler to handle incoming messages
-  socket.on('message', function(data) {
-    var messageDiv = document.createElement('div');
-    messageDiv.innerHTML = '<strong>' + data.sender + ':</strong> ' + data.message;
-    document.getElementById('messages').appendChild(messageDiv);
-  });
-
-  // Submit the message form when Enter key is pressed
-  document.getElementById('messageForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the form from submitting normally
-    sendMessage(); // Call the sendMessage function
-  });
-</script>
+  </ul>
 {% endblock %}

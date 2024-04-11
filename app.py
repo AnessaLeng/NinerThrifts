@@ -76,48 +76,32 @@ def create_post():
 
     return render_template('create_post.html')
 
+# Sample data
+chats = [
+    {'id': 1, 'user': 'User 1'},
+    {'id': 2, 'user': 'User 2'},
+    {'id': 3, 'user': 'User 3'},
+]
 
-# Cayla's DM Feature (the real one once i get the IDs to work)
-# @app.route('/dm/<recipient_id>', methods=['GET', 'POST'])
-# def direct_message(recipient_id):
-#     if request.method == 'POST':
-#         message = request.form.get('message')
-#         sender = request.form.get('sender')  # Assuming you include sender in the form
+chat_logs = [
+    {'message': 'Hello, how are you?'},
+    {'message': 'I\'m doing well, thanks!'},
+    # Add more chat logs here
+]
 
-#         if recipient_id in users:
-#             if recipient_id not in messages:
-#                 messages[recipient_id] = []
-#             messages[recipient_id].append({'sender': sender, 'message': message})
-#             emit('message', {'sender': sender, 'message': message}, room=recipient_id, broadcast=True)
-#             return redirect(url_for('direct_message', recipient_id=recipient_id))
-#         else:
-#             return render_template('error.html', error_message='Recipient not found')
-
-#     # Display DM page
-#     if recipient_id in users:
-#         if recipient_id in messages:
-#             return render_template('directmessages.html', recipient_id=recipient_id, messages=messages[recipient_id])
-#         else:
-#             messages[recipient_id] = []  # Initialize empty messages for this recipient
-#             return render_template('directmessages.html', recipient_id=recipient_id, messages=messages[recipient_id])
-#     else:
-#         return render_template('error.html', error_message='Recipient not found')
-    
-# @app.route('/dm', methods=['GET', 'POST'])
-# def direct_message():
-#     if request.method == 'POST':
-#         message = request.form.get('message')
-#         sender = request.form.get('sender')  
-#         messages.append({'sender': sender, 'message': message})
-#         return redirect(url_for('direct_message'))
-
-#     # Display the DM page
-#     return render_template('directmessages.html', messages=messages)
-@app.route('/dm', methods=['GET'])
+@app.route('/directmessages')
 def direct_messages():
-    # Display the DMs page without specifying a recipient
-    return render_template('directmessages.html', messages=messages)
+    return render_template('directmessages.html', chats=chats)
 
+@app.route('/inbox/<int:chat_id>')
+def inbox(chat_id):
+    chat = next((chat for chat in chats if chat.id == chat_id), None)
+    return render_template('inbox.html', chat=chat, chat_logs=chat_logs)
+
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    # Handle sending a message here
+    pass
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
