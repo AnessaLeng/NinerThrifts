@@ -1,0 +1,18 @@
+{% extends '_layout.html' %}
+
+{% block title %}Inbox{% endblock %}
+
+{% block content %}
+  <h1>Inbox</h1>
+  <h2>{{ chat.user }}</h2>
+  <div id="chat-logs">
+    <!-- Loop through the chat logs and display each one -->
+    {% for log in chat_logs %}
+      <p>{{ log.message }}</p>
+    {% endfor %}
+  </div>
+  <form id="chat-form" action="{{ url_for('send_message') }}" method="post">
+    <input type="text" name="message" placeholder="Type a message...">
+    <button type="submit">Send</button>
+  </form>
+{% endblock %}
