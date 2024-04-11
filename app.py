@@ -159,7 +159,6 @@ chat_logs = [
 @app.route('/directmessages', methods=['GET', 'POST'])
 def direct_messages():
     if request.method == 'POST':
-        # Handle clicks on users here if needed
         pass
     return render_template('directmessages.html', chats=chats, chat_logs=chat_logs)
 
