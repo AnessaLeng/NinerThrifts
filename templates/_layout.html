@@ -4,27 +4,29 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">Niner Thrift</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link{% if list_movies_active %} active{% endif %}" href="/signup">Sign Up</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link{% if create_rating_active %} active{% endif %}" href="/movies/new">Profile</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link{% if search_active %} active{% endif %}" href="/create_post">Create a Listing</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('direct_messages', recipient_id=recipient_id) }}">Direct Messages</a><!--<a class="nav-link{% if dm_active %} active{% endif %}" href="/dm/">Direct Messages</a> i need to change this to /dm/recipient_id later-->
-          </li>
+      <a class="navbar-brand" href="/">
+        <img src="/static/logo.png" alt="Niner Thrift Logo" width="300" height="auto">
+    </a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="navbar-toggler-icon"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="/signup">Sign Up</a></li>
+                    <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                    <li><a class="dropdown-item" href="/explore">Explore</a></li>
+                    <li><a class="dropdown-item" href="/individual_post">Individual Post</a></li>
+                    <li><a class="dropdown-item" href="/create_post">Create a Listing</a></li>
+                    <li><a class="dropdown-item" href="/favorites">Favorites</a></li>
+                </ul>
+            </li>
         </ul>
-      </div>
     </div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
   </nav>
   <div class="container">
     {% block body %}{% endblock %}
