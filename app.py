@@ -99,5 +99,51 @@ def send_message():
     # Handle sending a message here
     pass
 
+@app.route('/individual_post')
+def show_post():
+    post_image = 'static/blankpost.jpg'
+    post_title = "Placeholder Title"
+    post_price = "$Placeholder Price"
+    post_description = "Placeholder Description"
+    post_seller = " "
+    return render_template('individual_post.html', post_image=post_image, post_title=post_title, post_price=post_price, post_description=post_description, post_seller=post_seller)
+
+postGrid = {}
+# Nhu's explore feature
+@app.route('/explore', methods=["GET"])
+def explore():
+    # delete this after implementing database
+    post = "static/blankpost.jpg"
+    post_id = "post id"
+    posts = ["static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", 
+             "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg"]
+    postGrid[post_id] = []
+    postGrid[post_id].append(post)
+    return render_template("explore.html", postGrid = postGrid, posts = posts)
+
+    # use this after implementing database
+    #all_posts = post_repo.get_all_posts()
+    #return render_template("explore.html", posts = all_posts)
+
+# Nhu's search feature
+@app.route('/search', methods=["POST"])
+def search():
+    search_result = request.form['query']
+    #to do: get results from database4
+    #search_result = post_repo.get_searched_posts()
+    return render_template("search.html", search_result = search_result)
+
+
+@app.route('/favorites', methods=["GET"])
+def favorites():
+    # will change this after pulling posts from database
+    post = "static/blankpost.jpg"
+    post_id = "post id"
+    posts = ["static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", 
+            "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg"]
+    postGrid[post_id] = []
+    postGrid[post_id].append(post)
+    return render_template("favorites.html", postGrid = postGrid, posts = posts)
+
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    app.run(app, debug=True)
