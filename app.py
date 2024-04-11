@@ -144,6 +144,3 @@ def favorites():
     postGrid[post_id] = []
     postGrid[post_id].append(post)
     return render_template("favorites.html", postGrid = postGrid, posts = posts)
-
-if __name__ == '__main__':
-    app.run(app, debug=True)
