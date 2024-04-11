@@ -72,33 +72,6 @@ def create_post():
 
     return render_template('create_post.html')
 
-# Sample data
-chats = [
-    {'id': 1, 'user': 'User 1'},
-    {'id': 2, 'user': 'User 2'},
-    {'id': 3, 'user': 'User 3'},
-]
-
-chat_logs = [
-    {'message': 'Hello, how are you?'},
-    {'message': 'I\'m doing well, thanks!'},
-    # Add more chat logs here
-]
-
-@app.route('/directmessages')
-def direct_messages():
-    return render_template('directmessages.html', chats=chats)
-
-@app.route('/inbox/<int:chat_id>')
-def inbox(chat_id):
-    chat = next((chat for chat in chats if chat.id == chat_id), None)
-    return render_template('inbox.html', chat=chat, chat_logs=chat_logs)
-
-@app.route('/send_message', methods=['POST'])
-def send_message():
-    # Handle sending a message here
-    pass
-
 @app.route('/individual_post')
 def show_post():
     post_image = 'static/blankpost.jpg'
