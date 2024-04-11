@@ -139,3 +139,27 @@ def favorites():
     postGrid[post_id] = []
     postGrid[post_id].append(post)
     return render_template("favorites.html", postGrid = postGrid, posts = posts)
+
+#Cayla's DM Feature
+
+# Sample data
+chats = [
+    {'id': 1, 'user': 'User 1'},
+    {'id': 2, 'user': 'User 2'},
+    {'id': 3, 'user': 'User 3'},
+]
+
+chat_logs = [
+    {'chat_id': 1, 'message': 'Hello, how are you?'},
+    {'chat_id': 1, 'message': 'I\'m doing well, thanks!'},
+    {'chat_id': 2, 'message': 'Hi there!'},
+    {'chat_id': 2, 'message': 'What are you up to?'},
+]
+
+@app.route('/directmessages')
+def direct_messages():
+    return render_template('directmessages.html')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
