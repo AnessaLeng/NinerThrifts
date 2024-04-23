@@ -1,0 +1,84 @@
+{% extends '_layout.html' %}
+
+{% block title %}Direct Messages{% endblock %}
+
+{% block body %}
+<style>
+#chat-logs {
+  float: left;
+  width: 30%;
+  height: 80vh;
+  overflow-y: scroll;
+}
+
+#inbox {
+  float: right;
+  width: 70%;
+  height: 80vh;
+  padding: 20px;
+  border-left: 1px solid #ccc;
+}
+
+.logosmall {
+  display: block; 
+  margin: 0 auto; 
+  margin-bottom: 30px;
+  height: auto;
+  width: 400px;
+}
+
+#chat-logs h2 {
+  text-align: center;
+}
+</style>
+
+<br><img src="/static/messages.png" alt="favorites" class="logosmall"><br>
+
+<div id="chat-logs-container" style="display: flex; flex-direction: column; height: 80vh; position: relative;">
+  <div id="chat-logs" style="flex: 1;">
+    <h2>Inbox<span class="badge">{{ chats|length }}</span></h2>
+    <form action="/directmessages" method="post"> <!-- Update action to directmessages -->
+      <div class="input-group">
+        <input type="text" class="form-control" style="margin-bottom: 10px;" placeholder="Search for..." name="query"> <!-- Added margin-bottom to the input field -->
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+        </span>
+      </div>
+    </form>
+    <ul>
+      {% for chat in chats %}
+        <li>
+          <a href="#" class="user-link" data-chat-id="{{ chat.id }}">{{ chat.user }}</a> <!-- Add data attribute for chat id -->
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="inbox-content" style="display: flex; align-items: center; justify-content: space-between; position: absolute; bottom: 0; right: 0; width: 70%; margin-left: 20px;"> <!-- Adjust width and margin as needed -->
+    <div class="message-input" style="display: flex; align-items: center; flex-grow: 1; margin-top: -100px;"> <!-- Adjust margin-top to bring the text field up -->
+      <input type="text" class="form-control" style="width: 100%;" placeholder="Type your message..."> <!-- Set width to 100% -->
+    </div>
+    <div style="margin-top: -100px;">
+      <button class="btn btn-primary send-btn"><i class="fa fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Add event listener to user links
+  var userLinks = document.querySelectorAll('.user-link');
+  userLinks.forEach(function(link) {
+    link.addEventListener('click', function(event) {
+      event.preventDefault();
+      var chatId = link.getAttribute('data-chat-id');
+      // Fetch and display chat logs for the selected user here if needed
+      // For now, just toggle visibility of the inbox
+      var inbox = document.getElementById('inbox');
+      inbox.style.display = 'block';
+    });
+  });
+});
+</script>
+
+{% endblock %}

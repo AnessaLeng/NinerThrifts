@@ -1,9 +1,18 @@
 {% extends "_layout.html" %}
 
-{% block title %}Niner Thrift | Explore{% endblock %}
+{% block title %}Niner Thrift | Favorites{% endblock %}
 
 {% block body %}
+
+
 <style>
+    h1 {
+        background-color: #8CB854;
+        width: 100%;
+        margin-top: 20px;
+        text-align: center;
+    }
+
     body {
         background-color: white;
     }
@@ -21,12 +30,11 @@
     }
 
     input {
-        width: 60%; 
+        width: 90%;
+        background-color: #8CB854;  
         color: black;
         border: none;
-        border-radius: 15px;
-        height: 40px;
-        background-color: rgb(209, 207, 207);
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
     }
 
     .search-bar {
@@ -34,40 +42,26 @@
         position: relative;
     }
 
-    .search-bar input {
-        padding-left: 40px;
-    }
-
     i {
-        color: grey;
         position: absolute;
-        left: 225px;
-        top: 10px;
-    }
-
-    h2 {
-        text-align: center;
+        right: 80px;
+        top: 5px;
     }
 
     .logosmall {
         display: block; 
         margin: 0 auto; 
         height: auto;
-        width: 350px;
+        width: 400px;
     }
 
 </style>
-<br><img src="/static/explore.png" alt="explore" class="logosmall"><br>
-<form action="/search" method="POST">
-    <div class="search-bar">
-        <input type="text" name="query" placeholder="Search"><i class="fas fa-search"></i>
-    </div>
-</form>
 
-{% if results %}
+<br><img src="/static/favorites.png" alt="favorites" class="logosmall"><br>
+
 <div class="container">
     <div class="row row-cols-4">
-        {% for post in results %}
+        {% for post in posts %}
         <div class="col">
             <a href="/individual_post">
                 <img src="{{ post }}" height="250px" width="250px">
@@ -76,10 +70,6 @@
         {% endfor %}
     </div>
 </div>
-{% else %}
-<div>
-    <h2>No Results Found!</h2>
-</div>
-{% endif %}
+
 
 {% endblock %}

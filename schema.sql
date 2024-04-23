@@ -4,11 +4,9 @@ DROP TABLE IF EXISTS profiles CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP DATABASE IF EXISTS ninerthrifts;
 
-CREATE DATABASE ninerthrifts;
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS users (
-    user_id             uuid            DEFAULT     uuid_generate_v4(),
+    user_id             SERIAL          NOT NULL,
     username            VARCHAR(255)    NOT NULL    UNIQUE,
     email               VARCHAR(255)    NOT NULL    UNIQUE,
     password            VARCHAR(255)    NOT NULL,
@@ -21,7 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS profiles (
-    user_id             uuid            NOT NULL,
+    user_id             SERIAL            NOT NULL,
     username            VARCHAR(255)    NOT NULL,
     biography           VARCHAR(255),
     profile_picture     BYTEA           NOT NULL,
@@ -32,7 +30,7 @@ CREATE TABLE IF NOT EXISTS profiles (
 );
 
 CREATE TABLE IF NOT EXISTS posts (
-    user_id         uuid            NOT NULL,
+    user_id         SERIAL            NOT NULL,
     username        VARCHAR(255)    NOT NULL,
     post_id         SERIAL          NOT NULL,
     title           VARCHAR(255)    NOT NULL,
@@ -46,8 +44,8 @@ CREATE TABLE IF NOT EXISTS posts (
 CREATE TABLE IF NOT EXISTS messages (
     message_id      SERIAL          NOT NULL,
     username        VARCHAR(255)    NOT NULL,
-    receiver_id     uuid            NOT NULL,
-    sender_id       uuid            NOT NULL,
+    receiver_id     SERIAL            NOT NULL,
+    sender_id       SERIAL            NOT NULL,
     message         VARCHAR(255)    NOT NULL,
     time            TIMESTAMP       DEFAULT     CURRENT_TIMESTAMP,
     PRIMARY KEY(message_id),

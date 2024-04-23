@@ -1,17 +1,22 @@
 {% extends "_layout.html" %}
+{% block title %}Niner Thrift | Profile{% endblock %}
+
 {% block body %}
-<h1><img src="static/logo.png" width="550px" height="125px"></h1>
-{% for key in profile_info.keys() %}
+<!--USE THIS FOR WHEN THE DATABASE IS IMPLEMENTED (replace top code with this)-->
+
+
+    <h1><img src="static/logo.png" width="550px" height="125px"></h1>
+{% for profile in profiles %}
     <br>
     <div class="container">
         <div class="row"> 
-            <div class="col-sm"><p><img src="{{ profile_info[key][0] }}" height="200px" width="300px"></p></div>
+            <div class="col-sm"><p><img src="{{ profile.profile_picture }}" height="200px" width="300px"></p></div>
             <div class="col-sm">
-                <p class="text-center">{{ profile_info[key][2] }}</p>
+                <p class="text-center">{{ profile.followers }}</p>
                 <b><p class="text-center">Followers</p></b>
             </div>
             <div class="col-sm">
-                <p class="text-center">{{ profile_info[key][3] }}</p> 
+                <p class="text-center">{{ profile.following }}</p> 
                 <b><p class="text-center">Following</p></b>
             </div>
         </div>
@@ -20,8 +25,8 @@
     <div class="container">
         <div class="row">
             <div class="col-8">
-                <p>{{ key }}</p> 
-                <div> <p>{{ profile_info[key][1] }}</p> </div>
+                <p>{{ profile.username }}</p> 
+                <div> <p>{{ profile.biography }}</p> </div>
             </div>
             <div class="col-4">
                <p class="text-end"><button type="button" class="btn btn-primary">Follow</button></p>
@@ -41,5 +46,7 @@
         {% endfor %}
     </div>
 </div>
+
+
 
 {% endblock %}
