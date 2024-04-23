@@ -1,32 +1,42 @@
-from flask import Flask, redirect, render_template, request, send_from_directory, url_for
+import os
+from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
 from random import randint, random
-#from repositories import post_repo
+from dotenv import load_dotenv
+from flask_bcrypt import Bcrypt
+from repositories import post_repo, profile_repo
+
+
+load_dotenv()
 
 app = Flask(__name__)
+
+app.secret_key = os.getenv('APP_SECRET_KEY')
+
+bcrypt = Bcrypt(app)
 profile_info = {}
 users = {}
 
 ##Jaidens profile page
 @app.get('/profile')
 def show_profile():
-    user_pic = "static/user_icon.png"
-    username = "username here"
-    bio = "bio here"
-    followers = "###"
-    following = "###"
-    posts= ['static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png',
-            'static/placeholder.png','static/placeholder.png','static/placeholder.png','static/placeholder.png']
-    profile_info[username] = []
-    profile_info[username].append(user_pic)
-    profile_info[username].append(bio)
-    profile_info[username].append(followers)
-    profile_info[username].append(following)
+    # user_pic = "static/user_icon.png"
+    # username = "username here"
+    # bio = "bio here"
+    # followers = "###"
+    # following = "###"
+    # posts= ['static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png',
+    #         'static/placeholder.png','static/placeholder.png','static/placeholder.png','static/placeholder.png']
+    # profile_info[username] = []
+    # profile_info[username].append(user_pic)
+    # profile_info[username].append(bio)
+    # profile_info[username].append(followers)
+    # profile_info[username].append(following)
 
     #use this instead for when database is implemented
-    #all_profiles = profile_repo.get_profile_info()
-    #return render_template('profile.html', profiles = all_profiles)
+    all_profiles = profile_repo.get_profile_info()
+    return render_template('profile.html', profiles = all_profiles)
 
-    return render_template("profile.html", profile_info = profile_info, posts = posts)
+    #return render_template("profile.html", profile_info = profile_info, posts = posts)
 
 # Anessa's signup/login feature
 @app.route('/')
