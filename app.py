@@ -48,23 +48,11 @@ def signup():
         email = request.form.get('email')
         dob = request.form.get('dob')
         profile_image = request.form.get('profile_image')
-        with open(profile_image, 'rb') as file:
-            image_data = file.read()
-        uid = randint(1, 9999)
-
-        new_user = {
-            "uid": uid,
-            "first_name": first_name,
-            "last_name": last_name,
-            "password": password, 
-            "email": email,
-            "dob": dob,
-            "profile_image": image_data,
-        }
-
-        users[uid] = new_user
-
-        return redirect(url_for('profile'))
+        if user_repo.does_email_exist(email):
+            abort(409)
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        new_user = user_repo.create_user(email, first_name, last_name, hashed_password, dob, profile_image)
+        return redirect(url_for('show_profile'))
     return render_template('index.html', is_user=2)
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -72,13 +60,16 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        for user in users:
-            if user['email'] == email and user['password'] == password:
-                return redirect(url_for('profile'))
+        if not email or not password:
+            abort(400)
+        user = user_repo.get_user_by_email(email)
+        if user is not None:
+            session['user_id'] = user['user_id']
+            return redirect(url_for('show_profile'))
         error_message = "Invalid email or password"
         return render_template('index.html', is_user=1, error=True, error_message=error_message)
     return render_template('index.html', is_user=1, error=False)
-  
+
 # Cindy's create a post feature
 @app.route('/create_post', methods=['GET', 'POST'])
 def create_post():

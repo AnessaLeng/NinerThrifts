@@ -3,7 +3,6 @@ from psycopg_pool import ConnectionPool
 
 pool = None
 
-
 def get_pool():
     global pool
     if pool is None:
