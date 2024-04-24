@@ -3,8 +3,9 @@ from flask import Flask, redirect, render_template, request, send_from_directory
 from random import randint, random
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
-from repositories import post_repo, profile_repo, user_repo, favorites_repo, create_repo
-from repositories.favorites_repo import get_all_favorites
+from repositories import post_repo, profile_repo, user_repo
+from repositories.favorites_repo import get_all_favorites, add_favorite, remove_favorite
+from repositories.create_repo import create_post
 
 
 
@@ -136,26 +137,26 @@ def search():
 
 
 # Cindy's favorites feature
-@app.route('/favorites')
-def favorites():
-    all_favorites = get_all_favorites()
-    return render_template("favorites.html", favorites=all_favorites)
+# @app.route('/favorites')
+# def favorites():
+#     all_favorites = get_all_favorites()
+#     return render_template("favorites.html", favorites=all_favorites)
 
-@app.route('/add_favorite', methods=['POST'])
-def add_favorite():
-    if request.method == 'POST':
-        user_id = request.form.get('user_id')
-        post_id = request.form.get('post_id')
-        add_favorite(user_id, post_id)
-        return redirect(url_for('favorites'))
+# @app.route('/add_favorite', methods=['POST'])
+# def add_favorite():
+#     if request.method == 'POST':
+#         user_id = request.form.get('user_id')
+#         post_id = request.form.get('post_id')
+#         add_favorite(user_id, post_id)
+#         return redirect(url_for('favorites'))
 
-@app.route('/remove_favorite', methods=['POST'])
-def remove_favorite():
-    if request.method == 'POST':
-        user_id = request.form.get('user_id')
-        post_id = request.form.get('post_id')
-        remove_favorite(user_id, post_id)
-        return redirect(url_for('favorites'))
+# @app.route('/remove_favorite', methods=['POST'])
+# def remove_favorite():
+#     if request.method == 'POST':
+#         user_id = request.form.get('user_id')
+#         post_id = request.form.get('post_id')
+#         remove_favorite(user_id, post_id)
+#         return redirect(url_for('favorites'))
 
 #Cayla's DM Feature
 

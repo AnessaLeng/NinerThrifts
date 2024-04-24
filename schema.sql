@@ -57,3 +57,27 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY(receiver_id) REFERENCES users(user_id),
     FOREIGN KEY(sender_id) REFERENCES users(user_id)
 );
+
+
+-- Inserting sample data into the users table
+INSERT INTO users (username, email, password, first_name, last_name, dob, sockets_id, profile_picture)
+VALUES
+    ('user1', 'user1@example.com', 'password1', 'John', 'Doe', '1990-01-01',  12345, 'https://www.apologia.com/wp-content/uploads/2020/07/Advanced-Biology-Textbook-Module-7.jpg'),
+    ('user2', 'user2@example.com', 'password2', 'Jane', 'Smith', '1995-05-15', 54321, 'https://www.apologia.com/wp-content/uploads/2020/07/Advanced-Biology-Textbook-Module-7.jpg'),
+    ('user3', 'user3@example.com', 'password3', 'Alice', 'Johnson', '1988-11-30',  98765, 'https://www.apologia.com/wp-content/uploads/2020/07/Advanced-Biology-Textbook-Module-7.jpg'),
+    ('cindyn', 'cindyn@example.com', 'cindyn1' ,'Cindy', 'Nguyen', '2000-03-20',  01234, 'https://www.apologia.com/wp-content/uploads/2020/07/Advanced-Biology-Textbook-Module-7.jpg');
+    
+
+-- Inserting sample data into the post table
+INSERT INTO posts (username, title, body, price, condition, post_image) 
+VALUES
+    ('cindyn', 'textbook', 'This is the first is a calc textbook', 10.00, 'New', 'https://www.vitalsource.com/assets/coachme-b968423a61925be222b18375290bfa6756a7ea30a3bd3b65db4c0a2ceab97324.jpg'),
+    ('user2', 'shoe', 'size 6 sneakers', 20.00, 'Like New', 'https://www.vitalsource.com/assets/coachme-b968423a61925be222b18375290bfa6756a7ea30a3bd3b65db4c0a2ceab97324.jpg'),
+    ('user3', 'calculator', 'new ti-86 calc', 30.00, 'New', 'https://www.vitalsource.com/assets/coachme-b968423a61925be222b18375290bfa6756a7ea30a3bd3b65db4c0a2ceab97324.jpg');
+
+-- Inserting sample data into the profiles table
+INSERT INTO profiles (username, biography, profile_picture, followers, following)
+VALUES
+    ('cindyn', 'I am a student at UNCC comp sci student', 'https://www.apologia.com/wp-content/uploads/2020/07/Advanced-Biology-Textbook-Module-7.jpg', 10, 110),
+    ('user2', 'looking for a new home for my stuff', 'https://www.apologia.com/wp-content/uploads/2020/07/Advanced-Biology-Textbook-Module-7.jpg', 40, 40),
+    ('user3', 'uncc alumni looking to get rid of old supplies', 'https://www.apologia.com/wp-content/uploads/2020/07/Advanced-Biology-Textbook-Module-7.jpg', 30, 50);
