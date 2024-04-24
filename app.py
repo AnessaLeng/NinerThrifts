@@ -115,27 +115,16 @@ def show_post():
 
 postGrid = {}
 # Nhu's explore feature
-@app.route('/explore', methods=["GET"])
+@app.get('/explore')
 def explore():
-    # delete this after implementing database
-    post = "static/blankpost.jpg"
-    post_id = "post id"
-    posts = ["static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", 
-             "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg"]
-    postGrid[post_id] = []
-    postGrid[post_id].append(post)
-    return render_template("explore.html", postGrid = postGrid, posts = posts)
-
-    # use this after implementing database
-    #all_posts = post_repo.get_all_posts()
-    #return render_template("explore.html", posts = all_posts)
+    all_posts = post_repo.get_all_posts()
+    return render_template("explore.html", posts = all_posts)
 
 # Nhu's search feature
-@app.route('/search', methods=["POST"])
+@app.post('/search')
 def search():
-    search_result = request.form['query']
-    #to do: get results from database4
-    #search_result = post_repo.get_searched_posts()
+    value = request.form.get('query')
+    search_result = post_repo.get_searched_posts(value)
     return render_template("search.html", search_result = search_result)
 
 
