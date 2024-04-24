@@ -19,23 +19,15 @@ users = {}
 ##Jaidens profile page
 @app.get('/profile')
 def show_profile():
-    # user_pic = "static/user_icon.png"
-    # username = "username here"
-    # bio = "bio here"
-    # followers = "###"
-    # following = "###"
-    # posts= ['static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png',
-    #         'static/placeholder.png','static/placeholder.png','static/placeholder.png','static/placeholder.png']
-    # profile_info[username] = []
-    # profile_info[username].append(user_pic)
-    # profile_info[username].append(bio)
-    # profile_info[username].append(followers)
-    # profile_info[username].append(following)
-
-    #use this instead for when database is implemented
+    # if request.method == 'POST':
+    #     email = request.form.get('email')
     all_profiles = profile_repo.get_profile_info()
+    # usernames = [user.get('username') for user in all_profiles]
+    # for user in usernames:
+    #     if(user == email):
+    #         profile = all_profiles[user]
+    # return render_template('profile.html', profiles = profile)
     return render_template('profile.html', profiles = all_profiles)
-
     #return render_template("profile.html", profile_info = profile_info, posts = posts)
 
 # Anessa's signup/login feature
