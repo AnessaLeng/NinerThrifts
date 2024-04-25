@@ -4,7 +4,6 @@ from random import randint, random
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
 from repositories import post_repo, profile_repo, user_repo
-from repositories.favorites_repo import get_all_favorites, add_favorite, remove_favorite
 from repositories.create_repo import create_post
 
 
