@@ -65,8 +65,8 @@
     <div class="row row-cols-4">
         {% for post in posts %}
             <div class="col">
-                <a href="/individual_post">
-                    <img src="{{ post }}" height="250px" width="250px">
+                <a href="{{ url_for('show_individual_post', post_id=post.post_id) }}">
+                    <img src="{{ post.post_image }}" height="250px" width="250px">
                 </a>
             </div>
         {% endfor %}
