@@ -103,13 +103,10 @@ def create_post():
     return render_template('create_post.html')
 
 @app.route('/individual_post')
-def show_post():
-    post_image = 'static/blankpost.jpg'
-    post_title = "Placeholder Title"
-    post_price = "$Placeholder Price"
-    post_description = "Placeholder Description"
-    post_seller = " "
-    return render_template('individual_post.html', post_image=post_image, post_title=post_title, post_price=post_price, post_description=post_description, post_seller=post_seller)
+def show_individual_post():
+    post_id = request.args.get('post_id')
+    post = post_repo.get_post_by_id(post_id)
+    return render_template('individual_post.html', post=post)
 
 postGrid = {}
 # Nhu's explore feature
