@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE IF NOT EXISTS users (
     username            VARCHAR(255)    NOT NULL    UNIQUE,
     email               VARCHAR(255)    NOT NULL    UNIQUE,
-    password            VARCHAR(255)    NOT NULL,
+    pass            VARCHAR(255)    NOT NULL,
     biography           VARCHAR(255),
     first_name          VARCHAR(255)    NOT NULL,
     last_name           VARCHAR(255)    NOT NULL,

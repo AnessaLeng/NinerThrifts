@@ -30,6 +30,11 @@
 #chat-logs h2 {
   text-align: center;
 }
+
+#chat-log {
+  height: 80vh;
+  overflow-y: scroll;
+}
 </style>
 
 <br><img src="/static/messages.png" alt="favorites" class="logosmall"><br>
@@ -54,12 +59,24 @@
     </ul>
   </div>
 
-  <div class="inbox-content" style="display: flex; align-items: center; justify-content: space-between; position: absolute; bottom: 0; right: 0; width: 70%; margin-left: 20px;"> <!-- Adjust width and margin as needed -->
+  <div id="inbox" style="display: none;">
+    <div id="chat-log">
+      <h2>Chat Log</h2>
+      <ul id="messages">
+        {% for message in messages %}
+          <li class="message {{ message.sender_id == current_user_id ? 'sent' : 'received' }}">
+            <div class="sender">{{ message.sender.username }}:</div>
+            <div class="content">{{ message.content }}</div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
     <div class="message-input" style="display: flex; align-items: center; flex-grow: 1; margin-top: -100px;"> <!-- Adjust margin-top to bring the text field up -->
-      <input type="text" class="form-control" style="width: 100%;" placeholder="Type your message..."> <!-- Set width to 100% -->
+      <input type="text" id="message-input" class="form-control" style="width: 100%;" placeholder="Type your message..."> <!-- Set width to 100% -->
     </div>
     <div style="margin-top: -100px;">
-      <button class="btn btn-primary send-btn"><i class="fa fa-paper-plane"></i></button>
+      <button id="send-button" class="btn btn-primary send-btn"><i class="fa fa-paper-plane"></i></button>
     </div>
   </div>
 </div>
@@ -76,7 +93,63 @@ document.addEventListener('DOMContentLoaded', function() {
       // For now, just toggle visibility of the inbox
       var inbox = document.getElementById('inbox');
       inbox.style.display = 'block';
+
+      // Fetch messages for the selected user here
+      fetch(`/directmessages/${chatId}`)
+        .then(response => response.json())
+        .then(messages => {
+          // Clear existing messages
+          var messagesList = document.getElementById('messages');
+          messagesList.innerHTML = '';
+
+          // Add fetched messages to the messages list
+          messages.forEach(message => {
+            var messageElement = document.createElement('li');
+            messageElement.classList.add('message');
+            messageElement.classList.add(message.sender_id == current_user_id ? 'sent' : 'received');
+            messageElement.innerHTML = `
+              <div class="sender">${message.sender.username}:</div>
+              <div class="content">${message.content}</div>
+            `;
+            messagesList.appendChild(messageElement);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching messages:', error);
+        });
     });
+  });
+
+  // Add event listener to send button
+  var sendButton = document.getElementById('send-button');
+  sendButton.addEventListener('click', function() {
+    var messageInput = document.getElementById('message-input');
+    var messageContent = messageInput.value.trim();
+    if (messageContent === '') {
+      console.error('Cannot send empty message.');
+      return;
+    }
+
+    // Send message to the server here
+    // For now, just display the message in the chat log
+    var messagesList = document.getElementById('messages');
+    var messageElement = document.createElement('li');
+    messageElement.classList.add('message');
+    messageElement.classList.add('sent');
+    messageElement.innerHTML = `
+      <div class="sender">You:</div>
+      <div class="content">${messageContent}</div>
+    `;
+    messagesList.appendChild(messageElement);
+    messageInput.value = '';
+  });
+
+  // Add event listener to message input for Enter key press
+  var messageInput = document.getElementById('message-input');
+  messageInput.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      sendMessage();
+    }
   });
 });
 </script>
