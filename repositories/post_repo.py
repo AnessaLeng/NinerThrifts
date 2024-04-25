@@ -41,3 +41,23 @@ def get_searched_posts(title: str):
                             ''', ['%' + title + '%'])
             search_result = cursor.fetchall()
     return search_result
+
+def get_post_by_id(post_id):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cursor:
+            cursor.execute(''' 
+                           SELECT
+                                user_id,
+                                username,
+                                post_id,
+                                title,
+                                body,
+                                post_image,
+                                posted_date
+                           FROM
+                                posts
+                           WHERE
+                                post_id = %s
+                            ''', [post_id])
+            return cursor.fetchone()
