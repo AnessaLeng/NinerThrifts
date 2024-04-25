@@ -17,15 +17,15 @@ def does_email_exist(email: str) -> bool:
             user = cur.fetchone()
             return user is not None
         
-def create_user(email: str, first_name: str, last_name: str, password: str, dob: str, profile_image: str) -> dict[str, Any] | None:
+def create_user(email: str, first_name: str, last_name: str, password: str, dob: str, profile_picture: str) -> dict[str, Any] | None:
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
-                        INSERT INTO users (email, first_name, last_name, password, dob, profile_image)
+                        INSERT INTO users (email, first_name, last_name, password, dob, profile_picture)
                         VALUES (%s, %s, %s, %s, %s, %s)
                         RETURNING user_id
-                    ''', [email, first_name, last_name, password, dob, profile_image])
+                    ''', [email, first_name, last_name, password, dob, profile_picture])
             user_id = cur.fetchone()
             if user_id is None:
                 return None
@@ -34,7 +34,7 @@ def create_user(email: str, first_name: str, last_name: str, password: str, dob:
                 "email": email,
                 "first_name": first_name,
                 "last_name": last_name,
-                "profile_image": profile_image
+                "profile_picture": profile_picture
             }
 
 def get_user_by_email(email:str) -> dict[str, Any] | None:
@@ -49,7 +49,7 @@ def get_user_by_email(email:str) -> dict[str, Any] | None:
                             last_name,
                             password AS hashed_password,
                             dob,
-                            profile_image
+                            profile_picture
                         FROM 
                             users
                         WHERE 
@@ -70,7 +70,7 @@ def get_user_by_id(user_id: int) -> dict[str, Any] | None:
                             last_name,
                             password AS hashed_password,
                             dob,
-                            profile_image
+                            profile_picture
                         FROM 
                             users
                         WHERE 

@@ -3,7 +3,7 @@ from flask import Flask, redirect, render_template, request, send_from_directory
 from random import randint, random
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
-from repositories import post_repo, profile_repo
+from repositories import post_repo, profile_repo, user_repo
 
 
 load_dotenv()
@@ -19,16 +19,18 @@ users = {}
 ##Jaidens profile page
 @app.get('/profile')
 def show_profile():
-    # if request.method == 'POST':
-    #     email = request.form.get('email')
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    user_id = session['user_id']
+
     all_profiles = profile_repo.get_profile_info()
-    # usernames = [user.get('username') for user in all_profiles]
-    # for user in usernames:
-    #     if(user == email):
-    #         profile = all_profiles[user]
-    # return render_template('profile.html', profiles = profile)
-    return render_template('profile.html', profiles = all_profiles)
-    #return render_template("profile.html", profile_info = profile_info, posts = posts)
+    usernames = [user.get('user_id') for user in all_profiles]
+
+    user = user_repo.get_user_by_id(user_id)
+    if user is None:
+        abort(400)
+    profile = user
+    return render_template('profile.html', profile = profile)
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -47,7 +49,7 @@ def signup():
         password = request.form.get('password')
         email = request.form.get('email')
         dob = request.form.get('dob')
-        profile_image = request.form.get('profile_image')
+        profile_image = request.form.get('profile_picture')
         if user_repo.does_email_exist(email):
             abort(409)
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
