@@ -38,11 +38,18 @@
         padding-left: 40px;
     }
 
-    i {
+    .fa-search {
         color: grey;
         position: absolute;
         left: 225px;
         top: 10px;
+    }
+
+    .fa-chevron-left {
+        color: grey;
+        position: absolute;
+        left: 190px;
+        top: 12px;
     }
 
     h2 {
@@ -57,18 +64,23 @@
     }
 
 </style>
+<br><img src="/static/explore.png" alt="explore" class="logosmall"><br>
 <form action="/search" method="POST">
     <div class="search-bar">
+        <a href="/explore"><i class="fas fa-chevron-left"></i></a>
         <input type="text" name="query" placeholder="Search"><i class="fas fa-search"></i>
     </div>
 </form>
 
-{% if results %}
+{% if search_result %}
 <div class="container">
     <div class="row row-cols-4">
-        {% for post in results %}
-        <!--<div class="col"><img src="{{ post.post_id }}" height="250px" width="250px"></div>-->
-        <div class="col"><img src="{{ post }}" height="250px" width="250px"></div>
+        {% for result in search_result %}
+        <div class="col">
+            <a href="/individual_post">
+                <img src="{{ result.post_image }}" height="250px" width="250px">
+            </a>
+        </div>
         {% endfor %}
     </div>
 </div>

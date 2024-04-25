@@ -78,5 +78,3 @@ CREATE TABLE IF NOT EXISTS messages (
     message_content TEXT,
     sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-
