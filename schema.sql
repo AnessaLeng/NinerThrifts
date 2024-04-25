@@ -1,8 +1,11 @@
+
+
 DROP TABLE IF EXISTS messages CASCADE;
 DROP TABLE IF EXISTS posts CASCADE;
 DROP TABLE IF EXISTS profiles CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP DATABASE IF EXISTS ninerthrifts;
+
 
 CREATE TABLE IF NOT EXISTS users (
     user_id             SERIAL          NOT NULL,
@@ -55,20 +58,20 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY(sender_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE user_sessions (
+CREATE TABLE IF NOT EXISTS user_sessions (
   sid SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(user_id),
   session_id VARCHAR(255) UNIQUE NOT NULL
 );
 
-CREATE TABLE message_threads (
+CREATE TABLE IF NOT EXISTS message_threads (
   thread_id SERIAL PRIMARY KEY,
   sender_id INTEGER REFERENCES users(user_id),
   recipient_id INTEGER REFERENCES users(user_id),
   UNIQUE (sender_id, recipient_id)
 );
 
-CREATE TABLE messages (
+CREATE TABLE IF NOT EXISTS messages (
     message_id SERIAL PRIMARY KEY,
     thread_id INTEGER REFERENCES message_threads(thread_id),
     sender_id INTEGER REFERENCES users(user_id),
