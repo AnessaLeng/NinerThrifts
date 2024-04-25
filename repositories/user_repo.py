@@ -1,4 +1,5 @@
 from typing import Any
+from flask import session
 from repositories.db import get_pool
 from psycopg.rows import dict_row
 
@@ -78,3 +79,25 @@ def get_user_by_id(user_id: int) -> dict[str, Any] | None:
                     ''', [user_id])
             user = cur.fetchone()
             return user
+
+# Needed for DMS
+def update_user_status(username: str, status: str):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("UPDATE users SET status = %s WHERE email = %s", (status, username))
+            conn.commit()
+            
+def update_user_status(username: str, status: str):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("UPDATE users SET status = %s WHERE email = %s", (status, username))
+            conn.commit()
+
+def get_current_user():
+    user_id = session.get('user_id')
+    if user_id is None:
+        return None
+    user = get_user_by_id(user_id)
+    return user
