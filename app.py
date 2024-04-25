@@ -3,7 +3,10 @@ from flask import Flask, redirect, render_template, request, send_from_directory
 from random import randint, random
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
-from repositories import post_repo, profile_repo
+from repositories import post_repo, profile_repo, user_repo
+from repositories.favorites_repo import get_all_favorites, add_favorite, remove_favorite
+from repositories.create_repo import create_post
+
 
 
 load_dotenv()
@@ -84,14 +87,15 @@ def create_post():
     if request.method == 'POST':
         title = request.form.get('title')
         price = request.form.get('price')
-        hashtags = request.form.get('hashtags')
-        description = request.form.get('description')
+        condition = request.form.get('condition')
+        body = request.form.get('description')
 
-        print("Title:", title)
-        print("Price:", price)
-        print("Hashtags:", hashtags)
-        print("Description:", description)
-        return "You have succesfully created a listing!"
+        user_id = session.get('user_id')
+        username = session.get('username')
+
+        create_post(user_id, username, title, body, price, condition)
+        return "You have successfully created a post!"
+        # possible mixup w description and body
 
     return render_template('create_post.html')
 
@@ -119,16 +123,40 @@ def search():
     return render_template("search.html", search_result = search_result)
 
 
-@app.route('/favorites', methods=["GET"])
-def favorites():
-    # will change this after pulling posts from database
-    post = "static/blankpost.jpg"
-    post_id = "post id"
-    posts = ["static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", 
-            "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg"]
-    postGrid[post_id] = []
-    postGrid[post_id].append(post)
-    return render_template("favorites.html", postGrid = postGrid, posts = posts)
+# @app.route('/favorites', methods=["GET"])
+# def favorites():
+#     # will change this after pulling posts from database
+#     postGrid = {}
+#     post = "static/blankpost.jpg"
+#     post_id = "post id"
+#     posts = ["static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", 
+#             "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg"]
+#     postGrid[post_id] = []
+#     postGrid[post_id].append(post)
+#     return render_template("favorites.html", postGrid = postGrid, posts = posts)
+
+
+# Cindy's favorites feature
+# @app.route('/favorites')
+# def favorites():
+#     all_favorites = get_all_favorites()
+#     return render_template("favorites.html", favorites=all_favorites)
+
+# @app.route('/add_favorite', methods=['POST'])
+# def add_favorite():
+#     if request.method == 'POST':
+#         user_id = request.form.get('user_id')
+#         post_id = request.form.get('post_id')
+#         add_favorite(user_id, post_id)
+#         return redirect(url_for('favorites'))
+
+# @app.route('/remove_favorite', methods=['POST'])
+# def remove_favorite():
+#     if request.method == 'POST':
+#         user_id = request.form.get('user_id')
+#         post_id = request.form.get('post_id')
+#         remove_favorite(user_id, post_id)
+#         return redirect(url_for('favorites'))
 
 #Cayla's DM Feature
 

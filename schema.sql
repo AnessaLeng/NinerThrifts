@@ -1,3 +1,5 @@
+
+
 DROP TABLE IF EXISTS messages CASCADE;
 DROP TABLE IF EXISTS posts CASCADE;
 DROP TABLE IF EXISTS profiles CASCADE;
@@ -30,11 +32,13 @@ CREATE TABLE IF NOT EXISTS profiles (
 );
 
 CREATE TABLE IF NOT EXISTS posts (
-    user_id         SERIAL            NOT NULL,
+    user_id         SERIAL          NOT NULL,
     username        VARCHAR(255)    NOT NULL,
     post_id         SERIAL          NOT NULL,
     title           VARCHAR(255)    NOT NULL,
     body            VARCHAR(255)    NOT NULL,
+    price           DECIMAL(10,2)   NOT NULL,
+    condition       VARCHAR(255)    NOT NULL,
     post_image      BYTEA           NOT NULL,
     posted_date     TIMESTAMP       DEFAULT     CURRENT_TIMESTAMP,
     PRIMARY KEY(post_id),
@@ -53,3 +57,4 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY(receiver_id) REFERENCES users(user_id),
     FOREIGN KEY(sender_id) REFERENCES users(user_id)
 );
+
