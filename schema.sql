@@ -57,4 +57,3 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY(receiver_id) REFERENCES users(user_id),
     FOREIGN KEY(sender_id) REFERENCES users(user_id)
 );
-
