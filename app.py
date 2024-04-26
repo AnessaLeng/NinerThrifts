@@ -39,7 +39,7 @@ def show_profile():
 
     #use this instead for when database is implemented
     all_profiles = profile_repo.get_profile_info()
-    return render_template('profile.html', profiles = all_profiles)
+    return render_template('profile.html' , profiles = all_profiles)
 
     #return render_template("profile.html", profile_info = profile_info, posts = posts)
 
@@ -57,6 +57,7 @@ def signup():
     if request.method == 'POST':
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
+        username = request.form.get('username')
         password = request.form.get('password')
         email = request.form.get('email')
         dob = request.form.get('dob')
@@ -64,7 +65,7 @@ def signup():
         if user_repo.does_email_exist(email):
             abort(409)
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        new_user = user_repo.create_user(email, first_name, last_name, hashed_password, dob, profile_image)
+        user_repo.create_user(email, first_name, last_name, username, hashed_password, dob, profile_image)
         return redirect(url_for('show_profile'))
     return render_template('index.html', is_user=2)
 
