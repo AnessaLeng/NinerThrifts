@@ -3,7 +3,7 @@ from flask import session
 from repositories.db import get_pool
 from psycopg.rows import dict_row
 
-def does_email_exist(email: str) -> bool:
+def does_email_exist(email):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor() as cur:
@@ -18,15 +18,15 @@ def does_email_exist(email: str) -> bool:
             user = cur.fetchone()
             return user is not None
         
-def create_user(email: str, first_name: str, last_name: str, username: str, password: str, dob: str, profile_picture: str) -> dict[str, Any] | None:
+def create_user(email, first_name, last_name, password, dob, profile_image):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
-                        INSERT INTO users (email, first_name, last_name, username, password, dob, profile_picture)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s)
+                        INSERT INTO users (email, first_name, last_name, password, dob, profile_image)
+                        VALUES (%s, %s, %s, %s, %s, %s)
                         RETURNING user_id
-                    ''', [email, first_name, last_name, username, password, dob, profile_picture])
+                    ''', [email, first_name, last_name, password, dob, profile_image])
             user_id = cur.fetchone()
             if user_id is None:
                 return None
@@ -35,11 +35,10 @@ def create_user(email: str, first_name: str, last_name: str, username: str, pass
                 "email": email,
                 "first_name": first_name,
                 "last_name": last_name,
-                "username": username,
-                "profile_picture": profile_picture
+                "profile_image": profile_image
             }
 
-def get_user_by_email(email:str) -> dict[str, Any] | None:
+def get_user_by_email(email):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
@@ -49,10 +48,9 @@ def get_user_by_email(email:str) -> dict[str, Any] | None:
                             email,
                             first_name,
                             last_name,
-                            username,
                             password AS hashed_password,
                             dob,
-                            profile_picture
+                            profile_image
                         FROM 
                             users
                         WHERE 
@@ -61,7 +59,7 @@ def get_user_by_email(email:str) -> dict[str, Any] | None:
             user = cur.fetchone()
             return user
         
-def get_user_by_id(user_id: int) -> dict[str, Any] | None:
+def get_user_by_id(user_id):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
@@ -71,10 +69,9 @@ def get_user_by_id(user_id: int) -> dict[str, Any] | None:
                             email,
                             first_name,
                             last_name,
-                            username,
                             password AS hashed_password,
                             dob,
-                            profile_picture
+                            profile_image
                         FROM 
                             users
                         WHERE 
@@ -84,14 +81,14 @@ def get_user_by_id(user_id: int) -> dict[str, Any] | None:
             return user
 
 # Needed for DMS
-def update_user_status(username: str, status: str):
+def update_user_status(username, status):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor() as cur:
             cur.execute("UPDATE users SET status = %s WHERE email = %s", (status, username))
             conn.commit()
             
-def update_user_status(username: str, status: str):
+def update_user_status(username, status):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor() as cur:
