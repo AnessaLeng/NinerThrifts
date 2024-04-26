@@ -4,7 +4,7 @@ from random import randint, random
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
-from repositories import post_repo, profile_repo, user_repo
+from repositories import post_repo, profile_repo, user_repo, message_repo
 from repositories.create_repo import create_post
 
 

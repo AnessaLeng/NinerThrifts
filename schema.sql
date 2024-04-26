@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS users (
     last_name           VARCHAR(255)    NOT NULL,
     dob                 DATE            NOT NULL,
     profile_picture     BYTEA           NOT NULL,
-    sockets_id          INTEGER         NOT NULL,
     PRIMARY KEY(username)
 );
 
