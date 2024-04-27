@@ -9,6 +9,8 @@
         align-items: center;
         justify-content: center;
         height: 100vh; 
+        background-image: url('../static/abstract_bg1.jpg');
+        background-size: cover;
     }
 
     .form-group {
@@ -90,6 +92,12 @@
         height: auto;
         width: 400px;
     }
+
+    .btn {
+        background-color: darkgreen;
+        color: white; 
+        border-color: darkgreen; 
+      }
 </style>
 
 <div class="form-container">
@@ -134,7 +142,7 @@
     </div>
     <div id="file-list" class="file-list"></div><br><br>
 
-    <button type="submit">Submit</button><br><br><br>
+    <button type="submit" class="btn w-50 btn-success">Create A Listing!</button>
 </form>
 </div>
 
