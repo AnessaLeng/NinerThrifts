@@ -48,11 +48,11 @@ def get_post_by_id(post_id):
         with conn.cursor(row_factory=dict_row) as cursor:
             cursor.execute(''' 
                            SELECT
-                                user_id,
                                 username,
                                 post_id,
                                 title,
                                 body,
+                                price,
                                 post_image,
                                 posted_date
                            FROM
