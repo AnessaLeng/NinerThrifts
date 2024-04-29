@@ -1,9 +1,11 @@
 import os
+import base64
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
 from random import randint, random
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
+from werkzeug.utils import secure_filename
 from repositories import post_repo, profile_repo, user_repo, message_repo
 from repositories.favorites_repo import get_all_favorites, add_favorite, remove_favorite
 from repositories.create_repo import create_post
@@ -22,6 +24,21 @@ bcrypt = Bcrypt(app)
 profile_info = {}
 users = {}
 
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
+
+app.config['UPLOAD_FOLDER'] = ''
+app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.template_filter('b64encode')
+def b64encode_filter(data):
+    print("Encoding image: " + base64.b64encode(data).decode('utf-8'))
+    encoded_image = base64.b64encode(data).decode('utf-8')
+    return encoded_image
+    
 ##Jaidens profile page
 @app.get('/profile')
 def show_profile():
@@ -39,10 +56,24 @@ def show_profile():
     # profile_info[username].append(following)
 
     #use this instead for when database is implemented
-    all_profiles = profile_repo.get_profile_info()
-    return render_template('profile.html' , profiles = all_profiles)
+    #all_profiles = profile_repo.get_profile_info()
+    #return render_template('profile.html' , profiles = all_profiles)
 
     #return render_template("profile.html", profile_info = profile_info, posts = posts)
+
+    email = request.args.get('email')
+    user_profile = user_repo.get_user_by_email(email)
+    if user_profile:
+        profile_picture_data = user_profile['profile_picture']
+        image_path = profile_picture_data.decode('utf-8')
+        with open(image_path, 'rb') as image_file:
+            image_data = image_file.read()
+
+        # Encode the image data to Base64
+        encoded_image_data = base64.b64encode(image_data).decode('utf-8')
+        return render_template('profile.html' , profile=user_profile, encoded_profile_picture=encoded_image_data)
+    else: 
+        abort(404)
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -62,12 +93,32 @@ def signup():
         password = request.form.get('password')
         email = request.form.get('email')
         dob = request.form.get('dob')
-        profile_image = request.form.get('profile_image')
+        bio = request.form.get('biography')
+
         if user_repo.does_email_exist(email):
-            abort(409)
+            abort(409, 'Email already exists')
+
+        if 'profile_image' not in request.files:
+            abort(400, 'No profile image provided')
+        
+        profile_image = request.files['profile_image']
+        
+        if profile_image.filename == '':
+            abort(400, 'No profile image selected')
+        
+        if profile_image:
+            filename = secure_filename(profile_image.filename)
+            print("saving image: " + filename)
+            print("loading image to uploads folder")
+            profile_image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            profile_image.save(profile_image_path)
+            print("path: " + profile_image_path)
+        else:
+            abort(400, 'Invalid file type or extension')
+
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        user_repo.create_user(email, first_name, last_name, username, hashed_password, dob, profile_image)
-        return redirect(url_for('show_profile'))
+        user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, profile_image_path)
+        return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=2)
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -76,13 +127,11 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
         if not email or not password:
-            abort(400)
+            error_message = "Invalid email or password"
+            return render_template('index.html', is_user=1, error=True, error_message=error_message)
         user = user_repo.get_user_by_email(email)
         if user is not None:
-            session['user_id'] = user['user_id']
-            return redirect(url_for('show_profile'))
-        error_message = "Invalid email or password"
-        return render_template('index.html', is_user=1, error=True, error_message=error_message)
+            return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=1, error=False)
 
 # Cindy's create a post feature

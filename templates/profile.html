@@ -3,14 +3,13 @@
 
 {% block body %}
 <!--USE THIS FOR WHEN THE DATABASE IS IMPLEMENTED (replace top code with this)-->
-
-
-    <h1><img src="static/logo.png" width="550px" height="125px"></h1>
-{% for profile in profiles %}
+    <h1><img src="static/logo.png" alt="logo" width="550px" height="125px"></h1>
     <br>
     <div class="container">
         <div class="row"> 
-            <div class="col-sm"><p><img src="{{ profile.profile_picture }}" height="200px" width="300px"></p></div>
+            <div class="col-sm">
+
+                <p><img alt="profile_image" src="data:image/jpg;base64,{{ encoded_profile_picture }}" height="200px" width="300px"></p>
             <div class="col-sm">
                 <p class="text-center">{{ profile.followers }}</p>
                 <b><p class="text-center">Followers</p></b>
@@ -35,14 +34,13 @@
             </div>
         </div>
     </div>
-{% endfor %}
 <br>
 <h3>Listings</h3>
 <br>
 <div class="container">
     <div class="row row-cols-4">
         {% for post in posts %}
-        <div class="col"><img src="{{ post }}" height="250px" width="250px"></div>
+        <div class="col"><img alt="post" src="{{ post }}" height="250px" width="250px"></div>
         {% endfor %}
     </div>
 </div>
