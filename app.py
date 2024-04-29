@@ -103,7 +103,8 @@ def create_post():
 
         create_repo.create_post(username, title, body, price, condition, post_image)
         print(post_image)
-        return "You have successfully created a post!" 
+        #return "You have successfully created a post!" 
+        return redirect(url_for('explore'))
         # possible mixup w description and body
 
     return render_template('create_post.html')
