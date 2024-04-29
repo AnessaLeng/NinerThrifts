@@ -8,14 +8,15 @@ def get_profile_info():
         with conn.cursor(row_factory=dict_row) as cursor:
             cursor.execute('''      
                            SELECT
-                                user_id,
-                                username,
                                 biography,
                                 profile_picture,
-                                followers,
-                                following
+                                image_url
                            FROM
-                                profiles
+                                users
+                           INNER JOIN
+                                posts
+                           ON
+                                users.username = posts.username
                             ''')
             return cursor.fetchall()
 

@@ -11,14 +11,14 @@
     <div class="container">
         <div class="row"> 
             <div class="col-sm"><p><img src="{{ profile.profile_picture }}" height="200px" width="300px"></p></div>
-            <div class="col-sm">
+            <!-- <div class="col-sm">
                 <p class="text-center">{{ profile.followers }}</p>
                 <b><p class="text-center">Followers</p></b>
             </div>
             <div class="col-sm">
                 <p class="text-center">{{ profile.following }}</p> 
                 <b><p class="text-center">Following</p></b>
-            </div>
+            </div> -->
         </div>
     </div>
     <br>
@@ -42,7 +42,11 @@
 <div class="container">
     <div class="row row-cols-4">
         {% for post in posts %}
-        <div class="col"><img src="{{ post.image_url }}" height="250px" width="250px"></div>
+        <div class="col">
+            <a href="{{ url_for('show_individual_post', post_id=post.post_id) }}">
+                <img src="{{ post.image_url }}" height="250px" width="250px">
+            </a>
+        </div>
         {% endfor %}
     </div>
 </div>

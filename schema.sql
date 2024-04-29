@@ -25,18 +25,12 @@ CREATE TABLE IF NOT EXISTS posts (
     body            VARCHAR(255)    NOT NULL,
     price           DECIMAL(10,2)   NOT NULL,
     condition       VARCHAR(255)    NOT NULL,
-    posted_date     TIMESTAMP       DEFAULT     CURRENT_TIMESTAMP,
+    posted_date     DATE       DEFAULT     CURRENT_DATE,
     image_url       VARCHAR(255)    NULL,
     PRIMARY KEY(post_id),
     FOREIGN KEY(username) REFERENCES users(username)
 );
 
--- CREATE TABLE IF NOT EXISTS post_images (
---     image_id        SERIAL          NOT NULL,
---     post_id         INTEGER         NOT NULL,
---     order           INTEGER         NOT NULL,
---     FOREIGN KEY(post_id) REFERENCES posts(post_id),
--- )
 
 CREATE TABLE IF NOT EXISTS user_sessions (
     sid SERIAL PRIMARY KEY,

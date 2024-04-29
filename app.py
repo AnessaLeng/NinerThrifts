@@ -104,11 +104,6 @@ def create_listing():
         # username = session.get('username')
         username = "bob"
 
-        #create_repo.create_post(username, title, body, price, condition, post_image)
-        #print(post_image)
-        #return "You have successfully created a post!" 
-        #return redirect(url_for('explore'))
-
 
         api_key = '3c2553b7acacb644f84379109a30e5c3'
         upload_url = 'https://api.imgbb.com/1/upload'
@@ -124,16 +119,6 @@ def create_listing():
             print(json_response)
             create_post(username, title, body, price, condition, json_response['data']['url'])
             return redirect(url_for('explore'))
-            # if json_response['status_code'] == 200:
-            #     image_url = json_response['data']['url']
-            #     user_id = session.get('user_id')
-            #     username = session.get('username')
-            #     full_url = f"https://api.imgbb.com/1/upload?key={api_key}&image={image_url}"
-            #     create_post(user_id, username, title, body, price, condition, full_url)
-            #     return redirect(url_for('explore'))
-
-
-
     return render_template('create_post.html')
 
 #Varsha individual post feature
