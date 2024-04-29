@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
 from repositories import post_repo, profile_repo, user_repo
 from repositories.create_repo import create_post
-
+from repositories import create_repo
+import base64
 
 
 load_dotenv()
@@ -85,6 +86,8 @@ def login():
     return render_template('index.html', is_user=1, error=False)
 
 # Cindy's create a post feature
+#adding some logic for images -varsha
+
 @app.route('/create_post', methods=['GET', 'POST'])
 def create_post():
     if request.method == 'POST':
@@ -92,16 +95,21 @@ def create_post():
         price = request.form.get('price')
         condition = request.form.get('condition')
         body = request.form.get('description')
+        post_image = request.files['myFile'].read()
 
-        user_id = session.get('user_id')
-        username = session.get('username')
+        # user_id = session.get('user_id')
+        # username = session.get('username')
+        username = "bob"
 
-        create_post(user_id, username, title, body, price, condition)
-        return "You have successfully created a post!"
+        create_repo.create_post(username, title, body, price, condition, post_image)
+        print(post_image)
+        return "You have successfully created a post!" 
         # possible mixup w description and body
 
     return render_template('create_post.html')
 
+
+#Varsha individual post feature
 @app.route('/individual_post')
 def show_individual_post():
     post_id = request.args.get('post_id')

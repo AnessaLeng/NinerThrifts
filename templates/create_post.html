@@ -1,4 +1,5 @@
 
+
 {% extends "_layout.html" %}
 {% block title %}Create a Listing{% endblock %}
 {% block body %}
@@ -130,7 +131,7 @@
 
     <div class="drop-zone">
         <span class="drop-zone__prompt">Drop files or click here</span>
-        <input type="file" name="myFile" class="drop-zone__input" multiple>
+        <input type="file" id="input-img" name="myFile" onchange="upload()" class="drop-zone__input" multiple>
     </div>
     <div id="file-list" class="file-list"></div><br><br>
 
@@ -230,6 +231,36 @@
             });
         });
     });
+
+    function upload() {
+    const fileInput = document.getElementById('input-img');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        console.error("No file selected.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    fetch("https://api.imgbb.com/1/upload?key=3c2553b7acacb644f84379109a30e5c3", {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Upload failed. HTTP error ' + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+        console.log(data.data.url);
+    })
+    .catch(error => {
+        console.error('Upload failed:', error);
+    });
+}
 </script>
 {% endblock %}
-
