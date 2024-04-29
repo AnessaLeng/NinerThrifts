@@ -1,7 +1,7 @@
 
 from repositories.db import get_pool
 
-def create_post(username: str, title: str, body: str, price: float, condition: str, post_image: bytes):
+def create_post(username: str, title: str, body: str, price: float, condition: str, image_url: str):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor() as cursor:
@@ -13,7 +13,8 @@ def create_post(username: str, title: str, body: str, price: float, condition: s
                             body, 
                             price,
                             condition, 
-                            post_image)
+                            image_url
+                            )
                 VALUES
                         (%s, %s, %s, %s, %s, %s)
-            ''', (username, title, body, price, condition, post_image))
+            ''', (username, title, body, price, condition, image_url))

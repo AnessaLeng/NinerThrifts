@@ -107,6 +107,7 @@
         <input type="number" id="price" name="price" required>
     </div>
 
+
     <!-- <div class="form-group">
         <label for="hashtags">Hashtags</label>
         <input type="text" id="hashtags" name="hashtags" required>
@@ -129,17 +130,18 @@
         <textarea id="description" name="description" style="width: 300px; height: 150px;" placeholder="Tell us more..." required></textarea>
     </div>
 
-    <div class="drop-zone">
+    <!-- <div class="drop-zone">
         <span class="drop-zone__prompt">Drop files or click here</span>
-        <input type="file" id="input-img" name="myFile" onchange="upload()" class="drop-zone__input" multiple>
-    </div>
+        <input type="file" id="input-img" name="myFile" class="drop-zone__input">
+    </div> -->
+    <input type="file" id="myFile" name="myFile">
     <div id="file-list" class="file-list"></div><br><br>
 
-    <button type="submit">Submit</button><br><br><br>
+    <input type="submit" value="Submit"><br><br><br>
 </form>
 </div>
 
-<script>
+<!-- <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll(".drop-zone__input").forEach(inputElement => {
             const dropZoneElement = inputElement.closest(".drop-zone");
@@ -232,35 +234,35 @@
         });
     });
 
-    function upload() {
-    const fileInput = document.getElementById('input-img');
-    const file = fileInput.files[0];
+    // function upload() {
+//     const fileInput = document.getElementById('input-img');
+//     const file = fileInput.files[0];
 
-    if (!file) {
-        console.error("No file selected.");
-        return;
-    }
+//     if (!file) {
+//         console.error("No file selected.");
+//         return;
+//     }
 
-    const formData = new FormData();
-    formData.append('image', file);
+//     const formData = new FormData();
+//     formData.append('image', file);
 
-    fetch("https://api.imgbb.com/1/upload?key=3c2553b7acacb644f84379109a30e5c3", {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Upload failed. HTTP error ' + response.status);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log(data);
-        console.log(data.data.url);
-    })
-    .catch(error => {
-        console.error('Upload failed:', error);
-    });
-}
-</script>
+//     fetch("https://api.imgbb.com/1/upload?key=3c2553b7acacb644f84379109a30e5c3", {
+//         method: 'POST',
+//         body: formData
+//     })
+//     .then(response => {
+//         if (!response.ok) {
+//             throw new Error('Upload failed. HTTP error ' + response.status);
+//         }
+//         return response.json();
+//     })
+//     .then(data => {
+//         console.log(data);
+//         console.log(data.data.url);
+//     })
+//     .catch(error => {
+//         console.error('Upload failed:', error);
+//     });
+// }
+</script> -->
 {% endblock %}

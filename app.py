@@ -8,6 +8,7 @@ from repositories import post_repo, profile_repo, user_repo
 from repositories.create_repo import create_post
 from repositories import create_repo
 import base64
+import requests
 
 
 load_dotenv()
@@ -89,26 +90,51 @@ def login():
 #adding some logic for images -varsha
 
 @app.route('/create_post', methods=['GET', 'POST'])
-def create_post():
+def create_listing():
     if request.method == 'POST':
         title = request.form.get('title')
         price = request.form.get('price')
         condition = request.form.get('condition')
         body = request.form.get('description')
-        post_image = request.files['myFile'].read()
+        post_image = request.files['myFile']
+
+        print(post_image)
 
         # user_id = session.get('user_id')
         # username = session.get('username')
         username = "bob"
 
-        create_repo.create_post(username, title, body, price, condition, post_image)
-        print(post_image)
+        #create_repo.create_post(username, title, body, price, condition, post_image)
+        #print(post_image)
         #return "You have successfully created a post!" 
-        return redirect(url_for('explore'))
-        # possible mixup w description and body
+        #return redirect(url_for('explore'))
+
+
+        api_key = '3c2553b7acacb644f84379109a30e5c3'
+        upload_url = 'https://api.imgbb.com/1/upload'
+        data = {
+                'key': api_key,
+                'image': base64.b64encode(post_image.read())
+            }
+        response = requests.post(upload_url, data=data)
+        print(response)
+
+        if response.status_code == 200:
+            json_response = response.json()
+            print(json_response)
+            create_post(username, title, body, price, condition, json_response['data']['url'])
+            return redirect(url_for('explore'))
+            # if json_response['status_code'] == 200:
+            #     image_url = json_response['data']['url']
+            #     user_id = session.get('user_id')
+            #     username = session.get('username')
+            #     full_url = f"https://api.imgbb.com/1/upload?key={api_key}&image={image_url}"
+            #     create_post(user_id, username, title, body, price, condition, full_url)
+            #     return redirect(url_for('explore'))
+
+
 
     return render_template('create_post.html')
-
 
 #Varsha individual post feature
 @app.route('/individual_post')
