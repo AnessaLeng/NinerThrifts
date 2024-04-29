@@ -12,7 +12,7 @@
         margin-top: 10px;
         margin-bottom: 10px;
     }
-    
+
     form {
         padding: 6px;
         margin-left: 20px;
@@ -66,7 +66,7 @@
         {% for post in posts %}
             <div class="col">
                 <a href="{{ url_for('show_individual_post', post_id=post.post_id) }}">
-                    <img src="{{ post.post_image }}" height="250px" width="250px">
+                    <img src="{{ post.image_url }}" height="250px" width="250px">
                 </a>
             </div>
         {% endfor %}

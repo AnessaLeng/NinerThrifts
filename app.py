@@ -1,5 +1,4 @@
 import os
-import requests
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
 from random import randint, random
 from flask_socketio import SocketIO, emit
@@ -7,8 +6,9 @@ from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
 from repositories import post_repo, profile_repo, user_repo
 from repositories.create_repo import create_post
-from io import BytesIO
-
+from repositories import create_repo
+import base64
+import requests
 
 
 load_dotenv()
@@ -16,7 +16,6 @@ load_dotenv()
 app = Flask(__name__)
 
 app.secret_key = os.getenv('APP_SECRET_KEY')
-IMGBB_API_KEY = 'b185a7b712895f59638bf815da3f2ebd'
 
 socketio = SocketIO(app)
 
@@ -88,47 +87,41 @@ def login():
     return render_template('index.html', is_user=1, error=False)
 
 # Cindy's create a post feature
-# @app.route('/create_post', methods=['GET', 'POST'])
-# def create_post():
-#     if request.method == 'POST':
-#         title = request.form.get('title')
-#         price = request.form.get('price')
-#         condition = request.form.get('condition')
-#         body = request.form.get('description')
+#adding some logic for images -varsha
 
-#         user_id = session.get('user_id')
-#         username = session.get('username')
-
-#         create_post(user_id, username, title, body, price, condition)
-#         return "You have successfully created a post!"
-#         # possible mixup w description and body
-
-#     return render_template('create_post.html')
-
-@app.route('/create_post', methods=['GET'])
-def render_create_post():
-    return render_template('create_post.html')
-
-@app.route('/create_post', methods=['POST'])
-def create_post():
+@app.route('/create_post', methods=['GET', 'POST'])
+def create_listing():
     if request.method == 'POST':
         title = request.form.get('title')
         price = request.form.get('price')
         condition = request.form.get('condition')
-        description = request.form.get('description')
-        image_file = request.files['myFile']  
+        body = request.form.get('description')
+        post_image = request.files['myFile']
 
-        if image_file:
-            post_image = image_file.read()
+        print(post_image)
 
-            post_repo.create_post(title, price, condition, description, post_image)
+        # user_id = session.get('user_id')
+        # username = session.get('username')
+        username = "bob"
 
-            return "Listing successfully uploaded!"
-        else:
-            return "Failed listing!"
-    else:
-        return render_template('create_post.html')
 
+        api_key = '4ad78dceb78a8627462a7181984c5eda'
+        upload_url = 'https://api.imgbb.com/1/upload'
+        data = {
+                'key': api_key,
+                'image': base64.b64encode(post_image.read())
+            }
+        response = requests.post(upload_url, data=data)
+        print(response)
+
+        if response.status_code == 200:
+            json_response = response.json()
+            print(json_response)
+            create_post(username, title, body, price, condition, json_response['data']['url'])
+            return redirect(url_for('explore'))
+    return render_template('create_post.html')
+
+#Varsha individual post feature
 @app.route('/individual_post')
 def show_individual_post():
     post_id = request.args.get('post_id')
