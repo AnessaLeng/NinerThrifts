@@ -1,6 +1,8 @@
 from repositories.db import get_pool
 from psycopg.rows import dict_row
 
+
+#for Nhu's explore feature
 def get_all_posts():
     pool = get_pool()
     with pool.connection() as conn:
