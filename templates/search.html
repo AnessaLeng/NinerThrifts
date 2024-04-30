@@ -78,7 +78,7 @@
         {% for result in search_result %}
         <div class="col">
             <a href="/individual_post">
-                <img src="{{ result.post_image }}" height="250px" width="250px">
+                <img src="{{ result.image_url }}" height="250px" width="250px">
             </a>
         </div>
         {% endfor %}
@@ -86,7 +86,7 @@
 </div>
 {% else %}
 <div>
-    <h2>No Results Found!</h2>
+    <h2><br>No Results Found!</h2>
 </div>
 {% endif %}
 

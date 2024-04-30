@@ -13,7 +13,7 @@ def get_all_posts():
                                 body,
                                 price,
                                 condition,
-                                post_image,
+                                image_url,
                                 posted_date
                            FROM
                                 posts
@@ -32,7 +32,7 @@ def get_searched_posts(title: str):
                                 body,
                                 price,
                                 condition,
-                                post_image,
+                                image_url,
                                 posted_date
                            FROM
                                 posts
@@ -48,12 +48,12 @@ def get_post_by_id(post_id):
         with conn.cursor(row_factory=dict_row) as cursor:
             cursor.execute(''' 
                            SELECT
-                                user_id,
                                 username,
                                 post_id,
                                 title,
                                 body,
-                                post_image,
+                                price,
+                                image_url,
                                 posted_date
                            FROM
                                 posts

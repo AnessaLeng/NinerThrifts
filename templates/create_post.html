@@ -1,4 +1,3 @@
-
 {% extends "_layout.html" %}
 {% block title %}Create a Listing{% endblock %}
 {% block body %}
@@ -106,6 +105,7 @@
         <input type="number" id="price" name="price" required>
     </div>
 
+
     <!-- <div class="form-group">
         <label for="hashtags">Hashtags</label>
         <input type="text" id="hashtags" name="hashtags" required>
@@ -128,108 +128,10 @@
         <textarea id="description" name="description" style="width: 300px; height: 150px;" placeholder="Tell us more..." required></textarea>
     </div>
 
-    <div class="drop-zone">
-        <span class="drop-zone__prompt">Drop files or click here</span>
-        <input type="file" name="myFile" class="drop-zone__input" multiple>
-    </div>
+    <input type="file" id="myFile" name="myFile">
     <div id="file-list" class="file-list"></div><br><br>
 
-    <button type="submit">Submit</button><br><br><br>
+    <input type="submit" value="Submit"><br><br><br>
 </form>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll(".drop-zone__input").forEach(inputElement => {
-            const dropZoneElement = inputElement.closest(".drop-zone");
-            const fileListContainer = document.getElementById("file-list");
-            let uploadedFiles = []; // Array to store uploaded files
-
-            // Function to update the file list displayed to the user
-            function updateFileList(files) {
-                // Clear existing file list
-                fileListContainer.innerHTML = "";
-
-                // Update file list with names of uploaded files and remove buttons
-                files.forEach((file, index) => {
-                    let fileItem = document.createElement("div");
-                    fileItem.classList.add("file-item");
-
-                    let fileName = document.createElement("span");
-                    fileName.textContent = file.name;
-
-                    let removeButton = document.createElement("button");
-                    removeButton.textContent = "Remove";
-                    removeButton.classList.add("remove-button");
-
-                    // Add click event listener to remove button
-                    removeButton.addEventListener("click", () => {
-                        // Remove the file from the uploadedFiles array
-                        uploadedFiles.splice(index, 1);
-                        // Update file list
-                        updateFileList(uploadedFiles);
-                    });
-
-                    fileItem.appendChild(fileName);
-                    fileItem.appendChild(removeButton);
-
-                    // If the file is an image, create a preview
-                    if (file.type.startsWith("image/")) {
-                        let filePreview = document.createElement("img");
-                        filePreview.classList.add("drop-zone__thumb");
-                        filePreview.src = URL.createObjectURL(file);
-                        fileItem.appendChild(filePreview);
-                    }
-
-                    fileListContainer.appendChild(fileItem);
-                });
-
-                // Update the drop zone prompt visibility
-                if (files.length === 0) {
-                    dropZoneElement.querySelector('.drop-zone__prompt').style.display = 'block';
-                }
-            }
-
-            // Handle file input change event
-            inputElement.addEventListener("change", e => {
-                if (inputElement.files.length) {
-                    // Add newly uploaded files to the uploadedFiles array
-                    uploadedFiles.push(...inputElement.files);
-                    updateFileList(uploadedFiles);
-                }
-            });
-
-            // Handle click event to open file dialog
-            dropZoneElement.addEventListener("click", e => {
-                inputElement.click();
-            });
-
-            // Handle file drop event
-            dropZoneElement.addEventListener("drop", e => {
-                e.preventDefault();
-                dropZoneElement.classList.remove("drop-zone--over");
-
-                if (e.dataTransfer.files.length) {
-                    // Add dropped files to the uploadedFiles array
-                    uploadedFiles.push(...e.dataTransfer.files);
-                    updateFileList(uploadedFiles);
-                }
-            });
-
-            // Handle drag over event
-            dropZoneElement.addEventListener("dragover", e => {
-                e.preventDefault();
-                dropZoneElement.classList.add("drop-zone--over");
-            });
-
-            // Handle drag leave and drag end events
-            ["dragleave", "dragend"].forEach(type => {
-                dropZoneElement.addEventListener(type, e => {
-                    dropZoneElement.classList.remove("drop-zone--over");
-                });
-            });
-        });
-    });
-</script>
 {% endblock %}
-

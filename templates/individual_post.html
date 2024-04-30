@@ -7,27 +7,81 @@
     .container {
         margin-top: 25px;
         margin-bottom: 25px;
+        margin-left: 25px;
+        margin-right: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: auto;
     }
-    .col-md-4 {
-        margin-bottom: 15px;
+
+    .post {
+        width: 75%;
+        padding: 20px; 
+        background-color: #f9f9f9; 
+        border-radius: 10px;
+        text-align: center; 
     }
+
+    .post-image {
+        display: block;
+        margin: 0 auto;
+    }
+
+    /* Centering post info */
+    .post-info {
+        text-align: center;
+    }
+
+    .fa-chevron-left {
+        color: grey;
+        position: absolute;
+        left: 50px;
+        top: 100px;
+    }
+
+       /* Style for the link button */
+    .link-button {
+        background-color: rgb(3, 91, 3);
+        color: white;
+        padding: 7px 14px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        font-size: 15px;
+    }
+
+    .link-button:hover {
+        background-color: rgb(3, 91, 3);
+    }
+
+    .link-button:hover,
+    .user-link:hover {
+        color: rgb(177, 229, 177);
+    }
+
+    .post-info {
+        font-size: 18px;
+    }
+
 </style>
 
 <body>
     <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <img src="{{ post.post_image }}" class="img-fluid" alt="Post Image">
-            </div>
-            <div class="col-md-8">
-                <h2>{{ post_title }}</h2>
-                <p><strong>Price:</strong> {{ post.price }}</p>
-                <p><strong>Description:</strong> {{ post.body }}</p>
-                <p><strong><a href="/profile">Seller Profile</a></strong> {{ post.username }}</p>
+        <div class="post">
+            <a href="/explore"><i class="fas fa-chevron-left"></i></a>
+            <h2>{{ post.title }}</h2>
+            <img src="{{ post.image_url }}" class="post-image img-fluid" alt="Post Image">
+            <div class="post-info">
+                <p class="post-info"><strong>Price: $</strong> {{ post.price }}</p>
+                <p class="post-info"><strong>Description:</strong> {{ post.body }}</p>
+                <p class="post-info"><strong>Condition:</strong> {{ post.condition }}</p>
+                <p class="post-info"><strong>Date Posted:</strong> {{ post.posted_date }}</p>
+                <p class="post-info"><strong>Posted By: <a href="/profile" class="link-button" target="_blank" class="user-link">{{ post.username }}</a></strong></p>
             </div>
         </div>
-        <a href="/explore">Go Back to Explore Page</a>
     </div>
 </body>
 {% endblock %}
-

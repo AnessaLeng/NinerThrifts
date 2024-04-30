@@ -1,11 +1,12 @@
+import base64
 import os
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
 from random import randint, random
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
-from repositories import post_repo, profile_repo, user_repo
-from repositories.create_repo import create_post
+import requests
+from repositories import post_repo, profile_repo, user_repo, message_repo, create_repo
 
 
 
@@ -14,12 +15,29 @@ load_dotenv()
 app = Flask(__name__)
 
 app.secret_key = os.getenv('APP_SECRET_KEY')
+api_key = '14d7c237dda449da28f1b053880ee6d8'
+upload_url = 'https://api.imgbb.com/1/upload'
 
 socketio = SocketIO(app)
 
 bcrypt = Bcrypt(app)
 profile_info = {}
 users = {}
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
+
+app.config['UPLOAD_FOLDER'] = ''
+app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.template_filter('b64encode')
+def b64encode_filter(data):
+    print("Encoding image: " + base64.b64encode(data).decode('utf-8'))
+    encoded_image = base64.b64encode(data).decode('utf-8')
+    return encoded_image
 
 ##Jaidens profile page
 @app.get('/profile')
@@ -57,15 +75,37 @@ def signup():
     if request.method == 'POST':
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
+        username = request.form.get('username')
         password = request.form.get('password')
         email = request.form.get('email')
         dob = request.form.get('dob')
-        profile_image = request.form.get('profile_image')
+        bio = request.form.get('biography')
+
         if user_repo.does_email_exist(email):
-            abort(409)
+            return render_template('error.html', error_message='409: Email already exists.'), 409
+
+        if 'profile_image' not in request.files:
+            return render_template('error.html', error_message='400: No profile image provided.'), 400
+        
+        profile_image = request.files['profile_image']
+        
+        if profile_image.filename == '':
+            return render_template('error.html', error_message='400: No profile image selected.'), 400
+        payload = {
+            'key': api_key,
+            'image': base64.b64encode(profile_image.read())
+        }
+        response = requests.post(upload_url, data=payload)
+
+        if response.status_code == 200:
+            json_response = response.json()
+        else:
+            return render_template('error.html', error_message='500: Internal Server Error: Failed to upload profile image to ImgBB.'), 500
+
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        new_user = user_repo.create_user(email, first_name, last_name, hashed_password, dob, profile_image)
-        return redirect(url_for('show_profile'))
+        user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, json_response['data']['url'])
+        session['email'] = email
+        return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=2)
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -74,31 +114,47 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
         if not email or not password:
-            abort(400)
+            error_message = "Invalid email or password"
+            return render_template('index.html', is_user=1, error=True, error_message=error_message)
         user = user_repo.get_user_by_email(email)
         if user is not None:
-            session['user_id'] = user['user_id']
-            return redirect(url_for('show_profile'))
-        error_message = "Invalid email or password"
-        return render_template('index.html', is_user=1, error=True, error_message=error_message)
+            session['email'] = email
+            return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=1, error=False)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
 
 # Cindy's create a post feature
 @app.route('/create_post', methods=['GET', 'POST'])
-def create_post():
+def create_listing():
     if request.method == 'POST':
         title = request.form.get('title')
         price = request.form.get('price')
         condition = request.form.get('condition')
         body = request.form.get('description')
+        post_image = request.files['myFile']
 
-        user_id = session.get('user_id')
-        username = session.get('username')
+        print(post_image)
 
-        create_post(user_id, username, title, body, price, condition)
-        return "You have successfully created a post!"
-        # possible mixup w description and body
+        # user_id = session.get('user_id')
+        # username = session.get('username')
+        username = 'bob'
 
+        data = {
+                'key': api_key,
+                'image': base64.b64encode(post_image.read())
+            }
+        response = requests.post(upload_url, data=data)
+        print(response)
+
+        if response.status_code == 200:
+            json_response = response.json()
+            print(json_response)
+            create_repo.create_post(username, title, body, price, condition, json_response['data']['url'])
+            return redirect(url_for('explore'))
     return render_template('create_post.html')
 
 @app.route('/individual_post')
@@ -107,7 +163,6 @@ def show_individual_post():
     post = post_repo.get_post_by_id(post_id)
     return render_template('individual_post.html', post=post)
 
-postGrid = {}
 # Nhu's explore feature
 @app.get('/explore')
 def explore():
