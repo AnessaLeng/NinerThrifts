@@ -31,3 +31,4 @@ def get_profile_by_email(email):
                                 email = %s
                             ''',[email])
             return cursor.fetchone()
+

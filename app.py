@@ -43,6 +43,14 @@ def show_profile():
     return render_template('profile.html', profile = profile, posts = posts)
 
 # Anessa's signup/login feature
+@app.route('/')
+def index():
+    if request.method == 'GET' and request.form.get('signup'):
+        return render_template('index.html', is_user=2)
+    elif request.method == 'GET' and request.form.get('login'):
+        return render_template('index.html', is_user=1, error=False)
+    return render_template('index.html', is_user=0)
+
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
     if request.method == 'POST':
@@ -58,13 +66,13 @@ def signup():
             return render_template('error.html', error_message='409: Email already exists.'), 409
 
         if 'profile_picture' not in request.files:
-            abort(400, 'No profile image provided')
+            return render_template('error.html', error_message='400: No profile image provided.'), 400
         
         profile_picture = request.files['profile_picture']
         api_key = os.getenv('API_KEY')
         upload_url = 'https://api.imgbb.com/1/upload'
         if profile_picture.filename == '':
-            abort(400, 'No profile image selected')
+            return render_template('error.html', error_message='400: No profile image selected.'), 400
         payload = {
             'key': api_key,
             'image': base64.b64encode(profile_picture.read())
