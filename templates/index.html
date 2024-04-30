@@ -101,20 +101,24 @@
 {% elif is_user == 2 %}
     <div class="signup-form">
         <h1 class="mt-5 mb-5">Sign Up</h1>
-        <form action="/signup" method="POST">
+        <form action="/signup" method="POST" enctype="multipart/form-data">
             <label for="first_name">First Name</label><br>
             <input type="text" name="first_name" id="first_name" class="w-50" required><br><br>
             <label for="last_name">Last Name</label><br>
             <input type="text" name="last_name" id="last_name" class="w-50" required><br><br>
+            <label for="username">Username</label><br>
+            <input type="text" name="username" id="username" class="w-50" required><br><br>
             <label for="password">Password</label><br>
             <input type="text" name="password" id="password" class="w-50" required minLength="8"><br><br>
             <label for="email">Email</label><br>
             <input type="email" name="email" id="email" class="w-50" required><br><br>
             <label for="dob">Date of Birth</label><br>
             <input type="date" name="dob" id="dob" class="w-50" required><br><br>
+            <label for="biography">Biography</label><br>
+            <textarea name="biography" id="biography" cols="42" rows="5"></textarea><br><br>
             <label for="profile_image">Profile Image</label><br>
-            <input type="file" name="profile_image" id="profile_image" class="w-50"><br><br>
-            <button type="submit" name="signup" id="signup" class="btn w-50 btn-primary api">Create Account</button>
+            <input type="file" name="profile_image" id="profile_image" class="w-50" required><br><br>
+            <button type="submit" name="signup" id="signup" class="btn w-50 btn-primary">Create Account</button>
         </form>
     </div>
 {% elif is_user == 0 %}
@@ -135,7 +139,7 @@
             <input type="email" name="email" id="email" class="w-75" placeholder="Enter your email" required><br><br>
             <label for="password" >Password</label><br>
             <input type="password" name="password" id="password" class="w-75" placeholder="Enter your password" required minlength="8"><br><br>
-            <button type="submit" name="login" class="btn w-50 btn-primary" formaction="/login" formmethod="GET">Login</button><br><br>
+            <button type="submit" name="login" class="btn w-50 btn-primary">Login</button><br><br>
             <p class="small-text">Don't have an account? <a href="/signup">Sign up!</a></p>
         </form>
     </div>

@@ -3,10 +3,13 @@ from flask import Flask, redirect, render_template, request, send_from_directory
 from random import randint, random
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
+from werkzeug.utils import secure_filename
 from flask_bcrypt import Bcrypt
-from repositories import post_repo, profile_repo, user_repo, message_repo
-from repositories.favorites_repo import get_all_favorites, add_favorite, remove_favorite
+from repositories import post_repo, profile_repo, user_repo
 from repositories.create_repo import create_post
+from repositories import create_repo
+import base64
+import requests
 
 
 
@@ -25,18 +28,16 @@ users = {}
 ##Jaidens profile page
 @app.get('/profile')
 def show_profile():
-    if 'user_id' not in session:
+    if 'email' not in session:
         return redirect(url_for('login'))
-    user_id = session['user_id']
-
-    all_profiles = profile_repo.get_profile_info()
-    usernames = [user.get('user_id') for user in all_profiles]
-
-    user = user_repo.get_user_by_id(user_id)
-    if user is None:
-        abort(400)
-    profile = user
-    return render_template('profile.html', profile = profile)
+    email = session['email']
+    posts = []
+    profile = profile_repo.get_profile_by_email(email)
+    all_posts = post_repo.get_all_posts()
+    for post in all_posts:
+        if(post.get('email') == email):
+            posts.append(post)
+    return render_template('profile.html', profile = profile, posts = posts)
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -52,15 +53,48 @@ def signup():
     if request.method == 'POST':
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
+        username = request.form.get('username')
         password = request.form.get('password')
         email = request.form.get('email')
         dob = request.form.get('dob')
-        profile_image = request.form.get('profile_picture')
+        bio = request.form.get('biography')
+
         if user_repo.does_email_exist(email):
-            abort(409)
+            abort(409, 'Email already exists')
+
+        if 'profile_image' not in request.files:
+            abort(400, 'No profile image provided')
+        
+        profile_image = request.files['profile_image']
+        api_key = os.getenv('API_KEY')
+        upload_url = 'https://api.imgbb.com/1/upload'
+        if profile_image.filename == '':
+            abort(400, 'No profile image selected')
+        payload = {
+            'key': api_key,
+            'image': base64.b64encode(profile_image.read())
+        }
+        response = requests.post(upload_url, data=payload)
+
+        if response.status_code == 200:
+            json_response = response.json()
+        else:
+            abort(500, 'Failed to upload profile image to ImgBB')
+        
+        #if profile_image:
+        #    filename = secure_filename(profile_image.filename)
+        #    print("saving image: " + filename)
+        #    print("loading image to uploads folder")
+        #    profile_image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        #    profile_image.save(profile_image_path)
+        #    print("path: " + profile_image_path)
+        #else:
+        #    abort(400, 'Invalid file type or extension')
+
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        new_user = user_repo.create_user(email, first_name, last_name, hashed_password, dob, profile_image)
-        return redirect(url_for('show_profile'))
+        user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, json_response['data']['url'])
+        session['email'] = email
+        return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=2)
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -69,31 +103,51 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
         if not email or not password:
-            abort(400)
+            error_message = "Invalid email or password"
+            return render_template('index.html', is_user=1, error=True, error_message=error_message)
         user = user_repo.get_user_by_email(email)
         if user is not None:
-            session['user_id'] = user['user_id']
-            return redirect(url_for('show_profile'))
-        error_message = "Invalid email or password"
-        return render_template('index.html', is_user=1, error=True, error_message=error_message)
+            session['email'] = email
+            print(session['email'])
+            return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=1, error=False)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
 
 # Cindy's create a post feature
 @app.route('/create_post', methods=['GET', 'POST'])
-def create_post():
+def create_listing():
     if request.method == 'POST':
         title = request.form.get('title')
         price = request.form.get('price')
         condition = request.form.get('condition')
         body = request.form.get('description')
+        post_image = request.files['myFile']
 
-        user_id = session.get('user_id')
-        username = session.get('username')
+        print(post_image)
 
-        create_post(user_id, username, title, body, price, condition)
-        return "You have successfully created a post!"
-        # possible mixup w description and body
+        # user_id = session.get('user_id')
+        # username = session.get('username')
+        username = "bob"
 
+        api_key = os.getenv('API_KEY')
+        upload_url = 'https://api.imgbb.com/1/upload'
+        data = {
+                'key': api_key,
+                'image': base64.b64encode(post_image.read())
+            }
+        response = requests.post(upload_url, data=data)
+        print(response)
+
+        if response.status_code == 200:
+            json_response = response.json()
+            print(json_response)
+            create_post(username, title, body, price, condition, json_response['data']['url'])
+            return redirect(url_for('explore'))
     return render_template('create_post.html')
 
 @app.route('/individual_post')
