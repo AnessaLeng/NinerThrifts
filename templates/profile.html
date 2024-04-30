@@ -3,12 +3,16 @@
 
 {% block body %}
 <!--USE THIS FOR WHEN THE DATABASE IS IMPLEMENTED (replace top code with this)-->
-
+<style>
+    img .profile{
+        border-radius: 50%;
+    }
+</style>
 <h2>{{ profile.username }}</h2>
 <br>
 <div class="container">
     <div class="row"> 
-        <p><img alt="profile_picture" src="{{ profile.profile_picture }}" height="200px" width="300px"></p>
+        <p><img class="profile" alt="profile_picture" src="{{ profile.profile_picture }}" height="200px" width="300px"></p>
     </div>
 </div>
 <br>
