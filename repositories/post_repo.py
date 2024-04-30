@@ -64,3 +64,25 @@ def get_post_by_id(post_id):
                                 post_id = %s
                             ''', [post_id])
             return cursor.fetchone()
+        
+
+def get_posts_by_username(username):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cursor:
+            cursor.execute(''' 
+                           SELECT
+                                username,
+                                post_id,
+                                title,
+                                body,
+                                condition,
+                                price,
+                                image_url,
+                                posted_date
+                           FROM
+                                posts
+                           WHERE
+                                username = %s
+                            ''', [username])
+            return cursor.fetchall()

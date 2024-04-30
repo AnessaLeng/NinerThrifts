@@ -33,10 +33,13 @@ def show_profile():
     email = session['email']
     posts = []
     profile = profile_repo.get_profile_by_email(email)
-    all_posts = post_repo.get_all_posts()
-    for post in all_posts:
-        if(post.get('email') == email):
-            posts.append(post)
+    # all_posts = post_repo.get_all_posts()
+    # for post in all_posts:
+    #     if(post['email'] == email):
+    #         posts.append(post)
+    user = user_repo.get_logged_in_user()
+    username = user['username']
+    posts = post_repo.get_posts_by_username(username)
     return render_template('profile.html', profile = profile, posts = posts)
 
 # Anessa's signup/login feature
