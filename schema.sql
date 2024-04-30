@@ -5,31 +5,34 @@ DROP TABLE IF EXISTS user_sessions CASCADE;
 DROP TABLE IF EXISTS message_threads CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 
+
 CREATE TABLE IF NOT EXISTS users (
-    username            VARCHAR(255)    NOT NULL    UNIQUE,
-    email               VARCHAR(255)    NOT NULL    UNIQUE,
-    pass            VARCHAR(255)    NOT NULL,
-    biography           VARCHAR(255),
-    first_name          VARCHAR(255)    NOT NULL,
-    last_name           VARCHAR(255)    NOT NULL,
-    dob                 DATE            NOT NULL,
-    profile_picture     BYTEA           NOT NULL,
-    sockets_id          INTEGER         NOT NULL,
-    PRIMARY KEY(username)
+   username            VARCHAR(255)    NOT NULL    UNIQUE,
+   email               VARCHAR(255)    NOT NULL    UNIQUE,
+   pass                VARCHAR(255)    NOT NULL,
+   biography           VARCHAR(255),
+   first_name          VARCHAR(255)    NOT NULL,
+   last_name           VARCHAR(255)    NOT NULL,
+   dob                 DATE            NOT NULL,
+   profile_picture     VARCHAR(255)    NULL,
+   PRIMARY KEY(username)
 );
 
+
 CREATE TABLE IF NOT EXISTS posts (
-    username        VARCHAR(255)    NOT NULL,
-    post_id         SERIAL          NOT NULL,
-    title           VARCHAR(255)    NOT NULL,
-    body            VARCHAR(255)    NOT NULL,
-    price           DECIMAL(10,2)   NOT NULL,
-    condition       VARCHAR(255)    NOT NULL,
-    posted_date     DATE       DEFAULT     CURRENT_DATE,
-    image_url       VARCHAR(255)    NULL,
-    PRIMARY KEY(post_id),
-    FOREIGN KEY(username) REFERENCES users(username)
+   username        VARCHAR(255)    NOT NULL,
+   post_id         SERIAL          NOT NULL,
+   title           VARCHAR(255)    NOT NULL,
+   body            VARCHAR(255)    NOT NULL,
+   price           DECIMAL(10,2)   NOT NULL,
+   condition       VARCHAR(255)    NOT NULL,
+   posted_date     DATE       DEFAULT     CURRENT_DATE,
+   image_url       VARCHAR(255)    NULL,
+   PRIMARY KEY(post_id),
+   FOREIGN KEY(username) REFERENCES users(username)
 );
+
+
 
 
 CREATE TABLE IF NOT EXISTS user_sessions (
@@ -39,6 +42,7 @@ CREATE TABLE IF NOT EXISTS user_sessions (
     FOREIGN KEY (username) REFERENCES users(username)
 );
 
+
 CREATE TABLE IF NOT EXISTS message_threads (
     thread_id SERIAL PRIMARY KEY,
     sender_username VARCHAR(255) NOT NULL,
@@ -47,6 +51,7 @@ CREATE TABLE IF NOT EXISTS message_threads (
     FOREIGN KEY (sender_username) REFERENCES users(username),
     FOREIGN KEY (recipient_username) REFERENCES users(username)
 );
+
 
 CREATE TABLE IF NOT EXISTS messages (
     message_id SERIAL PRIMARY KEY,

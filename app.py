@@ -26,33 +26,65 @@ users = {}
 ##Jaidens profile page
 @app.get('/profile')
 def show_profile():
-    # user_pic = "static/user_icon.png"
-    # username = "username here"
-    # bio = "bio here"
-    # followers = "###"
-    # following = "###"
-    # posts= ['static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png',
-    #         'static/placeholder.png','static/placeholder.png','static/placeholder.png','static/placeholder.png']
-    # profile_info[username] = []
-    # profile_info[username].append(user_pic)
-    # profile_info[username].append(bio)
-    # profile_info[username].append(followers)
-    # profile_info[username].append(following)
-
-    #use this instead for when database is implemented
-    all_profiles = profile_repo.get_profile_info()
-    return render_template('profile.html' , profiles = all_profiles)
-
-    #return render_template("profile.html", profile_info = profile_info, posts = posts)
-
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    email = session['email']
+    posts = []
+    profile = profile_repo.get_profile_by_email(email)
+    all_posts = post_repo.get_all_posts()
+    for post in all_posts:
+        if(post.get('email') == email):
+            posts.append(post)
+    return render_template('profile.html', profile = profile, posts = posts)
 # Anessa's signup/login feature
 @app.route('/')
-def index():
-    if request.method == 'GET' and request.form.get('signup'):
-        return render_template('index.html', is_user=2)
-    elif request.method == 'GET' and request.form.get('login'):
-        return render_template('index.html', is_user=1, error=False)
-    return render_template('index.html', is_user=0)
+def signup():
+    if request.method == 'POST':
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        username = request.form.get('username')
+        password = request.form.get('password')
+        email = request.form.get('email')
+        dob = request.form.get('dob')
+        bio = request.form.get('biography')
+
+        if user_repo.does_email_exist(email):
+            abort(409, 'Email already exists')
+
+        if 'profile_picture' not in request.files:
+            abort(400, 'No profile image provided')
+
+        profile_picture = request.files['profile_picture']
+        api_key = os.getenv('API_KEY')
+        upload_url = 'https://api.imgbb.com/1/upload'
+        if profile_picture.filename == '':
+            abort(400, 'No profile image selected')
+        payload = {
+            'key': api_key,
+            'image': base64.b64encode(profile_picture.read())
+        }
+        response = requests.post(upload_url, data=payload)
+
+        if response.status_code == 200:
+            json_response = response.json()
+        else:
+            abort(500, 'Failed to upload profile image to ImgBB')
+
+        #if profile_image:
+        #    filename = secure_filename(profile_image.filename)
+        #    print("saving image: " + filename)
+        #    print("loading image to uploads folder")
+        #    profile_image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        #    profile_image.save(profile_image_path)
+        #    print("path: " + profile_image_path)
+        #else:
+        #    abort(400, 'Invalid file type or extension')
+
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, json_response['data']['url'])
+        session['email'] = email
+        return redirect(url_for('show_profile', email=email))
+    return render_template('index.html', is_user=2)
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -73,17 +105,16 @@ def signup():
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        if not email or not password:
-            abort(400)
-        user = user_repo.get_user_by_email(email)
-        if user is not None:
-            session['user_id'] = user['user_id']
-            return redirect(url_for('show_profile'))
+    email = request.form.get('email')
+    password = request.form.get('password')
+    if not email or not password:
         error_message = "Invalid email or password"
         return render_template('index.html', is_user=1, error=True, error_message=error_message)
+    user = user_repo.get_user_by_email(email)
+    if user is not None:
+        session['email'] = email
+        print(session['email'])
+        return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=1, error=False)
 
 # Cindy's create a post feature
