@@ -88,28 +88,28 @@ def get_logged_in_user():
     user = get_user_by_email(email)
     return user
 
-def get_user_by_id(user_id: int) -> dict[str, Any] | None:
-    pool = get_pool()
-    with pool.connection() as conn:
-        with conn.cursor(row_factory=dict_row) as cur:
-            cur.execute('''
-                        SELECT 
-                            user_id,
-                            username,
-                            email,
-                            pass AS hashed_password,
-                            biography,
-                            first_name,
-                            last_name,
-                            dob,
-                            profile_picture
-                        FROM 
-                            users
-                        WHERE 
-                            user_id = %s;
-                    ''', [user_id])
-            user = cur.fetchone()
-            return user
+# def get_user_by_id(user_id: int) -> dict[str, Any] | None:
+#     pool = get_pool()
+#     with pool.connection() as conn:
+#         with conn.cursor(row_factory=dict_row) as cur:
+#             cur.execute('''
+#                         SELECT 
+#                             user_id,
+#                             username,
+#                             email,
+#                             pass AS hashed_password,
+#                             biography,
+#                             first_name,
+#                             last_name,
+#                             dob,
+#                             profile_picture
+#                         FROM 
+#                             users
+#                         WHERE 
+#                             user_id = %s;
+#                     ''', [user_id])
+#             user = cur.fetchone()
+#             return user
 
 # Needed for DMs
 
@@ -184,3 +184,24 @@ def get_current_user():
         return None
     user = get_user_by_username(username)
     return user
+
+def search_users(search_query):
+    pool = get_pool()
+    search_results = []
+
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT * 
+                FROM users 
+                WHERE username ILIKE %s
+                OR email ILIKE %s
+                OR first_name ILIKE %s
+                OR last_name ILIKE %s
+            """, (f"%{search_query}%", f"%{search_query}%", f"%{search_query}%", f"%{search_query}%"))
+
+            columns = [desc[0] for desc in cur.description]
+            for row in cur.fetchall():
+                search_results.append(dict(zip(columns, row)))
+
+    return search_results

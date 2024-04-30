@@ -246,6 +246,13 @@ def search():
 #         pass
 #     return render_template('directmessages.html', chats=chats, chat_logs=chat_logs)
 
+@app.route('/search_users', methods=['POST'])
+def search_users_route():
+    search_query = request.form.get('query')  # Assuming the search query is sent via a form
+    search_results = user_repo.search_users(search_query)  # Call the search_users function
+    return render_template("search_users.html", search_results=search_results)
+
+
 @app.route('/directmessages', methods=['GET', 'POST'])
 def direct_messages():
     user = user_repo.get_current_user()

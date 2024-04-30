@@ -4,61 +4,91 @@
 
 {% block body %}
 <style>
-#inbox {
-  width: 70%;
-  margin: 0 auto;
-}
+    /* Add your custom CSS styles here */
+    #inbox {
+        width: 70%;
+        margin: 0 auto;
+    }
 
-.logosmall {
-  display: block; 
-  margin: 0 auto; 
-  margin-bottom: 30px;
-  height: auto;
-  width: 400px;
-}
+    .logosmall {
+        display: block; 
+        margin: 0 auto; 
+        margin-bottom: 30px;
+        height: auto;
+        width: 400px;
+    }
 
-#inbox h2 {
-  text-align: center;
-}
+    #inbox h2 {
+        text-align: center;
+    }
 
-#user-list {
-  list-style-type: none;
-  padding: 0;
-  text-align: center;
-}
+    #user-list {
+        list-style-type: none;
+        padding: 0;
+        text-align: center;
+    }
 
-.user-link {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 18px;
-}
+    .user-link {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 18px;
+    }
 
-.user-link:hover {
-  text-decoration: underline;
-}
+    .user-link:hover {
+        text-decoration: underline;
+    }
 
-.no-users {
-  text-align: center;
-  font-size: 18px;
-  color: #666;
-}
+    .no-users {
+        text-align: center;
+        font-size: 18px;
+        color: #666;
+    }
 
-.search-bar {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  box-sizing: border-box;
-}
+    .search-bar-container {
+        width: 400px; /* Set a width for the container */
+        margin: 0 auto; /* Center the container */
+    }
+
+    .search-bar {
+        display: block;
+        position: relative;
+        width: 100%; /* Use 100% width */
+    }
+
+    .search-bar input {
+        padding-left: 40px;
+        width: calc(100% - 40px); /* Adjust the width to leave space for the search icon */
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        height: 50px; /* Adjust the height as needed */
+        font-size: 16px; /* Adjust the font size as needed */
+    }
+
+    .search-bar i {
+        color: grey;
+        position: absolute;
+        left: 10px; /* Adjust the position as needed */
+        top: 50%;
+        transform: translateY(-50%);
+    }
 </style>
 
 <br><img src="/static/messages.png" alt="favorites" class="logosmall"><br>
 
 <div id="inbox">
   <h2>Inbox</h2>
-  <input type="text" id="search-bar" class="search-bar" placeholder="Search users...">
+  <div class="search-bar-container">
+    <form action="/search_users" method="POST">
+        <div class="search-bar">
+            <input type="text" name="query" id="search-bar" placeholder="Search">
+            <i class="fas fa-search"></i>
+        </div>
+    </form>
+  </div>
   <ul id="user-list">
     {% for user in users %}
-      <li>
+      <li class="user-item">
         <a href="/chat_log/{{ user.username }}" class="user-link">{{ user.username }}</a>
       </li>
     {% endfor %}
@@ -72,14 +102,14 @@
 document.addEventListener('DOMContentLoaded', function() {
   var searchBar = document.getElementById('search-bar');
   searchBar.addEventListener('input', function() {
-    var searchText = searchBar.value.toLowerCase();
-    var userLinks = document.querySelectorAll('.user-link');
-    userLinks.forEach(function(link) {
-      var username = link.textContent.toLowerCase();
+    var searchText = searchBar.value.trim().toLowerCase();
+    var userItems = document.querySelectorAll('.user-item');
+    userItems.forEach(function(item) {
+      var username = item.querySelector('.user-link').textContent.toLowerCase();
       if (username.includes(searchText)) {
-        link.style.display = 'block';
+        item.style.display = 'block';
       } else {
-        link.style.display = 'none';
+        item.style.display = 'none';
       }
     });
   });
