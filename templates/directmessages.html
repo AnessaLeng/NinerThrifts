@@ -64,7 +64,7 @@
       <h2>Chat Log</h2>
       <ul id="messages">
         {% for message in messages %}
-          <li class="message {{ message.sender_id == current_user_id ? 'sent' : 'received' }}">
+          <li class="message received">
             <div class="sender">{{ message.sender.username }}:</div>
             <div class="content">{{ message.content }}</div>
           </li>
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
           messages.forEach(message => {
             var messageElement = document.createElement('li');
             messageElement.classList.add('message');
-            messageElement.classList.add(message.sender_id == current_user_id ? 'sent' : 'received');
+            messageElement.classList.add('received');
             messageElement.innerHTML = `
               <div class="sender">${message.sender.username}:</div>
               <div class="content">${message.content}</div>
