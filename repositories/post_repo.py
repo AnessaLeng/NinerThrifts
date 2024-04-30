@@ -54,10 +54,7 @@ def get_post_by_id(post_id):
                                 post_id,
                                 title,
                                 body,
-<<<<<<< HEAD
-=======
                                 condition,
->>>>>>> 2ae617eba3f1a84381ba245945d63422155ebb1f
                                 price,
                                 image_url,
                                 posted_date

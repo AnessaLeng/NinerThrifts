@@ -1,19 +1,13 @@
-import base64
 import os
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
-<<<<<<< HEAD
-import requests
-from repositories import post_repo, profile_repo, user_repo, message_repo, create_repo
-=======
 from repositories import post_repo, profile_repo, user_repo, message_repo
 from repositories.create_repo import create_post
 import base64
 import requests
 from io import BytesIO
->>>>>>> 2ae617eba3f1a84381ba245945d63422155ebb1f
 
 
 
@@ -31,26 +25,7 @@ bcrypt = Bcrypt(app)
 profile_info = {}
 users = {}
 
-<<<<<<< HEAD
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
 
-app.config['UPLOAD_FOLDER'] = ''
-app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.template_filter('b64encode')
-def b64encode_filter(data):
-    print("Encoding image: " + base64.b64encode(data).decode('utf-8'))
-    encoded_image = base64.b64encode(data).decode('utf-8')
-    return encoded_image
-
-=======
-
-    
->>>>>>> 2ae617eba3f1a84381ba245945d63422155ebb1f
 ##Jaidens profile page
 @app.get('/profile')
 def show_profile():
@@ -91,18 +66,6 @@ def signup():
         if user_repo.does_email_exist(email):
             return render_template('error.html', error_message='409: Email already exists.'), 409
 
-<<<<<<< HEAD
-        if 'profile_image' not in request.files:
-            return render_template('error.html', error_message='400: No profile image provided.'), 400
-        
-        profile_image = request.files['profile_image']
-        
-        if profile_image.filename == '':
-            return render_template('error.html', error_message='400: No profile image selected.'), 400
-        payload = {
-            'key': api_key,
-            'image': base64.b64encode(profile_image.read())
-=======
         if 'profile_picture' not in request.files:
             abort(400, 'No profile image provided')
         
@@ -114,7 +77,6 @@ def signup():
         payload = {
             'key': api_key,
             'image': base64.b64encode(profile_picture.read())
->>>>>>> 2ae617eba3f1a84381ba245945d63422155ebb1f
         }
         response = requests.post(upload_url, data=payload)
 
@@ -158,25 +120,6 @@ def create_listing():
         body = request.form.get('description')
         post_image = request.files['myFile']
 
-<<<<<<< HEAD
-        print(post_image)
-
-        # user_id = session.get('user_id')
-        # username = session.get('username')
-        username = 'bob'
-
-        data = {
-                'key': api_key,
-                'image': base64.b64encode(post_image.read())
-            }
-        response = requests.post(upload_url, data=data)
-        print(response)
-
-        if response.status_code == 200:
-            json_response = response.json()
-            print(json_response)
-            create_repo.create_post(username, title, body, price, condition, json_response['data']['url'])
-=======
         user = user_repo.get_logged_in_user()
         username = user['username']
         print(post_image)
@@ -194,7 +137,6 @@ def create_listing():
             json_response = response.json()
             print(json_response)
             create_post(username, title, body, price, condition, json_response['data']['url'])
->>>>>>> 2ae617eba3f1a84381ba245945d63422155ebb1f
             return redirect(url_for('explore'))
     return render_template('create_post.html')
 
