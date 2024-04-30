@@ -7,12 +7,12 @@ DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE IF NOT EXISTS users (
     username            VARCHAR(255)    NOT NULL    UNIQUE,
     email               VARCHAR(255)    NOT NULL    UNIQUE,
-    pass            VARCHAR(255)    NOT NULL,
+    pass                VARCHAR(255)    NOT NULL,
     biography           VARCHAR(255),
     first_name          VARCHAR(255)    NOT NULL,
     last_name           VARCHAR(255)    NOT NULL,
     dob                 DATE            NOT NULL,
-    profile_picture     BYTEA           NOT NULL,
+    profile_picture     VARCHAR(255)    NOT NULL,
     PRIMARY KEY(username)
 );
 
@@ -23,8 +23,8 @@ CREATE TABLE IF NOT EXISTS posts (
     body            VARCHAR(255)    NOT NULL,
     price           DECIMAL(10,2)   NOT NULL,
     condition       VARCHAR(255)    NOT NULL,
-    post_image      BYTEA           NOT NULL,
     posted_date     TIMESTAMP       DEFAULT     CURRENT_TIMESTAMP,
+    image_url       VARCHAR(255)    NULL,
     PRIMARY KEY(post_id),
     FOREIGN KEY(username) REFERENCES users(username)
 );
