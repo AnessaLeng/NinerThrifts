@@ -13,8 +13,7 @@ def create_post(username: str, title: str, body: str, price: float, condition: s
                             body, 
                             price,
                             condition, 
-                            image_url
-                            )
+                            image_url)
                 VALUES
                         (%s, %s, %s, %s, %s, %s)
             ''', (username, title, body, price, condition, image_url))

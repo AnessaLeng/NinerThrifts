@@ -1,4 +1,6 @@
 DROP TABLE IF EXISTS messages CASCADE;
+DROP TABLE IF EXISTS message_threads CASCADE;
+DROP TABLE IF EXISTS user_sessions CASCADE;
 DROP TABLE IF EXISTS posts CASCADE;
 DROP TABLE IF EXISTS messages CASCADE;
 DROP TABLE IF EXISTS user_sessions CASCADE;
@@ -7,6 +9,7 @@ DROP TABLE IF EXISTS users CASCADE;
 
 
 CREATE TABLE IF NOT EXISTS users (
+
    username            VARCHAR(255)    NOT NULL    UNIQUE,
    email               VARCHAR(255)    NOT NULL    UNIQUE,
    pass                VARCHAR(255)    NOT NULL,
@@ -36,7 +39,8 @@ CREATE TABLE IF NOT EXISTS posts (
 
 
 CREATE TABLE IF NOT EXISTS user_sessions (
-    sid SERIAL PRIMARY KEY,
+ 
+   sid SERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     session_id VARCHAR(255) UNIQUE NOT NULL,
     FOREIGN KEY (username) REFERENCES users(username)
