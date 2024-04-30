@@ -44,12 +44,53 @@ def show_profile():
 
 # Anessa's signup/login feature
 @app.route('/')
-def index():
-    if request.method == 'GET' and request.form.get('signup'):
-        return render_template('index.html', is_user=2)
-    elif request.method == 'GET' and request.form.get('login'):
-        return render_template('index.html', is_user=1, error=False)
-    return render_template('index.html', is_user=0)
+def signup():
+    if request.method == 'POST':
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        username = request.form.get('username')
+        password = request.form.get('password')
+        email = request.form.get('email')
+        dob = request.form.get('dob')
+        bio = request.form.get('biography')
+
+        if user_repo.does_email_exist(email):
+            abort(409, 'Email already exists')
+
+        if 'profile_picture' not in request.files:
+            abort(400, 'No profile image provided')
+
+        profile_picture = request.files['profile_picture']
+        api_key = os.getenv('API_KEY')
+        upload_url = 'https://api.imgbb.com/1/upload'
+        if profile_picture.filename == '':
+            abort(400, 'No profile image selected')
+        payload = {
+            'key': api_key,
+            'image': base64.b64encode(profile_picture.read())
+        }
+        response = requests.post(upload_url, data=payload)
+
+        if response.status_code == 200:
+            json_response = response.json()
+        else:
+            abort(500, 'Failed to upload profile image to ImgBB')
+
+        #if profile_image:
+        #    filename = secure_filename(profile_image.filename)
+        #    print("saving image: " + filename)
+        #    print("loading image to uploads folder")
+        #    profile_image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        #    profile_image.save(profile_image_path)
+        #    print("path: " + profile_image_path)
+        #else:
+        #    abort(400, 'Invalid file type or extension')
+
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, json_response['data']['url'])
+        session['email'] = email
+        return redirect(url_for('show_profile', email=email))
+    return render_template('index.html', is_user=2)
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -110,6 +151,8 @@ def logout():
     return redirect(url_for('index'))
 
 # Cindy's create a post feature
+#adding some logic for images -varsha
+
 @app.route('/create_post', methods=['GET', 'POST'])
 def create_listing():
     if request.method == 'POST':
@@ -139,6 +182,7 @@ def create_listing():
             return redirect(url_for('explore'))
     return render_template('create_post.html')
 
+#Varsha individual post feature
 @app.route('/individual_post')
 def show_individual_post():
     post_id = request.args.get('post_id')
