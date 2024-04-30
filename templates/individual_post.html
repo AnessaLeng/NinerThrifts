@@ -19,6 +19,32 @@
         top: 100px;
     }
 
+       /* Style for the link button */
+    .link-button {
+        background-color: rgb(3, 91, 3);
+        color: white;
+        padding: 7px 14px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        font-size: 15px;
+    }
+
+    .link-button:hover {
+        background-color: rgb(3, 91, 3);
+    }
+
+    .link-button:hover,
+    .user-link:hover {
+        color: rgb(177, 229, 177);
+    }
+
+    .post-info {
+        font-size: 18px;
+    }
+
 </style>
 
 <body>
@@ -29,11 +55,11 @@
             </div>
             <div class="col-md-8">
                 <a href="/explore"><i class="fas fa-chevron-left"></i></a>
-                <h2>{{ post_title }}</h2>
-                <p><strong>Price:</strong> {{ post.price }}</p>
-                <p><strong>Description:</strong> {{ post.body }}</p>
-                <p><strong>Date Posted:</strong> {{ post.posted_date }}</p>
-                <p><strong><a href="/profile">{{ post.username }}</a></strong></p>
+                <h2>{{ post.title }}</h2>
+                <p class="post-info"><strong>Price: $</strong> {{ post.price }}</p>
+                <p class="post-info"><strong>Description:</strong> {{ post.body }}</p>
+                <p class="post-info"><strong>Date Posted:</strong> {{ post.posted_date }}</p>
+                <p class="post-info"><strong>Posted By: <a href="/profile" class="link-button" target="_blank" class="user-link">{{ post.username }}</a></strong></p>
             </div>
         </div>
     </div>
