@@ -6,7 +6,7 @@ from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
 from werkzeug.utils import secure_filename
-from repositories import post_repo, profile_repo, user_repo, message_repo
+from repositories import post_repo, profile_repo, user_repo, message_repo, create_repo
 from repositories.favorites_repo import get_all_favorites, add_favorite, remove_favorite
 from repositories.create_repo import create_post
 
@@ -118,6 +118,7 @@ def signup():
 
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, profile_image_path)
+        session['email'] = email
         return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=2)
 
@@ -131,8 +132,15 @@ def login():
             return render_template('index.html', is_user=1, error=True, error_message=error_message)
         user = user_repo.get_user_by_email(email)
         if user is not None:
+            session['email'] = email
+            print(session['email'])
             return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=1, error=False)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
 
 # Cindy's create a post feature
 @app.route('/create_post', methods=['GET', 'POST'])

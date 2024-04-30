@@ -63,27 +63,31 @@ def get_user_by_email(email:str) -> dict[str, Any] | None:
             user = cur.fetchone()
             return user
         
-def get_user_by_username(username: str) -> dict[str, Any] | None:
+def get_username_by_email(email: str) -> dict[str, Any] | None:
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
                         SELECT 
-                            username,
-                            email,
-                            pass AS hashed_password,
-                            biography,
-                            first_name,
-                            last_name,
-                            dob,
-                            profile_picture
+                            username
                         FROM 
                             users
                         WHERE 
-                            username = %s;
-                    ''', [username])
-            user = cur.fetchone()
-            return user
+                            email = %s;
+                    ''', [email])
+            username = cur.fetchone()
+            if username:
+                return username
+            else:
+                None
+
+def get_logged_in_user():
+    email = session.get('email')
+    print(email)
+    if email is None:
+        return None
+    user = get_user_by_email(email)
+    return user
 
 def get_user_by_id(user_id: int) -> dict[str, Any] | None:
     pool = get_pool()
