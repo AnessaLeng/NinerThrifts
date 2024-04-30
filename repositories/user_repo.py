@@ -18,41 +18,43 @@ def does_email_exist(email: str) -> bool:
             user = cur.fetchone()
             return user is not None
         
-def create_user(email: str, first_name: str, last_name: str, username: str, password: str, dob: str, profile_picture: str) -> dict[str, Any] | None:
+def create_user(username: str, email: str, password: str, biography: str, first_name: str, last_name: str, dob: str, profile_picture: bytes) -> dict[str, Any] | None:
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
-            cur.execute('''
-                        INSERT INTO users (email, first_name, last_name, username, password, dob, profile_picture)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s)
-                        RETURNING user_id
-                    ''', [email, first_name, last_name, username, password, dob, profile_picture])
-            user_id = cur.fetchone()
-            if user_id is None:
-                return None
-            return {
-                "user_id": user_id,
-                "email": email,
-                "first_name": first_name,
-                "last_name": last_name,
-                "username": username,
-                "profile_picture": profile_picture
-            }
+                cur.execute('''
+                            INSERT INTO users (username, email, pass, biography, first_name, last_name, dob, profile_picture)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                            RETURNING *
+                        ''', [username, email, password, biography, first_name, last_name, dob, profile_picture])
+                user = cur.fetchone()
+                if user is None:
+                    return None
 
+                return {
+                    "email": email,
+                    "biography": biography,
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "username": username,
+                    "profile_picture": profile_picture
+                }
+        
 def get_user_by_email(email:str) -> dict[str, Any] | None:
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
                         SELECT 
-                            user_id,
+                            username,
                             email,
+                            pass AS hashed_password,
+                            biography,
                             first_name,
                             last_name,
-                            username,
-                            password AS hashed_password,
                             dob,
-                            profile_picture
+                            profile_picture,
+                            sockets_id
                         FROM 
                             users
                         WHERE 
@@ -61,6 +63,28 @@ def get_user_by_email(email:str) -> dict[str, Any] | None:
             user = cur.fetchone()
             return user
         
+def get_user_by_username(username: str) -> dict[str, Any] | None:
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''
+                        SELECT 
+                            username,
+                            email,
+                            pass AS hashed_password,
+                            biography,
+                            first_name,
+                            last_name,
+                            dob,
+                            profile_picture
+                        FROM 
+                            users
+                        WHERE 
+                            username = %s;
+                    ''', [username])
+            user = cur.fetchone()
+            return user
+
 def get_user_by_id(user_id: int) -> dict[str, Any] | None:
     pool = get_pool()
     with pool.connection() as conn:
@@ -68,11 +92,12 @@ def get_user_by_id(user_id: int) -> dict[str, Any] | None:
             cur.execute('''
                         SELECT 
                             user_id,
+                            username,
                             email,
+                            pass AS hashed_password,
+                            biography,
                             first_name,
                             last_name,
-                            username,
-                            password AS hashed_password,
                             dob,
                             profile_picture
                         FROM 
