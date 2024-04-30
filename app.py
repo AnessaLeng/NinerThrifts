@@ -1,15 +1,13 @@
 import os
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
-from random import randint, random
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
-from werkzeug.utils import secure_filename
 from flask_bcrypt import Bcrypt
-from repositories import post_repo, profile_repo, user_repo
+from repositories import post_repo, profile_repo, user_repo, message_repo
 from repositories.create_repo import create_post
-from repositories import create_repo
 import base64
 import requests
+from io import BytesIO
 
 
 
@@ -19,12 +17,15 @@ app = Flask(__name__)
 
 app.secret_key = os.getenv('APP_SECRET_KEY')
 
+
 socketio = SocketIO(app)
 
 bcrypt = Bcrypt(app)
 profile_info = {}
 users = {}
 
+
+    
 ##Jaidens profile page
 @app.get('/profile')
 def show_profile():
@@ -83,16 +84,6 @@ def signup():
             json_response = response.json()
         else:
             abort(500, 'Failed to upload profile image to ImgBB')
-        
-        #if profile_image:
-        #    filename = secure_filename(profile_image.filename)
-        #    print("saving image: " + filename)
-        #    print("loading image to uploads folder")
-        #    profile_image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        #    profile_image.save(profile_image_path)
-        #    print("path: " + profile_image_path)
-        #else:
-        #    abort(400, 'Invalid file type or extension')
 
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, json_response['data']['url'])
@@ -111,7 +102,6 @@ def login():
         user = user_repo.get_user_by_email(email)
         if user is not None:
             session['email'] = email
-            print(session['email'])
             return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=1, error=False)
 
