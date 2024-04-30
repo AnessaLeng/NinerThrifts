@@ -1,4 +1,5 @@
 import os
+import requests
 import base64
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
 from random import randint, random
@@ -9,6 +10,7 @@ from werkzeug.utils import secure_filename
 from repositories import post_repo, profile_repo, user_repo, message_repo, create_repo
 from repositories.favorites_repo import get_all_favorites, add_favorite, remove_favorite
 from repositories.create_repo import create_post
+from io import BytesIO
 
 
 
@@ -17,6 +19,7 @@ load_dotenv()
 app = Flask(__name__)
 
 app.secret_key = os.getenv('APP_SECRET_KEY')
+IMGBB_API_KEY = 'b185a7b712895f59638bf815da3f2ebd'
 
 socketio = SocketIO(app)
 
@@ -143,22 +146,46 @@ def logout():
     return redirect(url_for('index'))
 
 # Cindy's create a post feature
-@app.route('/create_post', methods=['GET', 'POST'])
+# @app.route('/create_post', methods=['GET', 'POST'])
+# def create_post():
+#     if request.method == 'POST':
+#         title = request.form.get('title')
+#         price = request.form.get('price')
+#         condition = request.form.get('condition')
+#         body = request.form.get('description')
+
+#         user_id = session.get('user_id')
+#         username = session.get('username')
+
+#         create_post(user_id, username, title, body, price, condition)
+#         return "You have successfully created a post!"
+#         # possible mixup w description and body
+
+#     return render_template('create_post.html')
+
+@app.route('/create_post', methods=['GET'])
+def render_create_post():
+    return render_template('create_post.html')
+
+@app.route('/create_post', methods=['POST'])
 def create_post():
     if request.method == 'POST':
         title = request.form.get('title')
         price = request.form.get('price')
         condition = request.form.get('condition')
-        body = request.form.get('description')
+        description = request.form.get('description')
+        image_file = request.files['myFile']  
 
-        user_id = session.get('user_id')
-        username = session.get('username')
+        if image_file:
+            post_image = image_file.read()
 
-        create_post(user_id, username, title, body, price, condition)
-        return "You have successfully created a post!"
-        # possible mixup w description and body
+            post_repo.create_post(title, price, condition, description, post_image)
 
-    return render_template('create_post.html')
+            return "Listing successfully uploaded!"
+        else:
+            return "Failed listing!"
+    else:
+        return render_template('create_post.html')
 
 @app.route('/individual_post')
 def show_individual_post():
