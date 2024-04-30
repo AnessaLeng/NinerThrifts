@@ -62,17 +62,17 @@ def signup():
         if user_repo.does_email_exist(email):
             abort(409, 'Email already exists')
 
-        if 'profile_image' not in request.files:
+        if 'profile_picture' not in request.files:
             abort(400, 'No profile image provided')
         
-        profile_image = request.files['profile_image']
+        profile_picture = request.files['profile_picture']
         api_key = os.getenv('API_KEY')
         upload_url = 'https://api.imgbb.com/1/upload'
-        if profile_image.filename == '':
+        if profile_picture.filename == '':
             abort(400, 'No profile image selected')
         payload = {
             'key': api_key,
-            'image': base64.b64encode(profile_image.read())
+            'image': base64.b64encode(profile_picture.read())
         }
         response = requests.post(upload_url, data=payload)
 
@@ -128,11 +128,9 @@ def create_listing():
         body = request.form.get('description')
         post_image = request.files['myFile']
 
+        user = user_repo.get_logged_in_user()
+        username = user['username']
         print(post_image)
-
-        # user_id = session.get('user_id')
-        # username = session.get('username')
-        username = "bob"
 
         api_key = os.getenv('API_KEY')
         upload_url = 'https://api.imgbb.com/1/upload'

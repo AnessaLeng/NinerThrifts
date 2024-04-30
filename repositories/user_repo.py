@@ -53,8 +53,7 @@ def get_user_by_email(email:str) -> dict[str, Any] | None:
                             first_name,
                             last_name,
                             dob,
-                            profile_picture,
-                            sockets_id
+                            profile_picture
                         FROM 
                             users
                         WHERE 
