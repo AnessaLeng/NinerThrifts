@@ -17,7 +17,6 @@ app = Flask(__name__)
 
 app.secret_key = os.getenv('APP_SECRET_KEY')
 
-
 socketio = SocketIO(app)
 
 bcrypt = Bcrypt(app)
@@ -64,7 +63,7 @@ def signup():
         bio = request.form.get('biography')
 
         if user_repo.does_email_exist(email):
-            abort(409, 'Email already exists')
+            return render_template('error.html', error_message='409: Email already exists.'), 409
 
         if 'profile_picture' not in request.files:
             abort(400, 'No profile image provided')
@@ -83,7 +82,7 @@ def signup():
         if response.status_code == 200:
             json_response = response.json()
         else:
-            abort(500, 'Failed to upload profile image to ImgBB')
+            return render_template('error.html', error_message='500: Internal Server Error: Failed to upload profile image to ImgBB.'), 500
 
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, json_response['data']['url'])
@@ -109,7 +108,6 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for('index'))
-
 
 # Cindy's create a post feature
 @app.route('/create_post', methods=['GET', 'POST'])
