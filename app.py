@@ -105,7 +105,7 @@ def create_listing():
         username = "bob"
 
 
-        api_key = '3c2553b7acacb644f84379109a30e5c3'
+        api_key = os.getenv('API_KEY')
         upload_url = 'https://api.imgbb.com/1/upload'
         data = {
                 'key': api_key,
