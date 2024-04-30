@@ -1,15 +1,14 @@
 import os
+import requests
+import base64
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
+from random import randint, random
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
-from werkzeug.utils import secure_filename
-from repositories import post_repo, profile_repo, user_repo, message_repo, create_repo
-from repositories.favorites_repo import get_all_favorites, add_favorite, remove_favorite
+from repositories import post_repo, profile_repo, user_repo
 from repositories.create_repo import create_post
 from io import BytesIO
-import requests
-import base64
 
 
 
@@ -24,7 +23,24 @@ upload_url = 'https://api.imgbb.com/1/upload'
 socketio = SocketIO(app)
 
 bcrypt = Bcrypt(app)
-profile_info = {}   
+profile_info = {}
+users = {}
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
+
+app.config['UPLOAD_FOLDER'] = ''
+app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.template_filter('b64encode')
+def b64encode_filter(data):
+    print("Encoding image: " + base64.b64encode(data).decode('utf-8'))
+    encoded_image = base64.b64encode(data).decode('utf-8')
+    return encoded_image
+    
 ##Jaidens profile page
 @app.get('/profile')
 def show_profile():
@@ -50,14 +66,6 @@ def show_profile():
     email = request.args.get('email')
     user_profile = user_repo.get_user_by_email(email)
     if user_profile:
-        #profile_picture_data = user_profile['profile_picture']
-        #image_path = profile_picture_data.decode('utf-8')
-        #with open(image_path, 'rb') as image_file:
-        #    image_data = image_file.read()
-
-        # Encode the image data to Base64
-        #encoded_image_data = base64.b64encode(image_data).decode('utf-8')
-        #return render_template('profile.html' , profile=user_profile, encoded_profile_picture=encoded_image_data)
         profile_picture_url = user_profile['profile_picture']
         return render_template('profile.html' , profile=user_profile, profile_picture_url=profile_picture_url)
     else: 
@@ -103,19 +111,9 @@ def signup():
             json_response = response.json()
         else:
             return render_template('error.html', error_message='500: Internal Server Error: Failed to upload profile image to ImgBB.'), 500
-        
-        #if profile_image:
-        #    filename = secure_filename(profile_image.filename)
-        #    print("saving image: " + filename)
-        #    print("loading image to uploads folder")
-        #    profile_image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        #    profile_image.save(profile_image_path)
-        #    print("path: " + profile_image_path)
-        #else:
-        #    abort(400, 'Invalid file type or extension')
 
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, json_response['data']['url'])
+        user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, profile_image_path)
         session['email'] = email
         return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=2)
