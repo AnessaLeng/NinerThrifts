@@ -136,14 +136,11 @@
         <textarea id="description" name="description" style="width: 300px; height: 150px;" placeholder="Tell us more..." required></textarea>
     </div>
 
-
-    <div class="drop-zone">
-        <span class="drop-zone__prompt">Drop files or click here</span>
-        <input type="file" name="myFile" class="drop-zone__input" accept="image/*" multiple>
-    </div>
+    <input type="file" id="myFile" name="myFile">
     <div id="file-list" class="file-list"></div><br><br>
 
-    <button type="submit" class="btn w-50 btn-success">Create A Listing!</button>
+    <input type="submit" value="Submit"><br><br><br>
+
 </form>
 </div>
 {% endblock %}
