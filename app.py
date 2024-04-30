@@ -61,7 +61,7 @@ def show_profile():
         profile_picture_url = user_profile['profile_picture']
         return render_template('profile.html' , profile=user_profile, profile_picture_url=profile_picture_url)
     else: 
-        abort(404)
+        return render_template('error.html', error_message='404: User not found.'), 404
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -84,15 +84,15 @@ def signup():
         bio = request.form.get('biography')
 
         if user_repo.does_email_exist(email):
-            abort(409, 'Email already exists')
+            return render_template('error.html', error_message='409: Email already exists.'), 409
 
         if 'profile_image' not in request.files:
-            abort(400, 'No profile image provided')
+            return render_template('error.html', error_message='400: No profile image provided.'), 400
         
         profile_image = request.files['profile_image']
         
         if profile_image.filename == '':
-            abort(400, 'No profile image selected')
+            return render_template('error.html', error_message='400: No profile image selected.'), 400
         payload = {
             'key': api_key,
             'image': base64.b64encode(profile_image.read())
@@ -102,7 +102,7 @@ def signup():
         if response.status_code == 200:
             json_response = response.json()
         else:
-            abort(500, 'Failed to upload profile image to ImgBB')
+            return render_template('error.html', error_message='500: Internal Server Error: Failed to upload profile image to ImgBB.'), 500
         
         #if profile_image:
         #    filename = secure_filename(profile_image.filename)
@@ -131,7 +131,6 @@ def login():
         user = user_repo.get_user_by_email(email)
         if user is not None:
             session['email'] = email
-            print(session['email'])
             return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=1, error=False)
 
