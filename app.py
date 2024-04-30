@@ -66,13 +66,13 @@ def signup():
             return render_template('error.html', error_message='409: Email already exists.'), 409
 
         if 'profile_picture' not in request.files:
-            abort(400, 'No profile image provided')
+            return render_template('error.html', error_message='400: No profile image provided.'), 400
         
         profile_picture = request.files['profile_picture']
         api_key = os.getenv('API_KEY')
         upload_url = 'https://api.imgbb.com/1/upload'
         if profile_picture.filename == '':
-            abort(400, 'No profile image selected')
+            return render_template('error.html', error_message='400: No profile image selected.'), 400
         payload = {
             'key': api_key,
             'image': base64.b64encode(profile_picture.read())
