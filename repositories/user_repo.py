@@ -1,4 +1,4 @@
-from typing import Any
+from typing import List, Any
 from flask import session
 from repositories.db import get_pool
 from psycopg.rows import dict_row
@@ -40,7 +40,7 @@ def create_user(username: str, email: str, password: str, biography: str, first_
                     "profile_picture": profile_picture
                 }
         
-def get_user_by_email(email:str) -> dict[str, Any] | None:
+def get_user_by_email(email: str) -> dict[str, Any] | None:
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
@@ -111,7 +111,51 @@ def get_user_by_id(user_id: int) -> dict[str, Any] | None:
             user = cur.fetchone()
             return user
 
-# Needed for DMS
+# Needed for DMs
+
+def get_all_users() -> List[dict[str, Any]]:
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''
+                        SELECT 
+                            username,
+                            email,
+                            pass AS hashed_password,
+                            biography,
+                            first_name,
+                            last_name,
+                            dob,
+                            profile_picture
+                        FROM 
+                            users;
+                    ''')
+            users = cur.fetchall()
+            return users
+
+def get_user_by_username(username: str) -> dict[str, Any] | None:
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''
+                        SELECT 
+                            username,
+                            email,
+                            pass AS hashed_password,
+                            biography,
+                            first_name,
+                            last_name,
+                            dob,
+                            profile_picture
+                        FROM 
+                            users
+                        WHERE 
+                            username = %s;
+                    ''', [username])
+            user = cur.fetchone()
+            return user
+
+
 def get_user_by_username(username: str) -> dict:
     pool = get_pool()
     with pool.connection() as conn:

@@ -4,19 +4,9 @@
 
 {% block body %}
 <style>
-#chat-logs {
-  float: left;
-  width: 30%;
-  height: 80vh;
-  overflow-y: scroll;
-}
-
 #inbox {
-  float: right;
   width: 70%;
-  height: 80vh;
-  padding: 20px;
-  border-left: 1px solid #ccc;
+  margin: 0 auto;
 }
 
 .logosmall {
@@ -27,129 +17,71 @@
   width: 400px;
 }
 
-#chat-logs h2 {
+#inbox h2 {
   text-align: center;
 }
 
-#chat-log {
-  height: 80vh;
-  overflow-y: scroll;
+#user-list {
+  list-style-type: none;
+  padding: 0;
+  text-align: center;
+}
+
+.user-link {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.user-link:hover {
+  text-decoration: underline;
+}
+
+.no-users {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
 }
 </style>
 
 <br><img src="/static/messages.png" alt="favorites" class="logosmall"><br>
 
-<div id="chat-logs-container" style="display: flex; flex-direction: column; height: 80vh; position: relative;">
-  <div id="chat-logs" style="flex: 1;">
-    <h2>Inbox<span class="badge">{{ chats|length }}</span></h2>
-    <form action="/directmessages" method="post"> <!-- Update action to directmessages -->
-      <div class="input-group">
-        <input type="text" class="form-control" style="margin-bottom: 10px;" placeholder="Search for..." name="query"> <!-- Added margin-bottom to the input field -->
-        <span class="input-group-btn">
-          <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
-        </span>
-      </div>
-    </form>
-    <ul>
-      {% for chat in chats %}
-        <li>
-          <a href="#" class="user-link" data-chat-id="{{ chat.id }}">{{ chat.user }}</a> <!-- Add data attribute for chat id -->
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-
-  <div id="inbox" style="display: none;">
-    <div id="chat-log">
-      <h2>Chat Log</h2>
-      <ul id="messages">
-        {% for message in messages %}
-          <li class="message received">
-            <div class="sender">{{ message.sender.username }}:</div>
-            <div class="content">{{ message.content }}</div>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-
-    <div class="message-input" style="display: flex; align-items: center; flex-grow: 1; margin-top: -100px;"> <!-- Adjust margin-top to bring the text field up -->
-      <input type="text" id="message-input" class="form-control" style="width: 100%;" placeholder="Type your message..."> <!-- Set width to 100% -->
-    </div>
-    <div style="margin-top: -100px;">
-      <button id="send-button" class="btn btn-primary send-btn"><i class="fa fa-paper-plane"></i></button>
-    </div>
-  </div>
+<div id="inbox">
+  <h2>Inbox</h2>
+  <input type="text" id="search-bar" class="search-bar" placeholder="Search users...">
+  <ul id="user-list">
+    {% for user in users %}
+      <li>
+        <a href="/chat_log/{{ user.username }}" class="user-link">{{ user.username }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+  {% if not users %}
+    <p class="no-users">No users found</p>
+  {% endif %}
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Add event listener to user links
-  var userLinks = document.querySelectorAll('.user-link');
-  userLinks.forEach(function(link) {
-    link.addEventListener('click', function(event) {
-      event.preventDefault();
-      var chatId = link.getAttribute('data-chat-id');
-      // Fetch and display chat logs for the selected user here if needed
-      // For now, just toggle visibility of the inbox
-      var inbox = document.getElementById('inbox');
-      inbox.style.display = 'block';
-
-      // Fetch messages for the selected user here
-      fetch(`/directmessages/${chatId}`)
-        .then(response => response.json())
-        .then(messages => {
-          // Clear existing messages
-          var messagesList = document.getElementById('messages');
-          messagesList.innerHTML = '';
-
-          // Add fetched messages to the messages list
-          messages.forEach(message => {
-            var messageElement = document.createElement('li');
-            messageElement.classList.add('message');
-            messageElement.classList.add('received');
-            messageElement.innerHTML = `
-              <div class="sender">${message.sender.username}:</div>
-              <div class="content">${message.content}</div>
-            `;
-            messagesList.appendChild(messageElement);
-          });
-        })
-        .catch(error => {
-          console.error('Error fetching messages:', error);
-        });
+  var searchBar = document.getElementById('search-bar');
+  searchBar.addEventListener('input', function() {
+    var searchText = searchBar.value.toLowerCase();
+    var userLinks = document.querySelectorAll('.user-link');
+    userLinks.forEach(function(link) {
+      var username = link.textContent.toLowerCase();
+      if (username.includes(searchText)) {
+        link.style.display = 'block';
+      } else {
+        link.style.display = 'none';
+      }
     });
-  });
-
-  // Add event listener to send button
-  var sendButton = document.getElementById('send-button');
-  sendButton.addEventListener('click', function() {
-    var messageInput = document.getElementById('message-input');
-    var messageContent = messageInput.value.trim();
-    if (messageContent === '') {
-      console.error('Cannot send empty message.');
-      return;
-    }
-
-    // Send message to the server here
-    // For now, just display the message in the chat log
-    var messagesList = document.getElementById('messages');
-    var messageElement = document.createElement('li');
-    messageElement.classList.add('message');
-    messageElement.classList.add('sent');
-    messageElement.innerHTML = `
-      <div class="sender">You:</div>
-      <div class="content">${messageContent}</div>
-    `;
-    messagesList.appendChild(messageElement);
-    messageInput.value = '';
-  });
-
-  // Add event listener to message input for Enter key press
-  var messageInput = document.getElementById('message-input');
-  messageInput.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      sendMessage();
-    }
   });
 });
 </script>
