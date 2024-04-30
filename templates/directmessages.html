@@ -42,23 +42,48 @@
   font-size: 18px;
   color: #666;
 }
+
+.search-bar {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
 </style>
 
 <br><img src="/static/messages.png" alt="favorites" class="logosmall"><br>
 
 <div id="inbox">
   <h2>Inbox</h2>
-  {% if users %}
-    <ul id="user-list">
-      {% for user in users %}
-        <li>
-          <a href="/chat_log/{{ user.id }}" class="user-link">{{ user.username }}</a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p class="no-users">No one here! Go make some friends</p>
+  <input type="text" id="search-bar" class="search-bar" placeholder="Search users...">
+  <ul id="user-list">
+    {% for user in users %}
+      <li>
+        <a href="/chat_log/{{ user.username }}" class="user-link">{{ user.username }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+  {% if not users %}
+    <p class="no-users">No users found</p>
   {% endif %}
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var searchBar = document.getElementById('search-bar');
+  searchBar.addEventListener('input', function() {
+    var searchText = searchBar.value.toLowerCase();
+    var userLinks = document.querySelectorAll('.user-link');
+    userLinks.forEach(function(link) {
+      var username = link.textContent.toLowerCase();
+      if (username.includes(searchText)) {
+        link.style.display = 'block';
+      } else {
+        link.style.display = 'none';
+      }
+    });
+  });
+});
+</script>
 
 {% endblock %}
