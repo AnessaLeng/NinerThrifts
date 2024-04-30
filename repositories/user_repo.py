@@ -40,7 +40,7 @@ def create_user(username: str, email: str, password: str, biography: str, first_
                     "profile_picture": profile_picture
                 }
         
-def get_user_by_email(email: str) -> dict[str, Any] | None:
+def get_user_by_email(email:str) -> dict[str, Any] | None:
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:

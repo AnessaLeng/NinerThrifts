@@ -108,7 +108,7 @@
     {% endif %}
 {% elif is_user == 2 %}
     <div class="signup-form">
-        <br><img src="/static/signup.png" alt="explore" class="signup"><br>
+        <h1 class="mt-5 mb-5">Sign Up</h1>
         <form action="/signup" method="POST" enctype="multipart/form-data">
             <label for="first_name">First Name</label><br>
             <input type="text" name="first_name" id="first_name" class="w-50" required><br><br>
@@ -125,7 +125,7 @@
             <label for="biography">Biography</label><br>
             <textarea name="biography" id="biography" cols="42" rows="5"></textarea><br><br>
             <label for="profile_image">Profile Image</label><br>
-            <input type="file" name="profile_image" id="profile_image" class="w-50" required><br><br>
+            <input type="file" name="profile_picture" id="profile_picture" class="w-50" required><br><br>
             <button type="submit" name="signup" id="signup" class="btn w-50 btn-primary">Create Account</button>
         </form>
     </div>

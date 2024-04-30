@@ -1,12 +1,12 @@
 import os
-import requests
-import base64
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
-from repositories import post_repo, profile_repo, user_repo
+from repositories import post_repo, profile_repo, user_repo, message_repo
 from repositories.create_repo import create_post
+import base64
+import requests
 from io import BytesIO
 
 
@@ -16,13 +16,14 @@ load_dotenv()
 app = Flask(__name__)
 
 app.secret_key = os.getenv('APP_SECRET_KEY')
-api_key = '3c2553b7acacb644f84379109a30e5c3'
-upload_url = 'https://api.imgbb.com/1/upload'
 
 socketio = SocketIO(app)
 
 bcrypt = Bcrypt(app)
 profile_info = {}
+users = {}
+
+
     
 ##Jaidens profile page
 @app.get('/profile')
@@ -32,21 +33,14 @@ def show_profile():
     email = session['email']
     posts = []
     profile = profile_repo.get_profile_by_email(email)
-    all_posts = post_repo.get_all_posts()
-    for post in all_posts:
-        if(post.get('email') == email):
-            posts.append(post)
+    # all_posts = post_repo.get_all_posts()
+    # for post in all_posts:
+    #     if(post['email'] == email):
+    #         posts.append(post)
+    user = user_repo.get_logged_in_user()
+    username = user['username']
+    posts = post_repo.get_posts_by_username(username)
     return render_template('profile.html', profile = profile, posts = posts)
-
-
-
-    #email = request.args.get('email')
-    #user_profile = user_repo.get_user_by_email(email)
-    #if user_profile:
-    #    profile_picture_url = user_profile['profile_picture']
-    #    return render_template('profile.html' , profile=user_profile, profile_picture_url=profile_picture_url)
-    #else: 
-    #    return render_template('error.html', error_message='404: User not found.'), 404
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -71,16 +65,17 @@ def signup():
         if user_repo.does_email_exist(email):
             return render_template('error.html', error_message='409: Email already exists.'), 409
 
-        if 'profile_image' not in request.files:
-            return render_template('error.html', error_message='400: No profile image provided.'), 400
+        if 'profile_picture' not in request.files:
+            abort(400, 'No profile image provided')
         
-        profile_image = request.files['profile_image']
-        
-        if profile_image.filename == '':
-            return render_template('error.html', error_message='400: No profile image selected.'), 400
+        profile_picture = request.files['profile_picture']
+        api_key = os.getenv('API_KEY')
+        upload_url = 'https://api.imgbb.com/1/upload'
+        if profile_picture.filename == '':
+            abort(400, 'No profile image selected')
         payload = {
             'key': api_key,
-            'image': base64.b64encode(profile_image.read())
+            'image': base64.b64encode(profile_picture.read())
         }
         response = requests.post(upload_url, data=payload)
 
@@ -115,46 +110,34 @@ def logout():
     return redirect(url_for('index'))
 
 # Cindy's create a post feature
-# @app.route('/create_post', methods=['GET', 'POST'])
-# def create_post():
-#     if request.method == 'POST':
-#         title = request.form.get('title')
-#         price = request.form.get('price')
-#         condition = request.form.get('condition')
-#         body = request.form.get('description')
-
-#         user_id = session.get('user_id')
-#         username = session.get('username')
-
-#         create_post(user_id, username, title, body, price, condition)
-#         return "You have successfully created a post!"
-#         # possible mixup w description and body
-
-#     return render_template('create_post.html')
-
-@app.route('/create_post', methods=['GET'])
-def render_create_post():
-    return render_template('create_post.html')
-
-@app.route('/create_post', methods=['POST'])
-def create_post():
+@app.route('/create_post', methods=['GET', 'POST'])
+def create_listing():
     if request.method == 'POST':
         title = request.form.get('title')
         price = request.form.get('price')
         condition = request.form.get('condition')
-        description = request.form.get('description')
-        image_file = request.files['myFile']  
+        body = request.form.get('description')
+        post_image = request.files['myFile']
 
-        if image_file:
-            post_image = image_file.read()
+        user = user_repo.get_logged_in_user()
+        username = user['username']
+        print(post_image)
 
-            post_repo.create_post(title, price, condition, description, post_image)
+        api_key = os.getenv('API_KEY')
+        upload_url = 'https://api.imgbb.com/1/upload'
+        data = {
+                'key': api_key,
+                'image': base64.b64encode(post_image.read())
+            }
+        response = requests.post(upload_url, data=data)
+        print(response)
 
-            return "Listing successfully uploaded!"
-        else:
-            return "Failed listing!"
-    else:
-        return render_template('create_post.html')
+        if response.status_code == 200:
+            json_response = response.json()
+            print(json_response)
+            create_post(username, title, body, price, condition, json_response['data']['url'])
+            return redirect(url_for('explore'))
+    return render_template('create_post.html')
 
 @app.route('/individual_post')
 def show_individual_post():
