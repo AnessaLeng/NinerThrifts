@@ -88,29 +88,6 @@ def get_logged_in_user():
     user = get_user_by_email(email)
     return user
 
-def get_user_by_id(user_id: int) -> dict[str, Any] | None:
-    pool = get_pool()
-    with pool.connection() as conn:
-        with conn.cursor(row_factory=dict_row) as cur:
-            cur.execute('''
-                        SELECT 
-                            user_id,
-                            username,
-                            email,
-                            pass AS hashed_password,
-                            biography,
-                            first_name,
-                            last_name,
-                            dob,
-                            profile_picture
-                        FROM 
-                            users
-                        WHERE 
-                            user_id = %s;
-                    ''', [user_id])
-            user = cur.fetchone()
-            return user
-
 # Needed for DMs
 
 def get_all_users() -> List[dict[str, Any]]:

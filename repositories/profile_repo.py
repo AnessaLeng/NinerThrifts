@@ -32,19 +32,3 @@ def get_profile_by_email(email):
                             ''',[email])
             return cursor.fetchone()
 
-def get_profile_by_email(email):
-    pool = get_pool()
-    with pool.connection() as conn:
-        with conn.cursor(row_factory=dict_row) as cursor:
-            cursor.execute('''      
-                           SELECT
-                                username,
-                                biography,
-                                profile_picture
-                           FROM
-                                users
-                           WHERE
-                                email = %s
-                            ''',[email])
-            return cursor.fetchone()
-
