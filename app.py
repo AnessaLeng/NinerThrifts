@@ -8,6 +8,8 @@ from repositories.create_repo import create_post
 import base64
 import requests
 from io import BytesIO
+import requests
+import base64
 
 
 
@@ -116,7 +118,9 @@ def signup():
             abort(400, 'No profile image selected')
         payload = {
             'key': api_key,
+
             'image': base64.b64encode(profile_picture.read())
+
         }
         response = requests.post(upload_url, data=payload)
 
@@ -142,6 +146,7 @@ def login():
         user = user_repo.get_user_by_email(email)
         if user is not None:
             session['email'] = email
+
             return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=1, error=False)
 
@@ -246,6 +251,13 @@ def search():
 #     if request.method == 'POST':
 #         pass
 #     return render_template('directmessages.html', chats=chats, chat_logs=chat_logs)
+
+@app.route('/search_users', methods=['POST'])
+def search_users_route():
+    search_query = request.form.get('query')  # Assuming the search query is sent via a form
+    search_results = user_repo.search_users(search_query)  # Call the search_users function
+    return render_template("search_users.html", search_results=search_results)
+
 
 @app.route('/directmessages', methods=['GET', 'POST'])
 def direct_messages():
