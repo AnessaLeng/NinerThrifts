@@ -2,7 +2,6 @@ import os
 import requests
 import base64
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
-from random import randint, random
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
@@ -24,52 +23,30 @@ socketio = SocketIO(app)
 
 bcrypt = Bcrypt(app)
 profile_info = {}
-users = {}
-
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
-
-app.config['UPLOAD_FOLDER'] = ''
-app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.template_filter('b64encode')
-def b64encode_filter(data):
-    print("Encoding image: " + base64.b64encode(data).decode('utf-8'))
-    encoded_image = base64.b64encode(data).decode('utf-8')
-    return encoded_image
     
 ##Jaidens profile page
 @app.get('/profile')
 def show_profile():
-    # user_pic = "static/user_icon.png"
-    # username = "username here"
-    # bio = "bio here"
-    # followers = "###"
-    # following = "###"
-    # posts= ['static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png',
-    #         'static/placeholder.png','static/placeholder.png','static/placeholder.png','static/placeholder.png']
-    # profile_info[username] = []
-    # profile_info[username].append(user_pic)
-    # profile_info[username].append(bio)
-    # profile_info[username].append(followers)
-    # profile_info[username].append(following)
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    email = session['email']
+    posts = []
+    profile = profile_repo.get_profile_by_email(email)
+    all_posts = post_repo.get_all_posts()
+    for post in all_posts:
+        if(post.get('email') == email):
+            posts.append(post)
+    return render_template('profile.html', profile = profile, posts = posts)
 
-    #use this instead for when database is implemented
-    #all_profiles = profile_repo.get_profile_info()
-    #return render_template('profile.html' , profiles = all_profiles)
 
-    #return render_template("profile.html", profile_info = profile_info, posts = posts)
 
-    email = request.args.get('email')
-    user_profile = user_repo.get_user_by_email(email)
-    if user_profile:
-        profile_picture_url = user_profile['profile_picture']
-        return render_template('profile.html' , profile=user_profile, profile_picture_url=profile_picture_url)
-    else: 
-        return render_template('error.html', error_message='404: User not found.'), 404
+    #email = request.args.get('email')
+    #user_profile = user_repo.get_user_by_email(email)
+    #if user_profile:
+    #    profile_picture_url = user_profile['profile_picture']
+    #    return render_template('profile.html' , profile=user_profile, profile_picture_url=profile_picture_url)
+    #else: 
+    #    return render_template('error.html', error_message='404: User not found.'), 404
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -113,7 +90,7 @@ def signup():
             return render_template('error.html', error_message='500: Internal Server Error: Failed to upload profile image to ImgBB.'), 500
 
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, profile_image_path)
+        user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, json_response['data']['url'])
         session['email'] = email
         return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=2)
