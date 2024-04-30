@@ -7,24 +7,29 @@
     .profile{
         border-radius: 50%;
     }
+    .col-8{
+        padding-top: 50px;
+    }
+    .col-4{
+        width:240px;
+    }
+    .username{
+        font-weight:bold;
+    }
 </style>
-<h2>{{ profile.username }}</h2>
 <br>
 <div class="container">
     <div class="row"> 
-        <p><img class="profile" alt="profile_picture" src="{{ profile.profile_picture }}" height="200px" width="300px"></p>
+        <div class="col-4">
+            <p><img class="profile" alt="profile_picture" src="{{ profile.profile_picture }}" height="200px" width="200px"></p>
+        </div>
+        <div class="col-8">
+            <div class="username"><p>{{ profile.username }}</p></div>
+            <div class="bio"> <p>{{ profile.biography }}</p> </div>
+        </div>
     </div>
 </div>
 <br>
-<div class="container">
-    <div class="row">
-        <div class="col-8">
-            <div> <p>{{ profile.biography }}</p> </div>
-        </div>
-        <div class="col-4">
-        </div>
-    </div>
-</div>
 <br>
 <h3>Listings</h3>
 <br>
