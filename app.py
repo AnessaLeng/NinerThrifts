@@ -1,12 +1,19 @@
 import base64
 import os
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
-from random import randint, random
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
+<<<<<<< HEAD
 import requests
 from repositories import post_repo, profile_repo, user_repo, message_repo, create_repo
+=======
+from repositories import post_repo, profile_repo, user_repo, message_repo
+from repositories.create_repo import create_post
+import base64
+import requests
+from io import BytesIO
+>>>>>>> 2ae617eba3f1a84381ba245945d63422155ebb1f
 
 
 
@@ -24,6 +31,7 @@ bcrypt = Bcrypt(app)
 profile_info = {}
 users = {}
 
+<<<<<<< HEAD
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
 
@@ -39,27 +47,26 @@ def b64encode_filter(data):
     encoded_image = base64.b64encode(data).decode('utf-8')
     return encoded_image
 
+=======
+
+    
+>>>>>>> 2ae617eba3f1a84381ba245945d63422155ebb1f
 ##Jaidens profile page
 @app.get('/profile')
 def show_profile():
-    # user_pic = "static/user_icon.png"
-    # username = "username here"
-    # bio = "bio here"
-    # followers = "###"
-    # following = "###"
-    # posts= ['static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png', 'static/placeholder.png',
-    #         'static/placeholder.png','static/placeholder.png','static/placeholder.png','static/placeholder.png']
-    # profile_info[username] = []
-    # profile_info[username].append(user_pic)
-    # profile_info[username].append(bio)
-    # profile_info[username].append(followers)
-    # profile_info[username].append(following)
-
-    #use this instead for when database is implemented
-    all_profiles = profile_repo.get_profile_info()
-    return render_template('profile.html', profiles = all_profiles)
-
-    #return render_template("profile.html", profile_info = profile_info, posts = posts)
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    email = session['email']
+    posts = []
+    profile = profile_repo.get_profile_by_email(email)
+    # all_posts = post_repo.get_all_posts()
+    # for post in all_posts:
+    #     if(post['email'] == email):
+    #         posts.append(post)
+    user = user_repo.get_logged_in_user()
+    username = user['username']
+    posts = post_repo.get_posts_by_username(username)
+    return render_template('profile.html', profile = profile, posts = posts)
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -84,6 +91,7 @@ def signup():
         if user_repo.does_email_exist(email):
             return render_template('error.html', error_message='409: Email already exists.'), 409
 
+<<<<<<< HEAD
         if 'profile_image' not in request.files:
             return render_template('error.html', error_message='400: No profile image provided.'), 400
         
@@ -94,6 +102,19 @@ def signup():
         payload = {
             'key': api_key,
             'image': base64.b64encode(profile_image.read())
+=======
+        if 'profile_picture' not in request.files:
+            abort(400, 'No profile image provided')
+        
+        profile_picture = request.files['profile_picture']
+        api_key = os.getenv('API_KEY')
+        upload_url = 'https://api.imgbb.com/1/upload'
+        if profile_picture.filename == '':
+            abort(400, 'No profile image selected')
+        payload = {
+            'key': api_key,
+            'image': base64.b64encode(profile_picture.read())
+>>>>>>> 2ae617eba3f1a84381ba245945d63422155ebb1f
         }
         response = requests.post(upload_url, data=payload)
 
@@ -137,6 +158,7 @@ def create_listing():
         body = request.form.get('description')
         post_image = request.files['myFile']
 
+<<<<<<< HEAD
         print(post_image)
 
         # user_id = session.get('user_id')
@@ -154,6 +176,25 @@ def create_listing():
             json_response = response.json()
             print(json_response)
             create_repo.create_post(username, title, body, price, condition, json_response['data']['url'])
+=======
+        user = user_repo.get_logged_in_user()
+        username = user['username']
+        print(post_image)
+
+        api_key = os.getenv('API_KEY')
+        upload_url = 'https://api.imgbb.com/1/upload'
+        data = {
+                'key': api_key,
+                'image': base64.b64encode(post_image.read())
+            }
+        response = requests.post(upload_url, data=data)
+        print(response)
+
+        if response.status_code == 200:
+            json_response = response.json()
+            print(json_response)
+            create_post(username, title, body, price, condition, json_response['data']['url'])
+>>>>>>> 2ae617eba3f1a84381ba245945d63422155ebb1f
             return redirect(url_for('explore'))
     return render_template('create_post.html')
 

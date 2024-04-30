@@ -3,6 +3,7 @@
 
 {% block body %}
 <!--USE THIS FOR WHEN THE DATABASE IS IMPLEMENTED (replace top code with this)-->
+<<<<<<< HEAD
     <h1><img src="static/logo.png" alt="logo" width="550px" height="125px"></h1>
     <br>
     <div class="container">
@@ -34,10 +35,31 @@
             </div>
         </div>
     </div>
+=======
+
+<h2>{{ profile.username }}</h2>
+<br>
+<div class="container">
+    <div class="row"> 
+        <p><img alt="profile_picture" src="{{ profile.profile_picture }}" height="200px" width="300px"></p>
+    </div>
+</div>
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <div> <p>{{ profile.biography }}</p> </div>
+        </div>
+        <div class="col-4">
+        </div>
+    </div>
+</div>
+>>>>>>> 2ae617eba3f1a84381ba245945d63422155ebb1f
 <br>
 <h3>Listings</h3>
 <br>
 <div class="container">
+<<<<<<< HEAD
     <div class="row row-cols-4">
         {% for post in posts %}
         <div class="col">
@@ -46,9 +68,17 @@
             </a>
         </div>
         {% endfor %}
+=======
+<div class="row row-cols-4">
+    {% for post in posts %}
+    <div class="col">
+        <a href="{{ url_for('show_individual_post', post_id=post.post_id) }}">
+            <img src="{{ post.image_url }}" height="250px" width="250px">
+        </a>
+>>>>>>> 2ae617eba3f1a84381ba245945d63422155ebb1f
     </div>
+    {% endfor %}
 </div>
-
-
+</div>
 
 {% endblock %}
