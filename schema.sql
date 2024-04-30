@@ -9,7 +9,6 @@ DROP TABLE IF EXISTS users CASCADE;
 
 
 CREATE TABLE IF NOT EXISTS users (
-<<<<<<< HEAD
    username            VARCHAR(255)    NOT NULL    UNIQUE,
    email               VARCHAR(255)    NOT NULL    UNIQUE,
    pass                VARCHAR(255)    NOT NULL,
@@ -19,17 +18,6 @@ CREATE TABLE IF NOT EXISTS users (
    dob                 DATE            NOT NULL,
    profile_picture     VARCHAR(255)    NULL,
    PRIMARY KEY(username)
-=======
-    username            VARCHAR(255)    NOT NULL    UNIQUE,
-    email               VARCHAR(255)    NOT NULL    UNIQUE,
-    pass                VARCHAR(255)    NOT NULL,
-    biography           VARCHAR(255),
-    first_name          VARCHAR(255)    NOT NULL,
-    last_name           VARCHAR(255)    NOT NULL,
-    dob                 DATE            NOT NULL,
-    profile_picture     VARCHAR(255)    NULL,
-    PRIMARY KEY(username)
->>>>>>> 5d669e1c5a960ad9b52ba0beb6a81827d59ce10c
 );
 
 
