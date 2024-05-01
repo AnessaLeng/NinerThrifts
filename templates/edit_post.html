@@ -1,0 +1,90 @@
+{% extends "_layout.html" %}
+
+{% block title %}Edit Post{% endblock %}
+
+{% block body %}
+<style>
+    .container {
+        margin: 25px auto; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh; 
+    }
+
+    .post {
+        width: 75%;
+        padding: 20px; 
+        background-color: #d6f5e0; 
+        border-radius: 10px;
+        text-align: center; 
+    }
+
+    .post-image {
+        width: 100%; /* Set the width of the image to 100% of its container */
+        height: auto; /* Automatically adjust the height to maintain aspect ratio */
+        max-width: 500px; /* Set a maximum width to prevent overly large images */
+        max-height: 500px; /* Set a maximum height to prevent overly large images */
+        object-fit: cover; /* Cover the entire container without distortion */
+        border-radius: 10px; /* Optional: Add rounded corners to the image */
+    }
+
+    <!-- /* Centering post info */
+    .post-info {
+        text-align: center;
+    } -->
+
+    .fa-chevron-left {
+        color: grey;
+        position: absolute;
+        left: 50px;
+        top: 100px;
+    }
+
+       /* Style for the link button */
+    .link-button {
+        background-color: rgb(3, 91, 3);
+        color: white;
+        padding: 7px 14px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        font-size: 15px;
+    }
+
+    .link-button:hover {
+        background-color: rgb(3, 91, 3);
+    }
+
+    .link-button:hover,
+    .user-link:hover {
+        color: rgb(177, 229, 177);
+    }
+
+    .post-info {
+        font-size: 18px;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div class="post">
+            <h2>Edit Post</h2>
+            <form action="{{ url_for('update_post', post_id=post.id) }}" method="POST">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ post.title }}">
+                </div>
+                <div class="form-group">
+                    <label for="body">Description</label>
+                    <textarea class="form-control" id="body" name="body">{{ post.body }}</textarea>
+                </div>
+                <!-- Add fields for other post attributes to edit -->
+                <button type="submit" class="btn btn-primary">Update</button>
+            </form>
+        </div>
+    </div>
+</body>
+{% endblock %}
