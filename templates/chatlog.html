@@ -1,11 +1,39 @@
 {% extends "_layout.html" %}
 {% block title %}Chat with {{ recipient.username }}{% endblock %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.min.js"></script>
 <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
 {% block body %}
 <style>
+    #message-form {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+      }
+      
+      #message-input {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      
+      #send-button {
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: 10px;
+      }
+      
+      #send-button:hover {
+        background-color: #45a049;
+      }
     #chat-log {
         height: 500px;
         overflow-y: scroll;
+        background-color: #eee;
     }
 
     .message {
@@ -69,11 +97,12 @@
     }
 </style>
 <h1>Chat with {{ recipient.username }}</h1>
+<div class="recipient-info">
+    <img src="{{ recipient.profile_picture }}" alt="{{ recipient.username }}">
+    <p>{{ recipient.username }}</p>
+</div>
 <div id="chat-log">
-    <div class="recipient-info">
-        <img src="{{ recipient.profile_picture }}" alt="{{ recipient.username }}">
-        <p>{{ recipient.username }}</p>
-    </div>
+
     {% for message in messages %}
         <div class="message {% if message.sender_username == current_user_username %}sent{% else %}received{% endif %}">
             <div class="message-content">
@@ -92,7 +121,7 @@
 </form>
 
 <script>
-    const socket = io({autoConnect: false});
+    const socket = io();
     
     window.addEventListener('DOMContentLoaded', function() {
         const recipient_username = {{ recipient.username }};
@@ -115,7 +144,7 @@
     });
     
     function fetchExistingMessages(recipient_username) {
-        fetch(`/messages/${recipient_username}`)
+        fetch(`/chatlogs/${recipient_username}`)
            .then(response => response.json())
            .then(messages => {
                 messages.forEach(message => {
@@ -152,7 +181,7 @@
             return;
         }
         const recipient_username = document.getElementById('recipient-username').value;
-        socket.emit('new_message', { recipient_id: recipient_username, message_content: messageContent });
+        socket.emit('new_message', { recipient_username: recipient_username, message_content: messageContent });
         messageInput.value = '';
     }
     
