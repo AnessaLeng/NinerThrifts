@@ -5,33 +5,34 @@
 {% block body %}
 <style>
     .container {
-        margin-top: 25px;
-        margin-bottom: 25px;
-        margin-left: 25px;
-        margin-right: 25px;
+        margin: 25px auto; 
         display: flex;
         align-items: center;
         justify-content: center;
-        height: auto;
+        height: 100vh; 
     }
 
     .post {
         width: 75%;
         padding: 20px; 
-        background-color: #f9f9f9; 
+        background-color: #d6f5e0; 
         border-radius: 10px;
         text-align: center; 
     }
 
     .post-image {
-        display: block;
-        margin: 0 auto;
+        width: 100%; /* Set the width of the image to 100% of its container */
+        height: auto; /* Automatically adjust the height to maintain aspect ratio */
+        max-width: 500px; /* Set a maximum width to prevent overly large images */
+        max-height: 500px; /* Set a maximum height to prevent overly large images */
+        object-fit: cover; /* Cover the entire container without distortion */
+        border-radius: 10px; /* Optional: Add rounded corners to the image */
     }
 
-    /* Centering post info */
+    <!-- /* Centering post info */
     .post-info {
         text-align: center;
-    }
+    } -->
 
     .fa-chevron-left {
         color: grey;
