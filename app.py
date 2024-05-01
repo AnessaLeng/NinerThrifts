@@ -16,7 +16,7 @@ load_dotenv()
 app = Flask(__name__)
 
 app.secret_key = os.getenv('APP_SECRET_KEY')
-api_key = '14d7c237dda449da28f1b053880ee6d8'
+api_key = os.getenv('API_KEY')
 upload_url = 'https://api.imgbb.com/1/upload'
 
 socketio = SocketIO(app)
@@ -67,13 +67,13 @@ def signup():
             return render_template('error.html', error_message='409: Email already exists.'), 409
 
         if 'profile_picture' not in request.files:
-            return render_template('error.html', error_message='400: No profile image provided.'), 400
+            abort(400, 'No profile image provided')
         
         profile_picture = request.files['profile_picture']
         api_key = os.getenv('API_KEY')
         upload_url = 'https://api.imgbb.com/1/upload'
         if profile_picture.filename == '':
-            return render_template('error.html', error_message='400: No profile image selected.'), 400
+            abort(400, 'No profile image selected')
         payload = {
             'key': api_key,
             'image': base64.b64encode(profile_picture.read())
