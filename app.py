@@ -1,5 +1,5 @@
 import os
-from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
+from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session, flash
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
@@ -42,21 +42,34 @@ users = {}
 #     posts = post_repo.get_posts_by_username(username)
 #     return render_template('profile.html', profile = profile, posts = posts)
 
+# @app.get('/profile/<username>')
+# def show_profile(username):
+#     if 'email' not in session:
+#         return redirect(url_for('login'))
+#     email = session['email']
+#     posts = []
+#     profile = profile_repo.get_profile_by_username(username)
+#     # all_posts = post_repo.get_all_posts()
+#     # for post in all_posts:
+#     #     if(post['email'] == email):
+#     #         posts.append(post)
+#     user = user_repo.get_logged_in_user()
+#     username = user['username']
+#     posts = post_repo.get_posts_by_username(username)
+#     return render_template('profile.html', profile = profile, posts = posts)
 @app.get('/profile/<username>')
 def show_profile(username):
     if 'email' not in session:
         return redirect(url_for('login'))
-    email = session['email']
-    posts = []
+    
+    # Fetch profile information for the user whose profile is being viewed
     profile = profile_repo.get_profile_by_username(username)
-    # all_posts = post_repo.get_all_posts()
-    # for post in all_posts:
-    #     if(post['email'] == email):
-    #         posts.append(post)
-    user = user_repo.get_logged_in_user()
-    username = user['username']
+
+    # Fetch posts associated with the user whose profile is being viewed
     posts = post_repo.get_posts_by_username(username)
-    return render_template('profile.html', profile = profile, posts = posts)
+
+    return render_template('profile.html', profile=profile, posts=posts)
+
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -157,6 +170,49 @@ def create_listing():
             create_post(username, title, body, price, condition, json_response['data']['url'])
             return redirect(url_for('explore'))
     return render_template('create_post.html')
+
+# editing and deleting a post test
+# Edit post route
+@app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
+def edit_post(post_id):
+    post = post_repo.get_post_by_id(post_id)
+    if request.method == 'POST':
+        new_title = request.form['title']
+        new_body = request.form['body']
+        new_price = request.form['price']
+        new_condition = request.form['condition']
+        
+        # Handle file upload for image if provided
+        if 'myFile' in request.files:
+            post_image = request.files['myFile']
+            api_key = os.getenv('API_KEY')
+            upload_url = 'https://api.imgbb.com/1/upload'
+            data = {
+                    'key': api_key,
+                    'image': base64.b64encode(post_image.read())
+                }
+            response = requests.post(upload_url, data=data)
+            if response.status_code == 200:
+                json_response = response.json()
+                new_image_url = json_response['data']['url']
+                post_repo.update_post(post_id, new_title, new_body, new_price, new_condition, new_image_url)
+            else:
+                flash('Failed to upload new image for post', 'error')
+        else:
+            # If no new image is provided, update post without changing the image URL
+            post_repo.update_post(post_id, new_title, new_body, new_price, new_condition)
+        
+        flash('Post updated successfully', 'success')
+        return redirect(url_for('show_individual_post', post_id=post_id))
+    return render_template('edit_post.html', post=post)
+
+
+# Delete post route
+@app.route('/delete_post/<int:post_id>', methods=['POST'])
+def delete_post_route(post_id):
+    post_repo.delete_post(post_id)
+    flash('Post deleted successfully', 'success')
+    return redirect(url_for('profile')) 
 
 @app.route('/individual_post')
 def show_individual_post():
