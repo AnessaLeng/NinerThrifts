@@ -53,6 +53,8 @@ def index():
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
+    if 'email' in session:
+        return redirect(url_for('show_profile'))
     if request.method == 'POST':
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
@@ -106,6 +108,8 @@ def login():
 
 @app.route('/logout')
 def logout():
+    if 'email' not in session:
+        return render_template('error.html', error_message='400: You must login.'), 400
     session.clear()
     return redirect(url_for('index'))
 
@@ -114,6 +118,9 @@ def logout():
 
 @app.route('/create_post', methods=['GET', 'POST'])
 def create_listing():
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    
     if request.method == 'POST':
         title = request.form.get('title')
         price = request.form.get('price')
