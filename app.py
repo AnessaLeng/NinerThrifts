@@ -27,8 +27,24 @@ users = {}
 
 
 ##Jaidens profile page
-@app.get('/profile')
-def show_profile():
+# @app.get('/profile')
+# def show_profile():
+#     if 'email' not in session:
+#         return redirect(url_for('login'))
+#     email = session['email']
+#     posts = []
+#     profile = profile_repo.get_profile_by_email(email)
+#     # all_posts = post_repo.get_all_posts()
+#     # for post in all_posts:
+#     #     if(post['email'] == email):
+#     #         posts.append(post)
+#     user = user_repo.get_logged_in_user()
+#     username = user['username']
+#     posts = post_repo.get_posts_by_username(username)
+#     return render_template('profile.html', profile = profile, posts = posts)
+
+@app.get('/profile/<username>')
+def show_profile(username):
     if 'email' not in session:
         return redirect(url_for('login'))
     email = session['email']
@@ -88,6 +104,7 @@ def signup():
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, json_response['data']['url'])
         session['email'] = email
+        session['username'] = username
         return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=2)
 
@@ -102,7 +119,8 @@ def login():
         user = user_repo.get_user_by_email(email)
         if user is not None:
             session['email'] = email
-            return redirect(url_for('show_profile', email=email))
+            session['username'] = user['username']
+            return redirect(url_for('show_profile', username=user['username']))
     return render_template('index.html', is_user=1, error=False)
 
 @app.route('/logout')
@@ -111,8 +129,6 @@ def logout():
     return redirect(url_for('index'))
 
 # Cindy's create a post feature
-#adding some logic for images -varsha
-
 @app.route('/create_post', methods=['GET', 'POST'])
 def create_listing():
     if request.method == 'POST':
@@ -142,7 +158,6 @@ def create_listing():
             return redirect(url_for('explore'))
     return render_template('create_post.html')
 
-#Varsha individual post feature
 @app.route('/individual_post')
 def show_individual_post():
     post_id = request.args.get('post_id')
