@@ -128,7 +128,7 @@ def get_user_by_username(username: str) -> dict[str, Any] | None:
                             users
                         WHERE 
                             username = %s;
-                    ''', [username])
+                    ''', [str(username)])
             user = cur.fetchone()
             return user
 
@@ -137,7 +137,7 @@ def get_user_by_username(username: str) -> dict:
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
-            cur.execute("SELECT * FROM users WHERE username = %s", (username,))
+            cur.execute("SELECT * FROM users WHERE username = %s", (str(username),))
             user = cur.fetchone()
             return user
 
@@ -145,15 +145,9 @@ def update_user_status(username: str, status: str):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor() as cur:
-            cur.execute("UPDATE users SET status = %s WHERE username = %s", (status, username))
+            cur.execute("UPDATE users SET status = %s WHERE username = %s", (status, str(username)))
             conn.commit()
 
-def update_user_status(username: str, status: str):
-    pool = get_pool()
-    with pool.connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute("UPDATE users SET status = %s WHERE username = %s", (status, username))
-            conn.commit()
 
 def get_current_user():
     username = session.get('username')
@@ -161,3 +155,20 @@ def get_current_user():
         return None
     user = get_user_by_username(username)
     return user
+
+def search_users(query: str) -> List[dict[str, Any]]:
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''
+                        SELECT 
+                            username,
+                            email,
+                            profile_picture
+                        FROM 
+                            users
+                        WHERE 
+                            username ILIKE %s;
+                    ''', [f'%{query}%'])
+            users = cur.fetchall()
+            return users

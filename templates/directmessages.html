@@ -28,13 +28,24 @@
 }
 
 .user-link {
-  display: block;
+  display: flex;
+  align-items: center;
   margin-bottom: 10px;
   font-size: 18px;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
 }
 
 .user-link:hover {
-  text-decoration: underline;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.user-link img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 
 .no-users {
@@ -56,10 +67,14 @@
 <div id="inbox">
   <h2>Inbox</h2>
   <input type="text" id="search-bar" class="search-bar" placeholder="Search users...">
+  <button id="search-button">Search</button>
   <ul id="user-list">
     {% for user in users %}
       <li>
-        <a href="/chat_log/{{ user.username }}" class="user-link">{{ user.username }}</a>
+        <a href="/chatlog/{{ user.username }}" class="user-link">
+          <img src="{{ user.profile_picture }}" alt="profile picture">
+          {{ user.username }}
+        </a>
       </li>
     {% endfor %}
   </ul>
@@ -71,17 +86,10 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   var searchBar = document.getElementById('search-bar');
-  searchBar.addEventListener('input', function() {
+  var searchButton = document.getElementById('search-button');
+  searchButton.addEventListener('click', function() {
     var searchText = searchBar.value.toLowerCase();
-    var userLinks = document.querySelectorAll('.user-link');
-    userLinks.forEach(function(link) {
-      var username = link.textContent.toLowerCase();
-      if (username.includes(searchText)) {
-        link.style.display = 'block';
-      } else {
-        link.style.display = 'none';
-      }
-    });
+    window.location.href = '/direct_messages?q=' + encodeURIComponent(searchText);
   });
 });
 </script>
