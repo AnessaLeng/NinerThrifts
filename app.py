@@ -49,7 +49,7 @@ def show_profile(username):
         return redirect(url_for('login'))
     email = session['email']
     posts = []
-    profile = profile_repo.get_profile_by_email(email)
+    profile = profile_repo.get_profile_by_username(username)
     # all_posts = post_repo.get_all_posts()
     # for post in all_posts:
     #     if(post['email'] == email):
