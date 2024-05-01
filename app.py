@@ -48,7 +48,7 @@ def show_profile(username):
         return redirect(url_for('login'))
     email = session['email']
     posts = []
-    profile = profile_repo.get_profile_by_email(email)
+    profile = profile_repo.get_profile_by_username(username)
     # all_posts = post_repo.get_all_posts()
     # for post in all_posts:
     #     if(post['email'] == email):
@@ -104,7 +104,8 @@ def signup():
         user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, json_response['data']['url'])
         session['email'] = email
         session['username'] = username
-        return redirect(url_for('show_profile', email=email))
+        user = user_repo.get_user_by_email(email)
+        return redirect(url_for('show_profile', username=user['username']))
     return render_template('index.html', is_user=2)
 
 @app.route('/login', methods=['POST', 'GET'])
