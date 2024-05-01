@@ -3,13 +3,14 @@
 {% block body %}
 <style>
     .form-container {
+        background-image: url('../static/abstract_bg1.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         height: 100vh; 
-        background-image: url('../static/abstract_bg1.jpg');
-        background-size: cover;
     }
 
     .form-group {
@@ -92,11 +93,6 @@
         width: 400px;
     }
 
-    .btn {
-        background-color: darkgreen;
-        color: white; 
-        border-color: darkgreen; 
-      }
 </style>
 
 <div class="form-container">
@@ -139,8 +135,7 @@
     <input type="file" id="myFile" name="myFile">
     <div id="file-list" class="file-list"></div><br><br>
 
-    <input type="submit" value="Submit"><br><br><br>
-
+    <input type="submit" value="Submit" style="background-color: green; color: white; border: none; border-radius: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer;"><br><br><br>
 </form>
 </div>
 {% endblock %}
