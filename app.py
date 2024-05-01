@@ -1,14 +1,14 @@
 import os
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
-from random import randint, random
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
-from repositories import post_repo, profile_repo, user_repo
+from repositories import post_repo, profile_repo, user_repo, message_repo
 from repositories.create_repo import create_post
-from repositories import create_repo
 import base64
 import requests
+from io import BytesIO
+
 
 
 load_dotenv()
@@ -23,19 +23,24 @@ bcrypt = Bcrypt(app)
 profile_info = {}
 users = {}
 
+
+    
 ##Jaidens profile page
 @app.get('/profile')
 def show_profile():
-    # if request.method == 'POST':
-    #     email = request.form.get('email')
-    all_profiles = profile_repo.get_profile_info()
-    # usernames = [user.get('username') for user in all_profiles]
-    # for user in usernames:
-    #     if(user == email):
-    #         profile = all_profiles[user]
-    # return render_template('profile.html', profiles = profile)
-    return render_template('profile.html', profiles = all_profiles)
-    #return render_template("profile.html", profile_info = profile_info, posts = posts)
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    email = session['email']
+    posts = []
+    profile = profile_repo.get_profile_by_email(email)
+    # all_posts = post_repo.get_all_posts()
+    # for post in all_posts:
+    #     if(post['email'] == email):
+    #         posts.append(post)
+    user = user_repo.get_logged_in_user()
+    username = user['username']
+    posts = post_repo.get_posts_by_username(username)
+    return render_template('profile.html', profile = profile, posts = posts)
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -55,12 +60,34 @@ def signup():
         password = request.form.get('password')
         email = request.form.get('email')
         dob = request.form.get('dob')
-        profile_image = request.form.get('profile_image')
+        bio = request.form.get('biography')
+
         if user_repo.does_email_exist(email):
-            abort(409)
+            return render_template('error.html', error_message='409: Email already exists.'), 409
+
+        if 'profile_picture' not in request.files:
+            return render_template('error.html', error_message='400: No profile image provided.'), 400
+        
+        profile_picture = request.files['profile_picture']
+        api_key = os.getenv('API_KEY')
+        upload_url = 'https://api.imgbb.com/1/upload'
+        if profile_picture.filename == '':
+            return render_template('error.html', error_message='400: No profile image selected.'), 400
+        payload = {
+            'key': api_key,
+            'image': base64.b64encode(profile_picture.read())
+        }
+        response = requests.post(upload_url, data=payload)
+
+        if response.status_code == 200:
+            json_response = response.json()
+        else:
+            return render_template('error.html', error_message='500: Internal Server Error: Failed to upload profile image to ImgBB.'), 500
+
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        user_repo.create_user(email, first_name, last_name, username, hashed_password, dob, profile_image)
-        return redirect(url_for('show_profile'))
+        user_repo.create_user(username, email, hashed_password, bio, first_name, last_name, dob, json_response['data']['url'])
+        session['email'] = email
+        return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=2)
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -69,14 +96,18 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
         if not email or not password:
-            abort(400)
+            error_message = "Invalid email or password"
+            return render_template('index.html', is_user=1, error=True, error_message=error_message)
         user = user_repo.get_user_by_email(email)
         if user is not None:
-            session['user_id'] = user['user_id']
-            return redirect(url_for('show_profile'))
-        error_message = "Invalid email or password"
-        return render_template('index.html', is_user=1, error=True, error_message=error_message)
+            session['email'] = email
+            return redirect(url_for('show_profile', email=email))
     return render_template('index.html', is_user=1, error=False)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
 
 # Cindy's create a post feature
 #adding some logic for images -varsha
@@ -90,14 +121,11 @@ def create_listing():
         body = request.form.get('description')
         post_image = request.files['myFile']
 
+        user = user_repo.get_logged_in_user()
+        username = user['username']
         print(post_image)
 
-        # user_id = session.get('user_id')
-        # username = session.get('username')
-        username = "bob"
-
-
-        api_key = '4ad78dceb78a8627462a7181984c5eda'
+        api_key = os.getenv('API_KEY')
         upload_url = 'https://api.imgbb.com/1/upload'
         data = {
                 'key': api_key,

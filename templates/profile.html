@@ -3,50 +3,41 @@
 
 {% block body %}
 <!--USE THIS FOR WHEN THE DATABASE IS IMPLEMENTED (replace top code with this)-->
-
-
-    <h1><img src="static/logo.png" width="550px" height="125px"></h1>
-{% for profile in profiles %}
-    <br>
-    <div class="container">
-        <div class="row"> 
-            <div class="col-sm"><p><img src="{{ profile.profile_picture }}" height="200px" width="300px"></p></div>
-            <div class="col-sm">
-                <p class="text-center">{{ profile.followers }}</p>
-                <b><p class="text-center">Followers</p></b>
-            </div>
-            <div class="col-sm">
-                <p class="text-center">{{ profile.following }}</p> 
-                <b><p class="text-center">Following</p></b>
-            </div>
+<style>
+    .profile{
+        border-radius: 50%;
+    }
+</style>
+<h2>{{ profile.username }}</h2>
+<br>
+<div class="container">
+    <div class="row"> 
+        <p><img class="profile" alt="profile_picture" src="{{ profile.profile_picture }}" height="200px" width="300px"></p>
+    </div>
+</div>
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <div> <p>{{ profile.biography }}</p> </div>
+        </div>
+        <div class="col-4">
         </div>
     </div>
-    <br>
-    <div class="container">
-        <div class="row">
-            <div class="col-8">
-                <p>{{ profile.username }}</p> 
-                <div> <p>{{ profile.biography }}</p> </div>
-            </div>
-            <div class="col-4">
-               <p class="text-end"><button type="button" class="btn btn-primary">Follow</button></p>
-               <br>
-                <p class="text-end"><button type="button" class="btn btn-primary">Message</button></p>
-            </div>
-        </div>
-    </div>
-{% endfor %}
+</div>
 <br>
 <h3>Listings</h3>
 <br>
 <div class="container">
-    <div class="row row-cols-4">
-        {% for post in posts %}
-        <div class="col"><img src="{{ post }}" height="250px" width="250px"></div>
-        {% endfor %}
+<div class="row row-cols-4">
+    {% for post in posts %}
+    <div class="col">
+        <a href="{{ url_for('show_individual_post', post_id=post.post_id) }}">
+            <img src="{{ post.image_url }}" height="250px" width="250px">
+        </a>
     </div>
+    {% endfor %}
 </div>
-
-
+</div>
 
 {% endblock %}
