@@ -29,17 +29,12 @@ def show_profile():
     # if request.method == 'POST':
     #     email = request.form.get('email')
     all_profiles = profile_repo.get_profile_info()
-<<<<<<< HEAD
-    return render_template('profile.html' , profiles = all_profiles)
-
-=======
     # usernames = [user.get('username') for user in all_profiles]
     # for user in usernames:
     #     if(user == email):
     #         profile = all_profiles[user]
     # return render_template('profile.html', profiles = profile)
     return render_template('profile.html', profiles = all_profiles)
->>>>>>> 51d25c5 (Updating schema and some logistics)
     #return render_template("profile.html", profile_info = profile_info, posts = posts)
 
 # Anessa's signup/login feature
