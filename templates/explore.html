@@ -52,6 +52,13 @@
         height: auto;
         width: 350px;
     }
+
+    .post-image {
+        height: 250px; 
+        width: 100%; 
+        object-fit: cover; 
+        border-radius: 10px;
+    }
 </style>
 
 <br><img src="/static/explore.png" alt="explore" class="logosmall"><br>
@@ -63,7 +70,7 @@
 
 <div class="container">
     <div class="row row-cols-4">
-        {% for post in posts %}
+        {% for post in posts|reverse %}
             <div class="col">
                 <a href="{{ url_for('show_individual_post', post_id=post.post_id) }}">
                     <img src="{{ post.image_url }}" height="250px" width="250px">
