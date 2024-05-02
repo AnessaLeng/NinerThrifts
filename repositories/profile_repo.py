@@ -96,9 +96,5 @@ def update_profile(email, username=None, bio=None, img_url=None):
                               WHERE email = %s;
                               ''',(img_url, email))
             else:
-                 cursor.execute('''      
-                              UPDATE users
-                              SET 
-                              WHERE email = %s;
-                              ''',())
-                 conn.commit()
+                 pass
+            conn.commit()

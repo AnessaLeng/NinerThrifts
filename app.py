@@ -26,22 +26,6 @@ users = {}
 
     
 ##Jaidens profile page
-# @app.get('/profile')
-# def show_profile():
-#     if 'email' not in session:
-#         return redirect(url_for('login'))
-#     email = session['email']
-#     posts = []
-#     profile = profile_repo.get_profile_by_email(email)
-#     # all_posts = post_repo.get_all_posts()
-#     # for post in all_posts:
-#     #     if(post['email'] == email):
-#     #         posts.append(post)
-#     user = user_repo.get_logged_in_user()
-#     username = user['username']
-#     posts = post_repo.get_posts_by_username(username)
-#     return render_template('profile.html', profile = profile, posts = posts)
-
 @app.get('/profile/<username>')
 def show_profile(username):
     if 'email' not in session:
@@ -63,7 +47,7 @@ def updated_profile():
         new_bio = request.form.get('new_bio')
 
         if 'profile_picture' in request.files:
-            profile_image = request.files['new_profile_picture']
+            profile_image = request.files['profile_picture']
             api_key = os.getenv('API_KEY')
             upload_url = 'https://api.imgbb.com/1/upload'
             data = {
@@ -82,10 +66,10 @@ def updated_profile():
         
         updated_profile = profile_repo.get_profile_by_email(email)
         if updated_profile:
-            new_username = updated_profile.get('username')
-            return redirect(url_for('show_profile', username=new_username))
-        else:
-            return redirect(url_for('show_profile', username=new_username))
+            session['username'] = updated_profile.get('username')
+            session['bio'] = updated_profile.get('biography')
+            session['profile_picture'] = updated_profile.get('profile_picture')
+        return redirect(url_for('show_profile', username=session['username']))
     return render_template('edit_profile.html')
 
 
