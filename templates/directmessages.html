@@ -55,19 +55,28 @@
   color: #666;
 }
 
+.search-bar-container {
+  display: flex; /* Use flexbox layout */
+  align-items: stretch; /* Make children stretch to match height */
+}
+
 .search-bar {
-  width: 92%;
+  flex: 1; /* Take up remaining space */
+  width: 90%;
   padding: 8px;
   margin-bottom: 10px;
   box-sizing: border-box;
 }
+
 #search-button {
-  padding: 10px;
+  padding: 10px; /* Set padding to match search bar */
+  height: 100%; /* Set height to match search bar */
   background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin-left: 10px; /* Add space between search bar and button */
 }
 
 </style>
@@ -76,7 +85,7 @@
 
 <div id="inbox">
   <h2>Inbox</h2>
-  <div>
+  <div class="search-bar-container">
     <input type="text" id="search-bar" class="search-bar" placeholder="Search users...">
     <button id="search-button">Search</button>
   </div>
