@@ -16,6 +16,8 @@ load_dotenv()
 app = Flask(__name__)
 
 app.secret_key = os.getenv('APP_SECRET_KEY')
+api_key = os.getenv('API_KEY')
+upload_url = 'https://api.imgbb.com/1/upload'
 
 socketio = SocketIO(app)
 
@@ -35,10 +37,7 @@ def show_profile(username=None):
         username = session['username']
     # Fetch profile information for the user whose profile is being viewed
     profile = profile_repo.get_profile_by_username(username)
-
-    # Fetch posts associated with the user whose profile is being viewed
     posts = post_repo.get_posts_by_username(username)
-
     return render_template('profile.html', profile=profile, posts=posts)
 
 @app.route('/update_profile', methods=['GET', 'POST'])
@@ -225,7 +224,6 @@ def edit_post(post_id):
             else:
                 flash('Failed to upload new image for post', 'error')
         else:
-            # If no new image is provided, update post without changing the image URL
             post_repo.update_post(post_id, new_title, new_body, new_price, new_condition)
         
         flash('Post updated successfully', 'success')
@@ -236,25 +234,20 @@ def edit_post(post_id):
 # Delete post route
 @app.route('/delete_post/<int:post_id>', methods=['POST'])
 def delete_post(post_id):
-    # Check if the request method is POST
     if request.method == 'POST':
-        # Fetch the post being deleted
         post = post_repo.get_post_by_id(post_id)
 
-        # Check if the post exists
         if post:
-            # Delete the post from the database
             post_repo.delete_post(post_id)
             flash('Post deleted successfully', 'success')
             return redirect(url_for('show_profile', username=session['username']))
         else:
-            # If the post does not exist, display an error message
             flash('Post not found', 'error')
-            return redirect(url_for('explore'))  # Redirect to the explore page
+            return redirect(url_for('explore')) 
     else:
-        # If the request method is not POST, redirect to an error page
         flash('Invalid request method', 'error')
-        return redirect(url_for('explore'))  # Redirect to the explore page
+        return redirect(url_for('explore'))
+
 
 #varsha's individual psot route
 @app.route('/individual_post')
@@ -263,7 +256,6 @@ def show_individual_post():
     post = post_repo.get_post_by_id(post_id)
     return render_template('individual_post.html', post=post)
 
-postGrid = {}
 # Nhu's explore feature
 @app.get('/explore')
 def explore():
@@ -281,7 +273,7 @@ def search():
 @app.route('/add_favorite', methods=['POST'])
 def add_favorite():
     if 'username' not in session:
-        return redirect(url_for('login'))  # Redirect if user is not logged in
+        return redirect(url_for('login'))
 
     if request.method == 'POST':
         post_id = request.form.get('post_id')
@@ -299,10 +291,7 @@ def remove_favorite(post_id):
         return redirect(url_for('login'))  
 
     if request.method == 'POST':
-        # Remove the post from favorites for the logged-in user
         post_repo.remove_favorite(session['username'], post_id)
-
-        # Redirect to the favorites page
         return redirect(url_for('favorites'))
     return redirect(url_for('explore'))
 
