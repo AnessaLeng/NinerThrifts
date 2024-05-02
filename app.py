@@ -11,6 +11,7 @@ import requests
 from io import BytesIO
 
 
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -30,7 +31,7 @@ users = {}
 def show_profile(username):
     if 'email' not in session:
         return redirect(url_for('login'))
-    
+
     # Fetch profile information for the user whose profile is being viewed
     profile = profile_repo.get_profile_by_username(username)
 
@@ -137,13 +138,14 @@ def login():
             session['username'] = user['username']
             return redirect(url_for('show_profile', username=user['username']))
     return render_template('index.html', is_user=1, error=False)
-
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
 
 # Cindy's create a post feature
+#adding some logic for images -varsha
+
 @app.route('/create_post', methods=['GET', 'POST'])
 def create_listing():
     if request.method == 'POST':
@@ -173,6 +175,7 @@ def create_listing():
             return redirect(url_for('show_profile', username=username))
     return render_template('create_post.html')
 
+
 # Edit post route
 @app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
 def edit_post(post_id):
@@ -183,7 +186,7 @@ def edit_post(post_id):
         new_price = request.form['price']
         new_condition = request.form['condition']
         
-        # Handle file upload for image if provided
+        # updating image but not really working rn
         if 'myFile' in request.files:
             post_image = request.files['myFile']
             api_key = os.getenv('API_KEY')
@@ -209,8 +212,6 @@ def edit_post(post_id):
 
 
 # Delete post route
-
-
 @app.route('/delete_post/<int:post_id>', methods=['POST'])
 def delete_post(post_id):
     # Check if the request method is POST
@@ -233,7 +234,6 @@ def delete_post(post_id):
         flash('Invalid request method', 'error')
         return redirect(url_for('explore'))  # Redirect to the explore page
 
-
 @app.route('/individual_post')
 def show_individual_post():
     post_id = request.args.get('post_id')
@@ -254,47 +254,52 @@ def search():
     search_result = post_repo.get_searched_posts(value)
     return render_template("search.html", search_result = search_result)
 
-
-# @app.route('/favorites', methods=["GET"])
-# def favorites():
-#     # will change this after pulling posts from database
-#     postGrid = {}
-#     post = "static/blankpost.jpg"
-#     post_id = "post id"
-#     posts = ["static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", 
-#             "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg"]
-#     postGrid[post_id] = []
-#     postGrid[post_id].append(post)
-#     return render_template("favorites.html", postGrid = postGrid, posts = posts)
-
-
 # Cindy's favorites feature
-# @app.route('/favorites')
-# def favorites():
-#     all_favorites = get_all_favorites()
-#     return render_template("favorites.html", favorites=all_favorites)
+@app.route('/add_favorite', methods=['POST'])
+def add_favorite():
+    if 'username' not in session:
+        return redirect(url_for('login'))  # Redirect if user is not logged in
 
-# @app.route('/add_favorite', methods=['POST'])
-# def add_favorite():
-#     if request.method == 'POST':
-#         user_id = request.form.get('user_id')
-#         post_id = request.form.get('post_id')
-#         add_favorite(user_id, post_id)
-#         return redirect(url_for('favorites'))
+    if request.method == 'POST':
+        post_id = request.form.get('post_id')
 
-# @app.route('/remove_favorite', methods=['POST'])
-# def remove_favorite():
-#     if request.method == 'POST':
-#         user_id = request.form.get('user_id')
-#         post_id = request.form.get('post_id')
-#         remove_favorite(user_id, post_id)
-#         return redirect(url_for('favorites'))
+        post_repo.add_favorite(session['username'], post_id)
+
+        return redirect(url_for('favorites'))
+
+    return redirect(url_for('explore'))
+
+
+@app.route('/remove_favorite/<post_id>', methods=['POST'])
+def remove_favorite(post_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))  
+
+    if request.method == 'POST':
+        # Remove the post from favorites for the logged-in user
+        post_repo.remove_favorite(session['username'], post_id)
+
+        # Redirect to the favorites page
+        return redirect(url_for('favorites'))
+    return redirect(url_for('explore'))
+
+@app.route('/favorites')
+def favorites():
+    if 'username' in session:
+        favorite_posts = post_repo.get_favorite_posts_by_username(session['username'])
+        return render_template('favorites.html', favorite_posts=favorite_posts)
+    else:
+        return redirect(url_for('login'))
 
 #Cayla's DM Feature
 
 
 @app.route('/directmessages', methods=['GET'])
 def direct_messages():
+    if 'username' not in session:
+        # Redirect to login page
+        return redirect(url_for('login'))
+    print("Request received to get to direct messages")
     query = request.args.get('q')
     if query:
         users = user_repo.search_users(query)
@@ -304,22 +309,19 @@ def direct_messages():
 
 @app.route('/chatlog/<recipient_username>', methods=['GET'])
 def chatlog(recipient_username):
+    print("Request received to get to chatlogs")
     # Check if user is logged in
     if 'username' not in session:
         # Redirect to login page
         return redirect(url_for('login'))
-    
+    print("User is in session")
     # Get the logged-in user's ID
-    sender_username = session.get('user_id')
-
+    sender_username = session.get('username')
     # Fetch messages for the specified thread ID
-    thread_id = message_repo.get_thread_id(sender_username, recipient_username)
+    thread_id = message_repo.get_or_create_thread(sender_username,recipient_username)
     messages = message_repo.get_messages_for_thread(thread_id)
-
-    # Fetch user information for both the sender and recipient
     sender = user_repo.get_user_by_username(sender_username)
     recipient = user_repo.get_user_by_username(recipient_username)
-
     # Render template to display messages
     return render_template('chatlog.html', messages=messages, sender=sender, recipient=recipient)
 
@@ -334,10 +336,10 @@ def handle_user_join(username):
 
 @socketio.on("new_message")
 def handle_new_message(data):
-    sender_username = session.get('user_id')  # Get sender's user ID from session
+    sender_username = session.get('username') 
     recipient_username = data.get('recipient_username')
     message_content = data.get('message_content')
-    # Determine the thread ID based on the sender and recipient
+    # Determine the thread ID based on the sender and 
     thread_id = message_repo.get_thread_id(sender_username, recipient_username)
     # If the thread doesn't exist, create a new one
     if not thread_id:

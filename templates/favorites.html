@@ -1,75 +1,39 @@
-<!-- {% extends "_layout.html" %}
-
-{% block title %}Niner Thrift | Favorites{% endblock %}
+{% extends "_layout.html" %}
+{% block title %}Favorite Posts{% endblock %}
 
 {% block body %}
 
-
 <style>
-    h1 {
-        background-color: #8CB854;
-        width: 100%;
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    body {
-        background-color: white;
-    }
-
-    .container .col {
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-    
-    form {
-        padding: 6px;
-        margin-left: 20px;
-        margin-right: 20px;
-        text-align: center;
-    }
-
-    input {
-        width: 90%;
-        background-color: #8CB854;  
-        color: black;
-        border: none;
-        box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
-    }
-
-    .search-bar {
-        display: block;
-        position: relative;
-    }
-
-    i {
-        position: absolute;
-        right: 80px;
-        top: 5px;
-    }
-
     .logosmall {
         display: block; 
         margin: 0 auto; 
         height: auto;
         width: 400px;
     }
-
 </style>
-
-<br><img src="/static/favorites.png" alt="favorites" class="logosmall"><br>
-
 <div class="container">
-    <div class="row row-cols-4">
-        {% for post in posts %}
-        <div class="col">
-            <a href="/individual_post">
-                <img src="{{ post }}" height="250px" width="250px">
-            </a>
+    <br><img src="/static/favorites.png" alt="favorites" class="logosmall"><br>
+    {% if favorite_posts %}
+        <div class="row">
+            {% for post in favorite_posts | reverse %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ post.image_url }}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text">Price: ${{ post.price }}</p>
+                            <p class="card-text">{{ post.condition }}</p>
+                            <a href="{{ url_for('show_individual_post', post_id=post.post_id) }}" class="btn btn-primary">View</a>
+                            <form action="{{ url_for('remove_favorite', post_id=post.post_id) }}" method="post" onsubmit="return confirm('Are you sure you want to remove this post?')">
+                                <button type="submit" class="btn btn-danger" >Remove from Favorites</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
+    {% else %}
+        <p>No favorite posts found.</p>
+    {% endif %}
 </div>
-
-
-{% endblock %} -->
+{% endblock %}

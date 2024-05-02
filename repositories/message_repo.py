@@ -88,7 +88,7 @@ def create_thread(sender_username: str, recipient_username: str) -> int:
                         INSERT INTO message_threads (sender_username, recipient_username)
                         VALUES (%s, %s)
                         RETURNING thread_id
-                        ''', [sender_username, recipient_username])
+                        ''', [str(sender_username), str(recipient_username)])
             thread_id = cur.fetchone()[0]
             return thread_id
 
