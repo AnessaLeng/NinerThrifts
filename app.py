@@ -282,13 +282,14 @@ def chatlog(recipient_username):
     print("User is in session")
     # Get the logged-in user's ID
     sender_username = session.get('username')
+    current_username = sender_username  # Establish current_username
     # Fetch messages for the specified thread ID
     thread_id = message_repo.get_or_create_thread(sender_username,recipient_username)
     messages = message_repo.get_messages_for_thread(thread_id)
     sender = user_repo.get_user_by_username(sender_username)
     recipient = user_repo.get_user_by_username(recipient_username)
     # Render template to display messages
-    return render_template('chatlog.html', messages=messages, sender=sender, recipient=recipient)
+    return render_template('chatlog.html', messages=messages, sender=sender, recipient=recipient, current_username=current_username)
 
 @socketio.on("connect")
 def handle_connect():
