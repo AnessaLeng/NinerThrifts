@@ -27,11 +27,15 @@ profile_info = {}
 users = {}
 
 
-# Jaiden's profile page
+    
+##Jaidens profile page
+#changes to work with username - varsha
 @app.get('/profile/<username>')
 def show_profile(username):
     if 'email' not in session:
         return redirect(url_for('login'))
+    
+    # Fetch profile information for the user whose profile is being viewed
     profile = profile_repo.get_profile_by_username(username)
     posts = post_repo.get_posts_by_username(username)
     return render_template('profile.html', profile=profile, posts=posts)
@@ -60,7 +64,7 @@ def updated_profile():
                 flash('Failed to upload new image for post', 'error')
         else:
             profile_repo.update_profile(email, new_username, new_bio)
-
+        
         updated_profile = profile_repo.get_profile_by_email(email)
         if updated_profile:
             session['username'] = updated_profile.get('username')
@@ -68,18 +72,6 @@ def updated_profile():
             session['profile_picture'] = updated_profile.get('profile_picture')
         return redirect(url_for('show_profile', username=session['username']))
     return render_template('edit_profile.html')
-
-@app.post('/delete_profile/<email>')
-def delete_profile(email):
-    if request.method == 'POST':
-        profile = profile_repo.get_profile_by_email(email)
-        if profile:
-            profile_repo.delete_profile(email)
-            return redirect(url_for('signup'))
-        else:
-            return redirect(url_for('show_profile'))
-    else:
-        return render_template('error.html', error_message='Invalid request method.')
 
 
 # Anessa's signup/login feature
@@ -183,7 +175,6 @@ def create_listing():
             return redirect(url_for('show_profile', username=username))
     return render_template('create_post.html')
 
-
 # Edit post route
 @app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
 def edit_post(post_id):
@@ -236,6 +227,7 @@ def delete_post(post_id):
         return redirect(url_for('explore'))
 
 
+#varsha's individual psot route
 @app.route('/individual_post')
 def show_individual_post():
     post_id = request.args.get('post_id')
@@ -313,13 +305,14 @@ def chatlog(recipient_username):
     print("User is in session")
     # Get the logged-in user's ID
     sender_username = session.get('username')
+    current_username = sender_username  # Establish current_username
     # Fetch messages for the specified thread ID
     thread_id = message_repo.get_or_create_thread(sender_username,recipient_username)
     messages = message_repo.get_messages_for_thread(thread_id)
     sender = user_repo.get_user_by_username(sender_username)
     recipient = user_repo.get_user_by_username(recipient_username)
     # Render template to display messages
-    return render_template('chatlog.html', messages=messages, sender=sender, recipient=recipient)
+    return render_template('chatlog.html', messages=messages, sender=sender, recipient=recipient, current_username=current_username)
 
 @socketio.on("connect")
 def handle_connect():

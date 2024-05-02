@@ -48,16 +48,6 @@ def get_profile_by_username(username):
                             ''',[username])
             return cursor.fetchone()
         
-def delete_profile(email):
-    pool = get_pool()
-    with pool.connection() as conn:
-        with conn.cursor(row_factory=dict_row) as cursor:
-            cursor.execute('''
-                           DELETE FROM users
-                           WHERE email = %s ''',
-                           [email])
-            conn.commit()
-
 def update_profile(email, username=None, bio=None, img_url=None):
     pool = get_pool()
     with pool.connection() as conn:

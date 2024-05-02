@@ -28,14 +28,18 @@
         <div class="col-4">
             <p><img class="profile" alt="profile_picture" src="{{ profile.profile_picture }}" height="200px" width="200px"></p>
             <br>
-            <button class="edit"><a href="{{ url_for('updated_profile') }}">Edit Profile</a></button>
-            <!-- <form action="{{ url_for('delete_profile', email=profile.email) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete your profile?');">
-                <button type="submit" class="btn btn-danger">Delete Profile</button>
-            </form> -->
+            {% if profile.username == session.get('username') %}
+                <button class="edit"><a href="{{ url_for('updated_profile') }}">Edit Profile</a></button>
+            {% endif %}
         </div>
         <div class="col-8">
             <div class="username"><p>{{ profile.username }}</p></div>
             <div class="bio"> <p>{{ profile.biography }}</p> </div>
+            <div>
+                {% if profile.username != session.get('username') %}
+                    <a href="{{ url_for('chatlog', recipient_username=profile.username) }}" class="btn btn-primary">Message</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
