@@ -1,5 +1,4 @@
 from repositories.db import get_pool
-from typing import Any
 from psycopg.rows import dict_row
 from flask import redirect, url_for
 from flask import Flask, session
@@ -48,7 +47,7 @@ def get_searched_posts(title: str):
     return search_result
 
 
-def get_post_by_id(post_id: dict[str, Any]):
+def get_post_by_id(post_id):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cursor:
