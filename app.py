@@ -68,7 +68,7 @@ def updated_profile():
         updated_profile = profile_repo.get_profile_by_email(email)
         if updated_profile:
             new_username = updated_profile.get('username')
-            session['username'] = updated_profile.get('username')
+            session['username'] = new_username
             return redirect(url_for('show_profile', username=new_username))
         else:
             flash('Failed to update profile', 'error')
@@ -198,7 +198,7 @@ def create_listing():
     return render_template('create_post.html')
 
 # Edit post route
-@app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
+@app.route('/edit_post/<post_id>', methods=['GET', 'POST'])
 def edit_post(post_id):
     post = post_repo.get_post_by_id(post_id)
     if request.method == 'POST':
@@ -232,7 +232,7 @@ def edit_post(post_id):
 
 
 # Delete post route
-@app.route('/delete_post/<int:post_id>', methods=['POST'])
+@app.route('/delete_post/<post_id>', methods=['POST'])
 def delete_post(post_id):
     if request.method == 'POST':
         post = post_repo.get_post_by_id(post_id)

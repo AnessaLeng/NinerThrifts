@@ -70,7 +70,7 @@
 
 <div class="edit-container">
     <br><br><img src="/static/profile.png" alt="explore" class="logosmall"><br><br>
-    <form action="{{ url_for('updated_profile') }}" method="POST">
+    <form action="{{ url_for('updated_profile') }}" method="POST" enctype="multipart/form-data">
         <div>
             <label>New Username</label>
             <input type="text" id="new_username" name="new_username" placeholder="Enter new username">
