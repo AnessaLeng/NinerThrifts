@@ -11,6 +11,7 @@ import requests
 from io import BytesIO
 
 
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -166,7 +167,7 @@ def edit_post(post_id):
         new_price = request.form['price']
         new_condition = request.form['condition']
         
-        # Handle file upload for image if provided
+        # updating image but not really working rn
         if 'myFile' in request.files:
             post_image = request.files['myFile']
             api_key = os.getenv('API_KEY')
@@ -192,8 +193,6 @@ def edit_post(post_id):
 
 
 # Delete post route
-
-
 @app.route('/delete_post/<int:post_id>', methods=['POST'])
 def delete_post(post_id):
     # Check if the request method is POST
@@ -237,41 +236,44 @@ def search():
     search_result = post_repo.get_searched_posts(value)
     return render_template("search.html", search_result = search_result)
 
-
-# @app.route('/favorites', methods=["GET"])
-# def favorites():
-#     # will change this after pulling posts from database
-#     postGrid = {}
-#     post = "static/blankpost.jpg"
-#     post_id = "post id"
-#     posts = ["static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", 
-#             "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg"]
-#     postGrid[post_id] = []
-#     postGrid[post_id].append(post)
-#     return render_template("favorites.html", postGrid = postGrid, posts = posts)
-
-
 # Cindy's favorites feature
-# @app.route('/favorites')
-# def favorites():
-#     all_favorites = get_all_favorites()
-#     return render_template("favorites.html", favorites=all_favorites)
+@app.route('/add_favorite', methods=['POST'])
+def add_favorite():
+    if 'username' not in session:
+        return redirect(url_for('login'))  # Redirect if user is not logged in
 
-# @app.route('/add_favorite', methods=['POST'])
-# def add_favorite():
-#     if request.method == 'POST':
-#         user_id = request.form.get('user_id')
-#         post_id = request.form.get('post_id')
-#         add_favorite(user_id, post_id)
-#         return redirect(url_for('favorites'))
+    if request.method == 'POST':
+        post_id = request.form.get('post_id')
 
-# @app.route('/remove_favorite', methods=['POST'])
-# def remove_favorite():
-#     if request.method == 'POST':
-#         user_id = request.form.get('user_id')
-#         post_id = request.form.get('post_id')
-#         remove_favorite(user_id, post_id)
-#         return redirect(url_for('favorites'))
+        post_repo.add_favorite(session['username'], post_id)
+
+        return redirect(url_for('favorites'))
+
+    return redirect(url_for('explore'))
+
+
+@app.route('/remove_favorite/<post_id>', methods=['POST'])
+def remove_favorite(post_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))  
+
+    if request.method == 'POST':
+        # Remove the post from favorites for the logged-in user
+        post_repo.remove_favorite(session['username'], post_id)
+
+        # Redirect to the favorites page
+        return redirect(url_for('favorites'))
+    return redirect(url_for('explore'))
+
+@app.route('/favorites')
+def favorites():
+    if 'username' in session:
+        favorite_posts = post_repo.get_favorite_posts_by_username(session['username'])
+        return render_template('favorites.html', favorite_posts=favorite_posts)
+    else:
+        return redirect(url_for('login'))
+
+
 
 #Cayla's DM Feature
 
