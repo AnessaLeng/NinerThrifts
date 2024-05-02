@@ -189,6 +189,7 @@
         const recipientUsername = document.getElementById('recipient-username').value;
         socket.emit('new_message', { recipient_username: recipientUsername, message_content: messageContent });
         messageInput.value = '';
+        location.reload();
     }
     
     const messageForm = document.getElementById('message-form');

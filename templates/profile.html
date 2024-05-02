@@ -28,7 +28,9 @@
         <div class="col-4">
             <p><img class="profile" alt="profile_picture" src="{{ profile.profile_picture }}" height="200px" width="200px"></p>
             <br>
-            <button class="edit"><a href="{{ url_for('updated_profile') }}">Edit Profile</a></button>
+            {% if profile.username == session.get('username') %}
+                <button class="edit"><a href="{{ url_for('updated_profile') }}">Edit Profile</a></button>
+            {% endif %}
         </div>
         <div class="col-8">
             <div class="username"><p>{{ profile.username }}</p></div>
