@@ -21,18 +21,13 @@
     }
 
     .post-image {
-        width: 100%; /* Set the width of the image to 100% of its container */
-        height: auto; /* Automatically adjust the height to maintain aspect ratio */
-        max-width: 500px; /* Set a maximum width to prevent overly large images */
-        max-height: 500px; /* Set a maximum height to prevent overly large images */
-        object-fit: cover; /* Cover the entire container without distortion */
-        border-radius: 10px; /* Optional: Add rounded corners to the image */
+        width: 100%; 
+        height: auto; 
+        max-width: 500px; 
+        max-height: 500px;
+        object-fit: cover; 
+        border-radius: 10px; 
     }
-
-    <!-- /* Centering post info */
-    .post-info {
-        text-align: center;
-    } -->
 
     .fa-chevron-left {
         color: grey;
@@ -41,7 +36,6 @@
         top: 100px;
     }
 
-       /* Style for the link button */
     .link-button {
         background-color: rgb(3, 91, 3);
         color: white;
@@ -67,6 +61,22 @@
         font-size: 18px;
     }
 
+    .round-button {
+        background-color: #4CAF50; 
+        color: white; 
+        border: none; 
+        border-radius: 20px; 
+        padding: 10px 20px; 
+        text-align: center; 
+        text-decoration: none; 
+        font-size: 16px; 
+        cursor: pointer; 
+    }
+
+    .round-button:hover {
+        background-color: #154f18; 
+    }
+
 </style>
 
 <body>
@@ -80,7 +90,11 @@
                 <p class="post-info"><strong>Description:</strong> {{ post.body }}</p>
                 <p class="post-info"><strong>Condition:</strong> {{ post.condition }}</p>
                 <p class="post-info"><strong>Date Posted:</strong> {{ post.posted_date }}</p>
-                <p class="post-info"><strong>Posted By: <a href="/profile/{{ post.username }}" class="link-button" target="_blank" class="user-link">{{ post.username }}</a></strong></p>
+                <p class="post-info"><strong>Posted By: <a href="/profile/{{ post.username }}" class="link-button" target="_blank" class="user-link">{{ post.username }}</a></strong></p><br>
+                <form method="POST" action="/add_favorite">
+                    <input type="hidden" name="post_id" value="{{ post_id }}">
+                    <button type="submit" class="round-button">Add to Favorites</button>
+                </form>
             </div>
         </div>
     </div>
