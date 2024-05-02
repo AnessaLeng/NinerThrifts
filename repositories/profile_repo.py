@@ -48,14 +48,14 @@ def get_profile_by_username(username):
                             ''',[username])
             return cursor.fetchone()
         
-def delete_profile(username):
+def delete_profile(email):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cursor:
             cursor.execute('''
                            DELETE FROM users
-                           WHERE username = %s ''',
-                           [username])
+                           WHERE email = %s ''',
+                           [email])
             conn.commit()
 
 def update_profile(email, username=None, bio=None, img_url=None):
@@ -67,43 +67,43 @@ def update_profile(email, username=None, bio=None, img_url=None):
                               UPDATE users
                               SET username = %s, biography = %s, profile_picture = %s
                               WHERE email = %s;
-                              ''',(email, username, bio, img_url))
+                              ''',(username, bio, img_url, email))
             elif(username is not None and bio is not None):
                cursor.execute('''      
                               UPDATE users
                               SET username = %s, biography = %s
                               WHERE email = %s;
-                              ''',(email, username, bio))
+                              ''',(username, bio, email))
             elif(username is not None and img_url is not None):
                  cursor.execute('''      
                               UPDATE users
                               SET username = %s, profile_picture = %s
                               WHERE email = %s;
-                              ''',(email, username, img_url))
+                              ''',(username, img_url, email))
             elif(bio is not None and img_url is not None):
                  cursor.execute('''      
                               UPDATE users
                               SET biography = %s, profile_picture = %s
                               WHERE email = %s;
-                              ''',(email, bio, img_url))
+                              ''',(bio, img_url, email))
             elif(username is not None):
                  cursor.execute('''      
                               UPDATE users
                               SET username = %s
                               WHERE email = %s;
-                              ''',(email, username))
+                              ''',(username, email))
             elif(bio is not None):
                  cursor.execute('''      
                               UPDATE users
                               SET biography = %s
                               WHERE email = %s;
-                              ''',(email, bio))
+                              ''',(bio, email))
             elif(img_url is not None):
                  cursor.execute('''      
                               UPDATE users
                               SET profile_picture = %s
                               WHERE email = %s;
-                              ''',(email, img_url))
+                              ''',(img_url, email))
             else:
                  cursor.execute('''      
                               UPDATE users

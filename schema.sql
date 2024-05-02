@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS messages CASCADE;
 DROP TABLE IF EXISTS user_sessions CASCADE;
 DROP TABLE IF EXISTS message_threads CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
-
+DROP TABLE IF EXISTS favorites CASCADE;
 
 CREATE TABLE IF NOT EXISTS users (
    username            VARCHAR(255)    NOT NULL    UNIQUE,
@@ -61,4 +61,13 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY (thread_id) REFERENCES message_threads(thread_id),
     FOREIGN KEY (sender_username) REFERENCES users(username),
     FOREIGN KEY (recipient_username) REFERENCES users(username)
+);
+
+CREATE TABLE IF NOT EXISTS favorites (
+    favorite_id SERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    post_id INTEGER NOT NULL,
+    UNIQUE (username, post_id),
+    FOREIGN KEY (username) REFERENCES users(username),
+    FOREIGN KEY (post_id) REFERENCES posts(post_id)
 );
