@@ -1,5 +1,4 @@
 import os
-from flask import session
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session, flash
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
@@ -27,6 +26,7 @@ users = {}
 
     
 ##Jaidens profile page
+#changes to work with username - varsha
 @app.get('/profile/<username>')
 def show_profile(username=None):
     if 'email' not in session:
@@ -77,7 +77,6 @@ def updated_profile():
             return redirect(url_for('show_profile', username=username))
     return render_template('edit_profile.html')
 
-
 # Anessa's signup/login feature
 @app.route('/')
 def index():
@@ -89,21 +88,23 @@ def index():
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
+    if 'email' in session:
+        return redirect(url_for('show_profile'))
     if request.method == 'POST':
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
-        username = request.form.get('username')
-        password = request.form.get('password')
-        email = request.form.get('email')
+        first_name = request.form.get('first_name').strip()
+        last_name = request.form.get('last_name').strip()
+        username = request.form.get('username').strip()
+        password = request.form.get('password').strip()
+        email = request.form.get('email').strip()
         dob = request.form.get('dob')
-        bio = request.form.get('biography')
+        bio = request.form.get('biography').strip()
 
         if user_repo.does_email_exist(email):
             return render_template('error.html', error_message='409: Email already exists.'), 409
 
         if 'profile_picture' not in request.files:
             return render_template('error.html', error_message='400: No profile image provided.'), 400
-        
+
         profile_picture = request.files['profile_picture']
         api_key = os.getenv('API_KEY')
         upload_url = 'https://api.imgbb.com/1/upload'
@@ -131,8 +132,8 @@ def signup():
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+        email = request.form.get('email').strip()
+        password = request.form.get('password').strip()
         if not email or not password:
             error_message = "Invalid email or password"
             return render_template('index.html', is_user=1, error=True, error_message=error_message)
@@ -142,16 +143,34 @@ def login():
             session['username'] = user['username']
             return redirect(url_for('show_profile', username=user['username']))
     return render_template('index.html', is_user=1, error=False)
+
 @app.route('/logout')
 def logout():
+    if 'email' not in session:
+        return render_template('error.html', error_message='400: You must login.'), 400
     session.clear()
     return redirect(url_for('index'))
+
+@app.post('/profile/<username>/delete')
+def delete_user(username):
+    if 'email' not in session:
+        return render_template('error.html', error_message='400: You must login.'), 400
+    if session['username'] != username:
+        return render_template('error.html', error_message='403: Cannot delete an account that is not your own.'), 403
+    if user_repo.delete_user_by_username(username):
+        session.clear()
+        return redirect(url_for('index'))
+    else:
+        return render_template('error.html', error_message=f'500: Error deleting user {username}'), 500
 
 # Cindy's create a post feature
 #adding some logic for images -varsha
 
 @app.route('/create_post', methods=['GET', 'POST'])
 def create_listing():
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    
     if request.method == 'POST':
         title = request.form.get('title')
         price = request.form.get('price')
@@ -237,6 +256,7 @@ def delete_post(post_id):
         flash('Invalid request method', 'error')
         return redirect(url_for('explore'))  # Redirect to the explore page
 
+#varsha's individual psot route
 @app.route('/individual_post')
 def show_individual_post():
     post_id = request.args.get('post_id')
@@ -295,8 +315,6 @@ def favorites():
         return redirect(url_for('login'))
 
 #Cayla's DM Feature
-
-
 @app.route('/directmessages', methods=['GET'])
 def direct_messages():
     if 'username' not in session:
