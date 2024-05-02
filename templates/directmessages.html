@@ -1,6 +1,7 @@
 {% extends '_layout.html' %}
 
 {% block title %}Direct Messages{% endblock %}
+<script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
 
 {% block body %}
 <style>
@@ -91,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var searchText = searchBar.value.toLowerCase();
     window.location.href = '/directmessages?q=' + encodeURIComponent(searchText);
   });
+  connectSocketIO();
 });
 </script>
 

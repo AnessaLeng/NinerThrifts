@@ -26,29 +26,13 @@ users = {}
 
     
 ##Jaidens profile page
-# @app.get('/profile')
-# def show_profile():
-#     if 'email' not in session:
-#         return redirect(url_for('login'))
-#     email = session['email']
-#     posts = []
-#     profile = profile_repo.get_profile_by_email(email)
-#     # all_posts = post_repo.get_all_posts()
-#     # for post in all_posts:
-#     #     if(post['email'] == email):
-#     #         posts.append(post)
-#     user = user_repo.get_logged_in_user()
-#     username = user['username']
-#     posts = post_repo.get_posts_by_username(username)
-#     return render_template('profile.html', profile = profile, posts = posts)
-
-@app.get('/profile/<username>')
-def show_profile(username):
+@app.get('/profile')
+def show_profile():
     if 'email' not in session:
         return redirect(url_for('login'))
     email = session['email']
     posts = []
-    profile = profile_repo.get_profile_by_username(username)
+    profile = profile_repo.get_profile_by_email(email)
     # all_posts = post_repo.get_all_posts()
     # for post in all_posts:
     #     if(post['email'] == email):
@@ -122,13 +106,14 @@ def login():
             session['username'] = user['username']
             return redirect(url_for('show_profile', username=user['username']))
     return render_template('index.html', is_user=1, error=False)
-
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
 
 # Cindy's create a post feature
+#adding some logic for images -varsha
+
 @app.route('/create_post', methods=['GET', 'POST'])
 def create_listing():
     if request.method == 'POST':
@@ -158,6 +143,7 @@ def create_listing():
             return redirect(url_for('explore'))
     return render_template('create_post.html')
 
+#Varsha individual post feature
 @app.route('/individual_post')
 def show_individual_post():
     post_id = request.args.get('post_id')
@@ -201,17 +187,17 @@ def search():
 # @app.route('/add_favorite', methods=['POST'])
 # def add_favorite():
 #     if request.method == 'POST':
-#         user_id = request.form.get('user_id')
+#         username = request.form.get('username')
 #         post_id = request.form.get('post_id')
-#         add_favorite(user_id, post_id)
+#         add_favorite(username, post_id)
 #         return redirect(url_for('favorites'))
 
 # @app.route('/remove_favorite', methods=['POST'])
 # def remove_favorite():
 #     if request.method == 'POST':
-#         user_id = request.form.get('user_id')
+#         username = request.form.get('username')
 #         post_id = request.form.get('post_id')
-#         remove_favorite(user_id, post_id)
+#         remove_favorite(username, post_id)
 #         return redirect(url_for('favorites'))
 
 #Cayla's DM Feature
@@ -219,6 +205,10 @@ def search():
 
 @app.route('/directmessages', methods=['GET'])
 def direct_messages():
+    if 'username' not in session:
+        # Redirect to login page
+        return redirect(url_for('login'))
+    print("Request received to get to direct messages")
     query = request.args.get('q')
     if query:
         users = user_repo.search_users(query)
@@ -228,22 +218,19 @@ def direct_messages():
 
 @app.route('/chatlog/<recipient_username>', methods=['GET'])
 def chatlog(recipient_username):
+    print("Request received to get to chatlogs")
     # Check if user is logged in
     if 'username' not in session:
         # Redirect to login page
         return redirect(url_for('login'))
-    
+    print("User is in session")
     # Get the logged-in user's ID
-    sender_username = session.get('user_id')
-
+    sender_username = session.get('username')
     # Fetch messages for the specified thread ID
-    thread_id = message_repo.get_thread_id(sender_username, recipient_username)
+    thread_id = message_repo.get_or_create_thread(sender_username,recipient_username)
     messages = message_repo.get_messages_for_thread(thread_id)
-
-    # Fetch user information for both the sender and recipient
     sender = user_repo.get_user_by_username(sender_username)
     recipient = user_repo.get_user_by_username(recipient_username)
-
     # Render template to display messages
     return render_template('chatlog.html', messages=messages, sender=sender, recipient=recipient)
 
@@ -258,10 +245,10 @@ def handle_user_join(username):
 
 @socketio.on("new_message")
 def handle_new_message(data):
-    sender_username = session.get('user_id')  # Get sender's user ID from session
+    sender_username = session.get('username') 
     recipient_username = data.get('recipient_username')
     message_content = data.get('message_content')
-    # Determine the thread ID based on the sender and recipient
+    # Determine the thread ID based on the sender and 
     thread_id = message_repo.get_thread_id(sender_username, recipient_username)
     # If the thread doesn't exist, create a new one
     if not thread_id:
