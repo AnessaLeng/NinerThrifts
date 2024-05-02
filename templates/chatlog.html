@@ -74,6 +74,7 @@
     }
 
     .recipient-info {
+        margin-top: 10px;
         display: flex;
         align-items: center;
         margin-bottom: 10px;
@@ -100,7 +101,9 @@
 <a href="/directmessages"> <i class="fas fa-chevron-left"></i></a> 
 <h1>Chat with {{ recipient.username }}</h1>
 <div class="recipient-info">
-    <img src="{{ recipient.profile_picture }}" alt="{{ recipient.username }}">
+    <a href="/profile/{{ recipient.username }}">
+        <img src="{{ recipient.profile_picture }}" alt="{{ recipient.username }}">
+    </a>
     <p>{{ recipient.username }}</p>
 </div>
 <div id="chat-log">
