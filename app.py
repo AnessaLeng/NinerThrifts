@@ -42,21 +42,6 @@ users = {}
 #     posts = post_repo.get_posts_by_username(username)
 #     return render_template('profile.html', profile = profile, posts = posts)
 
-# @app.get('/profile/<username>')
-# def show_profile(username):
-#     if 'email' not in session:
-#         return redirect(url_for('login'))
-#     email = session['email']
-#     posts = []
-#     profile = profile_repo.get_profile_by_username(username)
-#     # all_posts = post_repo.get_all_posts()
-#     # for post in all_posts:
-#     #     if(post['email'] == email):
-#     #         posts.append(post)
-#     user = user_repo.get_logged_in_user()
-#     username = user['username']
-#     posts = post_repo.get_posts_by_username(username)
-#     return render_template('profile.html', profile = profile, posts = posts)
 @app.get('/profile/<username>')
 def show_profile(username):
     if 'email' not in session:
@@ -171,7 +156,6 @@ def create_listing():
             return redirect(url_for('show_profile', username=username))
     return render_template('create_post.html')
 
-# editing and deleting a post test
 # Edit post route
 @app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
 def edit_post(post_id):
