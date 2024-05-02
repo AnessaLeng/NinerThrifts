@@ -35,7 +35,7 @@
 <br>
 <div class="container">
 <div class="row row-cols-4">
-    {% for post in posts %}
+    {% for post in posts | reverse%}
     <div class="col">
         <a href="{{ url_for('show_individual_post', post_id=post.post_id) }}">
             <img src="{{ post.image_url }}" height="250px" width="250px">
