@@ -5,17 +5,17 @@
 <h1>Edit Profile</h1>
 <br>
 <br>
-<form>
+<form action="{{ url_for('updated_profile') }}" method="POST">
     <label>New Username:</label>
     <input type="text" id="new_username" name="new_username" placeholder="Enter new username">
     <br><br>
     <label>New Bio:</label>
-    <input>
+    <input type="text" id="new_bio" name="new_bio" placeholder="Enter a new bio">
     <br><br>
     <label for="profile_picture">New Profile Image:</label>
-    <input type="file" name="profile_picture" id="profile_picture" class="w-50" required>
+    <input type="file" name="new_profile_picture" id="new_rofile_picture" class="w-50" required>
     <br><br>
-    <a class="btn btn-primary" href="/updated_profile">Save Changes</a>
+    <button class="btn btn-primary">Save Changes</button>
 </form>
 
 
