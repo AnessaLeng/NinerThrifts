@@ -27,6 +27,7 @@ users = {}
 
     
 ##Jaidens profile page
+#changes to work with username - varsha
 @app.get('/profile/<username>')
 def show_profile(username):
     if 'email' not in session:
@@ -233,6 +234,7 @@ def delete_post(post_id):
         flash('Invalid request method', 'error')
         return redirect(url_for('explore'))  # Redirect to the explore page
 
+#varsha's individual psot route
 @app.route('/individual_post')
 def show_individual_post():
     post_id = request.args.get('post_id')
@@ -291,8 +293,6 @@ def favorites():
         return redirect(url_for('login'))
 
 #Cayla's DM Feature
-
-
 @app.route('/directmessages', methods=['GET'])
 def direct_messages():
     if 'username' not in session:
