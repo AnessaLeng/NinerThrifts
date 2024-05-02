@@ -7,6 +7,7 @@
         background-image: url('../static/abstract_bg1.jpg');
         background-repeat: no-repeat;
         background-size: cover;
+        min-height: 80vh;
         width: 90%;
         display: block;
         align-items: center;
@@ -68,7 +69,7 @@
 </style>
 
 <div class="edit-container">
-    <br><img src="/static/profile.png" alt="explore" class="logosmall"><br>
+    <br><br><img src="/static/profile.png" alt="explore" class="logosmall"><br><br>
     <form action="{{ url_for('updated_profile') }}" method="POST">
         <div>
             <label>New Username</label>
@@ -83,7 +84,7 @@
             <input type="file" name="new_profile_picture" id="new_profile_picture" class="w-50" required>
         </div>
         <div class="center-content">
-            <button id="submit" class="btn btn-primary" >Save Changes</button>
+            <button id="submit" class="btn btn-primary">Save Changes</button>
         </div>
     </form>
 </div>

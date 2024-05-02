@@ -27,46 +27,24 @@ profile_info = {}
 users = {}
 
 
-##Jaidens profile page
-# @app.get('/profile')
-# def show_profile():
-#     if 'email' not in session:
-#         return redirect(url_for('login'))
-#     email = session['email']
-#     posts = []
-#     profile = profile_repo.get_profile_by_email(email)
-#     # all_posts = post_repo.get_all_posts()
-#     # for post in all_posts:
-#     #     if(post['email'] == email):
-#     #         posts.append(post)
-#     user = user_repo.get_logged_in_user()
-#     username = user['username']
-#     posts = post_repo.get_posts_by_username(username)
-#     return render_template('profile.html', profile = profile, posts = posts)
-
+# Jaiden's profile page
 @app.get('/profile/<username>')
 def show_profile(username):
     if 'email' not in session:
         return redirect(url_for('login'))
-    
-    # Fetch profile information for the user whose profile is being viewed
     profile = profile_repo.get_profile_by_username(username)
-
-    # Fetch posts associated with the user whose profile is being viewed
     posts = post_repo.get_posts_by_username(username)
-
     return render_template('profile.html', profile=profile, posts=posts)
 
-@app.route('/update_profile/', methods=['GET', 'POST'])
+@app.route('/update_profile', methods=['GET', 'POST'])
 def updated_profile():
-
     if(request.method == 'POST'):
         email = session['email']
         new_username = request.form.get('new_username')
         new_bio = request.form.get('new_bio')
 
-        if 'new_profile_picture' in request.files:
-            profile_image = request.files['new_profile_picture']
+        if 'profile_picture' in request.files:
+            profile_image = request.files['profile_picture']
             api_key = os.getenv('API_KEY')
             upload_url = 'https://api.imgbb.com/1/upload'
             data = {
@@ -85,13 +63,13 @@ def updated_profile():
 
         updated_profile = profile_repo.get_profile_by_email(email)
         if updated_profile:
-            new_username = updated_profile.get('username')
-            return redirect(url_for('show_profile', username=new_username))
-        else:
-            return redirect(url_for('show_profile', username=new_username))
+            session['username'] = updated_profile.get('username')
+            session['bio'] = updated_profile.get('biography')
+            session['profile_picture'] = updated_profile.get('profile_picture')
+        return redirect(url_for('show_profile', username=session['username']))
     return render_template('edit_profile.html')
 
-@app.post('/delete_profile')
+@app.post('/delete_profile/<email>')
 def delete_profile(email):
     if request.method == 'POST':
         profile = profile_repo.get_profile_by_email(email)
@@ -231,7 +209,6 @@ def edit_post(post_id):
             else:
                 flash('Failed to upload new image for post', 'error')
         else:
-            # If no new image is provided, update post without changing the image URL
             post_repo.update_post(post_id, new_title, new_body, new_price, new_condition)
         
         flash('Post updated successfully', 'success')
@@ -242,25 +219,19 @@ def edit_post(post_id):
 # Delete post route
 @app.route('/delete_post/<int:post_id>', methods=['POST'])
 def delete_post(post_id):
-    # Check if the request method is POST
     if request.method == 'POST':
-        # Fetch the post being deleted
         post = post_repo.get_post_by_id(post_id)
 
-        # Check if the post exists
         if post:
-            # Delete the post from the database
             post_repo.delete_post(post_id)
             flash('Post deleted successfully', 'success')
             return redirect(url_for('show_profile', username=session['username']))
         else:
-            # If the post does not exist, display an error message
             flash('Post not found', 'error')
-            return redirect(url_for('explore'))  # Redirect to the explore page
+            return redirect(url_for('explore')) 
     else:
-        # If the request method is not POST, redirect to an error page
         flash('Invalid request method', 'error')
-        return redirect(url_for('explore'))  # Redirect to the explore page
+        return redirect(url_for('explore'))
 
 
 @app.route('/individual_post')
@@ -286,7 +257,7 @@ def search():
 @app.route('/add_favorite', methods=['POST'])
 def add_favorite():
     if 'username' not in session:
-        return redirect(url_for('login'))  # Redirect if user is not logged in
+        return redirect(url_for('login'))
 
     if request.method == 'POST':
         post_id = request.form.get('post_id')
@@ -304,10 +275,7 @@ def remove_favorite(post_id):
         return redirect(url_for('login'))  
 
     if request.method == 'POST':
-        # Remove the post from favorites for the logged-in user
         post_repo.remove_favorite(session['username'], post_id)
-
-        # Redirect to the favorites page
         return redirect(url_for('favorites'))
     return redirect(url_for('explore'))
 
@@ -319,11 +287,7 @@ def favorites():
     else:
         return redirect(url_for('login'))
 
-
-
 #Cayla's DM Feature
-
-
 @app.route('/directmessages', methods=['GET'])
 def direct_messages():
     query = request.args.get('q')

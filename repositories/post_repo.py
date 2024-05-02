@@ -154,64 +154,38 @@ def delete_post(post_id):
                 WHERE post_id = %s
             ''', (post_id))
             conn.commit()
-    # Redirect back to the profile page after deleting the post
     return redirect(url_for('show_profile', username=session['username']))
 
 def add_favorite(username, post_id):
     try:
-        # Get the database connection pool
         pool = get_pool()
-        
-        # Acquire a connection from the pool
         with pool.connection() as conn:
             with conn.cursor() as cursor:
-                # Define the SQL query to insert a favorite record
                 insert_query = "INSERT INTO favorites (username, post_id) VALUES (%s, %s)"
-
-                # Execute the SQL query with the provided username and post_id
                 cursor.execute(insert_query, (username, post_id))
-
-            # Commit the transaction to persist the changes
             conn.commit()
-
         print("Favorite added successfully!")
-
     except Exception as error:
         print("Error while adding favorite:", error)
 
 def remove_favorite(username, post_id):
     try:
-        # Get the database connection pool
         pool = get_pool()
-        
-        # Acquire a connection from the pool
         with pool.connection() as conn:
             with conn.cursor() as cursor:
-                # Define the SQL query to delete a favorite record
                 delete_query = "DELETE FROM favorites WHERE username = %s AND post_id = %s"
-
-                # Execute the SQL query with the provided username and post_id
                 cursor.execute(delete_query, (username, post_id))
-
-            # Commit the transaction to persist the changes
             conn.commit()
-
         print("Favorite removed successfully!")
         return redirect(url_for('favorites'))
-
-
     except Exception as error:
         print("Error while removing favorite:", error)
 
 def get_favorite_posts_by_username(username):
     try:
-        # Get the database connection pool
         pool = get_pool()
-        
-        # Acquire a connection from the pool
         with pool.connection() as conn:
             with conn.cursor(row_factory=dict_row) as cursor:
-                # Define the SQL query to retrieve favorite posts for a given username
                 select_query = '''
                     SELECT
                         p.username AS post_owner,
@@ -229,15 +203,9 @@ def get_favorite_posts_by_username(username):
                     WHERE
                         f.username = %s
                 '''
-
-                # Execute the SQL query
                 cursor.execute(select_query, (username,))
-
-                # Fetch all the rows from the result
                 favorite_posts = cursor.fetchall()
-
         return favorite_posts
-
     except Exception as error:
         print("Error while retrieving favorite posts:", error)
         return []

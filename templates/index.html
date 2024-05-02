@@ -21,7 +21,7 @@
 }
 
 .logosmall {
-    width: 70%; 
+    width: 30%; 
     display: block; 
     margin: 0 auto; 
 }
@@ -58,15 +58,15 @@
     justify-content: center;
 }
 
-.login-form, .signup-form {
+.login-form{
     background-image: url('../static/abstract_bg1.jpg');
     background-repeat: no-repeat;
     background-size: 100% 100%;
     border: 1px solid rgba(0, 0, 0, 0.479);
     color: black;
-    padding-bottom: 100px; /* Increase the padding on bottom */
+    padding-bottom: 100px; 
     padding-left: 450px;
-    padding-right: 450px; /* Adjust padding on left and right as needed */
+    padding-right: 450px; 
     justify-content: center;
     width: 100%;
     font-size: 1em;
@@ -83,11 +83,60 @@
     padding: 5px 10px;
 }
 
-.signup {
+#submit {
+    margin-top: 20px;
+    background-color: rgb(3, 91, 3);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.signup-form {
+    background-image: url('../static/abstract_bg1.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: black;
+    justify-content: center;
+    min-height: 130vh;
     display: block;
-    margin: 0 auto 20px 0;
-    height: auto;
-    width: 250px;
+    width: 90%;
+}
+
+.signup-form input, .signup-form textarea {
+    display: block;
+    width: 40%;
+    box-sizing: border-box;
+    border: 2px solid rgb(3, 91, 3);
+    border-radius: 3px;
+    padding: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 7px;
+}
+
+.signup-form input[type="file"] {
+    display: block;
+    width: 40%;
+    margin-left: 29.5%;
+    margin-right: auto;
+    border: none;
+    margin-bottom: 0;
+}
+
+.signup-form label {
+    display: block;
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 7px;
+    font-weight: bold;
+}
+
+.center-content {
+    text-align: center;
 }
 
 </style>
@@ -111,25 +160,27 @@
     {% endif %}
 {% elif is_user == 2 %}
     <div class="signup-form">
-        <br><img src="/static/signup.png" alt="explore" class="signup">
+        <br><img src="/static/signup.png" alt="explore" class="logosmall"><br>
         <form action="/signup" method="POST" enctype="multipart/form-data">
-            <label for="first_name">First Name</label><br>
-            <input type="text" name="first_name" id="first_name" class="w-50" required><br><br>
-            <label for="last_name">Last Name</label><br>
-            <input type="text" name="last_name" id="last_name" class="w-50" required><br><br>
-            <label for="username">Username</label><br>
-            <input type="text" name="username" id="username" class="w-50" required><br><br>
-            <label for="password">Password</label><br>
-            <input type="password" name="password" id="password" class="w-50" required minLength="8"><br><br>
-            <label for="email">Email</label><br>
-            <input type="email" name="email" id="email" class="w-50" required><br><br>
-            <label for="dob">Date of Birth</label><br>
-            <input type="date" name="dob" id="dob" class="w-50" required><br><br>
-            <label for="biography">Biography</label><br>
-            <textarea name="biography" id="biography" cols="30" rows="3" placeholder="Introduce yourself!"></textarea><br><br>
-            <label for="profile_picture">Profile Image</label><br>
-            <input type="file" name="profile_picture" id="profile_picture" class="w-50" required><br><br>
-            <button type="submit" name="signup" id="signup" class="btn w-50 btn-primary">Create Account</button>
+            <label for="first_name">First Name</label>
+            <input type="text" name="first_name" id="first_name" required>
+            <label for="last_name">Last Name</label>
+            <input type="text" name="last_name" id="last_name" required>
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" required>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required minLength="8">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" required>
+            <label for="dob">Date of Birth</label>
+            <input type="date" name="dob" id="dob" required>
+            <label for="biography">Biography</label>
+            <textarea name="biography" id="biography" cols="30" rows="3" placeholder="Introduce yourself!"></textarea>
+            <label for="profile_picture">Profile Image</label>
+            <input type="file" name="profile_picture" id="profile_picture" required>
+            <div class="center-content">
+                <button type="submit" name="signup" id="submit" class="btn btn-primary">Create Account</button>
+            </div>
         </form>
     </div>
 {% elif is_user == 0 %}
