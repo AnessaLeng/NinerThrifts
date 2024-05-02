@@ -1,4 +1,5 @@
 from repositories.db import get_pool
+from typing import Any
 from psycopg.rows import dict_row
 from flask import redirect, url_for
 from flask import Flask, session
@@ -47,7 +48,7 @@ def get_searched_posts(title: str):
     return search_result
 
 
-def get_post_by_id(post_id):
+def get_post_by_id(post_id: dict[str, Any]):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cursor:
@@ -152,7 +153,7 @@ def delete_post(post_id):
             cursor.execute('''
                 DELETE FROM posts
                 WHERE post_id = %s
-            ''', (post_id))
+            ''', (post_id,))
             conn.commit()
     return redirect(url_for('show_profile', username=session['username']))
 
