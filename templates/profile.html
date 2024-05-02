@@ -4,9 +4,9 @@
 {% block body %}
 <style>
     .profile-picture {
-        border-radius: 50%; 
-        width: 150px; 
-        height: 150px;
+        border-radius: 50%;
+        width: 200px; 
+        height: 200px;
         object-fit: cover; 
     }
     .col-8{
@@ -18,8 +18,27 @@
     .username{
         font-weight:bold;
     }
-    .edit{
+    .edit-profile-btn {
         width: 220px;
+        margin-top: 10px;
+        background-color: #315ce9;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        transition-duration: 0.4s;
+    }
+    .edit-profile-btn:hover {
+        background-color: #2747b0;
+    }
+
+    .edit-profile-btn a {
+        color: inherit; 
+        text-decoration: none;
     }
 </style>
 <br>
@@ -28,11 +47,18 @@
         <div class="col-4">
             <p><img class="profile" alt="profile_picture" src="{{ profile.profile_picture }}" height="200px" width="200px"></p>
             <br>
-            <button class="edit"><a href="{{ url_for('updated_profile') }}">Edit Profile</a></button>
+            {% if profile.username == session.get('username') %}
+                <button class="edit-profile-btn"><a href="{{ url_for('updated_profile') }}">Edit Profile</a></button>
+            {% endif %}
         </div>
         <div class="col-8">
             <div class="username"><p>{{ profile.username }}</p></div>
             <div class="bio"> <p>{{ profile.biography }}</p> </div>
+            <div>
+                {% if profile.username != session.get('username') %}
+                    <a href="{{ url_for('chatlog', recipient_username=profile.username) }}" class="btn btn-primary">Message</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>

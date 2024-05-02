@@ -56,27 +56,40 @@
 }
 
 .search-bar {
-  width: 100%;
+  width: 92%;
   padding: 8px;
   margin-bottom: 10px;
   box-sizing: border-box;
 }
+#search-button {
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 </style>
 
 <br><img src="/static/messages.png" alt="favorites" class="logosmall"><br>
 
 <div id="inbox">
   <h2>Inbox</h2>
-  <input type="text" id="search-bar" class="search-bar" placeholder="Search users...">
-  <button id="search-button">Search</button>
+  <div>
+    <input type="text" id="search-bar" class="search-bar" placeholder="Search users...">
+    <button id="search-button">Search</button>
+  </div>
   <ul id="user-list">
     {% for user in users %}
+      {% if user.username != session.get('username') %}
       <li>
         <a href="/chatlog/{{ user.username }}" class="user-link">
           <img src="{{ user.profile_picture }}" alt="profile picture">
           {{ user.username }}
         </a>
       </li>
+      {% endif %}
     {% endfor %}
   </ul>
   {% if not users %}

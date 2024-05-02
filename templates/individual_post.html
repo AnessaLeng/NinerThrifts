@@ -9,7 +9,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 100vh; 
+        min-height: 100vh; 
     }
 
     .post {
@@ -77,13 +77,18 @@
         background-color: #154f18; 
     }
 
+    .post-title {
+        word-wrap: break-word; 
+        margin-top: 10px;
+    }
+
 </style>
 
 <body>
     <div class="container">
         <div class="post">
             <a href="/explore"><i class="fas fa-chevron-left"></i></a>
-            <h1>{{ post.title }}</h1><br>
+            <h1 class="post-title">{{ post.title }}</h1><br>
             <img src="{{ post.image_url }}" class="post-image img-fluid" alt="Post Image">
             <div class="post-info">
                 <p class="post-info"><strong>Price: $</strong> {{ post.price }}</p>
