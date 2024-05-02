@@ -10,30 +10,41 @@
         height: auto;
         width: 400px;
     }
+
+    body {
+        background-color: white;
+    }
+
+    .container .col {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .card {
+        border: none;
+    }
+
 </style>
-<div class="container">
     <br><img src="/static/favorites.png" alt="favorites" class="logosmall"><br>
-    {% if favorite_posts %}
-        <div class="row">
-            {% for post in favorite_posts | reverse %}
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <img src="{{ post.image_url }}" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ post.title }}</h5>
-                            <p class="card-text">Price: ${{ post.price }}</p>
-                            <p class="card-text">{{ post.condition }}</p>
-                            <a href="{{ url_for('show_individual_post', post_id=post.post_id) }}" class="btn btn-primary">View</a>
-                            <form action="{{ url_for('remove_favorite', post_id=post.post_id) }}" method="post" onsubmit="return confirm('Are you sure you want to remove this post?')">
-                                <button type="submit" class="btn btn-danger" >Remove from Favorites</button>
-                            </form>
-                        </div>
+    <div class="container">
+        <div class="row row-cols-4">
+            {% if favorite_posts %}
+                {% for post in favorite_posts | reverse %}
+                    <div class="col">
+                        <a href="{{ url_for('show_individual_post', post_id=post.post_id) }}">
+                            <img src="{{ post.image_url }}" height="250px" width="250px" alt="Post Image">
+                        </a>
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">Price: ${{ post.price }}</p>
+                        <p class="card-text">Condition: {{ post.condition }}</p>
+                        <form action="{{ url_for('remove_favorite', post_id=post.post_id) }}" method="post" onsubmit="return confirm('Are you sure you want to remove this post?')">
+                            <button type="submit" class="btn btn-danger" >Remove from Favorites</button>
+                        </form>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                <p>No posts added to favorites.</p>
+        {% endif %}
         </div>
-    {% else %}
-        <p>No favorite posts found.</p>
-    {% endif %}
-</div>
+    </div>
 {% endblock %}

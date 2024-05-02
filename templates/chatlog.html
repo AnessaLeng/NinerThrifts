@@ -62,17 +62,6 @@
         background-color: #4cd137;
     }
 
-    .message-content::before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: -10px;
-        width: 10px;
-        height: 10px;
-        background-color: #dcf8c6;
-        border-radius: 50%;
-        transform: translateY(-50%);
-    }
 
     .sent .message-content::before {
         background-color: #4cd137;
@@ -85,6 +74,7 @@
     }
 
     .recipient-info {
+        margin-top: 10px;
         display: flex;
         align-items: center;
         margin-bottom: 10px;
@@ -96,17 +86,35 @@
         border-radius: 50%;
         margin-right: 10px;
     }
+    .fa-search {
+        color: grey;
+        left: 225px;
+        top: 10px;
+    }
+
+    .fa-chevron-left {
+        color: grey;
+        left: 190px;
+        top: 12px;
+    }
 </style>
+<a href="/directmessages"> <i class="fas fa-chevron-left"></i></a> 
 <h1>Chat with {{ recipient.username }}</h1>
 <div class="recipient-info">
-    <img src="{{ recipient.profile_picture }}" alt="{{ recipient.username }}">
+    <a href="/profile/{{ recipient.username }}">
+        <img src="{{ recipient.profile_picture }}" alt="{{ recipient.username }}">
+    </a>
     <p>{{ recipient.username }}</p>
 </div>
 <div id="chat-log">
     {% for message in messages %}
+        {% if message.sender_username == current_username %}
+        {% else %}
+        {% endif %}
+        <!-- Message display -->
         <div class="message {% if message.sender_username == current_username %}sent{% else %}received{% endif %}">
             <div class="message-content">
-                {{ message.message_content }}
+                <strong>{{ message.sender_username }}: </strong>{{ message.message_content }}
             </div>
             <div class="message-timestamp">
                 {{ message.sent_at.strftime('%Y-%m-%d %H:%M') }}
@@ -181,6 +189,7 @@
         const recipientUsername = document.getElementById('recipient-username').value;
         socket.emit('new_message', { recipient_username: recipientUsername, message_content: messageContent });
         messageInput.value = '';
+        location.reload();
     }
     
     const messageForm = document.getElementById('message-form');

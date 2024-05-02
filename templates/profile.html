@@ -38,6 +38,11 @@
         <div class="col-8">
             <div class="username"><p>{{ profile.username }}</p></div>
             <div class="bio"> <p>{{ profile.biography }}</p> </div>
+            <div>
+                {% if profile.username != session.get('username') %}
+                    <a href="{{ url_for('chatlog', recipient_username=profile.username) }}" class="btn btn-primary">Message</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
