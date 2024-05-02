@@ -152,7 +152,7 @@ def delete_post(post_id):
             cursor.execute('''
                 DELETE FROM posts
                 WHERE post_id = %s
-            ''', (post_id))
+            ''', (post_id,))
             conn.commit()
     return redirect(url_for('show_profile', username=session['username']))
 
