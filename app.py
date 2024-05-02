@@ -31,7 +31,7 @@ users = {}
 def show_profile():
     if 'email' not in session:
         return redirect(url_for('login'))
-
+    username = session['username']
     # Fetch profile information for the user whose profile is being viewed
     profile = profile_repo.get_profile_by_username(username)
 
