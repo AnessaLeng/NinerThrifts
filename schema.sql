@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS posts (
    posted_date     DATE       DEFAULT     CURRENT_DATE,
    image_url       VARCHAR(255)    NULL,
    PRIMARY KEY(post_id),
-   FOREIGN KEY(username) REFERENCES users(username)
+   FOREIGN KEY(username) REFERENCES users(username) ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS user_sessions (
