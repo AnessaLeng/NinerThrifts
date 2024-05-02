@@ -3,9 +3,6 @@ from psycopg.rows import dict_row
 from flask import redirect, url_for
 from flask import Flask, session
 
-
-
-#for Nhu's explore feature
 def get_all_posts():
     pool = get_pool()
     with pool.connection() as conn:
@@ -24,6 +21,7 @@ def get_all_posts():
                                 posts
                             ''')
             return cursor.fetchall()
+
 
 def get_searched_posts(title: str):
     pool = get_pool()
@@ -46,6 +44,7 @@ def get_searched_posts(title: str):
                             ''', ['%' + title + '%'])
             search_result = cursor.fetchall()
     return search_result
+
 
 def get_post_by_id(post_id):
     pool = get_pool()
@@ -89,7 +88,6 @@ def get_posts_by_username(username):
                                 username = %s
                             ''', [username])
             return cursor.fetchall()
-        
 
 # testing update and delete post
 # post_repo.py
@@ -149,7 +147,6 @@ def update_post(post_id, title, body, price=None, condition=None, image_url=None
             conn.commit()
 
 
-
 def delete_post(post_id):
     pool = get_pool()
     with pool.connection() as conn:
@@ -157,7 +154,7 @@ def delete_post(post_id):
             cursor.execute('''
                 DELETE FROM posts
                 WHERE post_id = %s
-            ''', (post_id,))
+            ''', (post_id))
             conn.commit()
     # Redirect back to the profile page after deleting the post
     return redirect(url_for('show_profile', username=session['username']))

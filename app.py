@@ -56,6 +56,43 @@ def show_profile(username):
 
     return render_template('profile.html', profile=profile, posts=posts)
 
+@app.route('/update_profile', methods=['GET', 'POST'])
+def updated_profile():
+    if(request.method == 'POST'):
+        email = session['email']
+        username = request.form.get('new_username')
+        bio = request.form.get('new_bio')
+
+        if 'profile_picture' in request.files:
+            profile_image = request.files['new_rofile_picture']
+            api_key = os.getenv('API_KEY')
+            upload_url = 'https://api.imgbb.com/1/upload'
+            data = {
+                    'key': api_key,
+                    'image': base64.b64encode(profile_image.read())
+                }
+            response = requests.post(upload_url, data=data)
+            if response.status_code == 200:
+                json_response = response.json()
+                new_image_url = json_response['data']['url']
+                profile_repo.update_profile(email, username, bio, new_image_url)
+            else:
+                flash('Failed to upload new image for post', 'error')
+            return redirect(url_for('show_profile', username=username))
+    return render_template('edit_profile.html')
+
+@app.post('/delete_profile/<username>')
+def delete_profile(username):
+    if request.method == 'POST':
+        profile = profile_repo.get_profile_by_username(username)
+        if profile:
+            profile_repo.delete_profile(username)
+            return redirect(url_for('signup'))
+        else:
+            return redirect(url_for('show_profile'))
+    else:
+        return render_template('error.html', error_message='Invalid request method.')
+
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -193,7 +230,6 @@ def edit_post(post_id):
 
 
 # Delete post route
-
 
 @app.route('/delete_post/<int:post_id>', methods=['POST'])
 def delete_post(post_id):

@@ -6,21 +6,10 @@
         background-image: url('../static/abstract_bg1.jpg');
         background-repeat: no-repeat;
         background-size: cover;
-        display: flex;
-        flex-direction: column;
+        display: block;
         align-items: center;
         justify-content: center;
         height: 100vh; 
-    }
-
-    .form-group {
-        margin-bottom: 10px; 
-    }
-
-    label{
-        display: block;
-        margin-bottom: 10px;
-        font-weight: bold;
     }
 
     .drop-zone{
@@ -93,29 +82,68 @@
         width: 400px;
     }
 
+    label {
+        display: block;
+        width: 40%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 7px;
+        font-weight: bold;
+    }
+
+    input, select, textarea {
+        display: block;
+        width: 40%;
+        box-sizing: border-box;
+        border: 2px solid rgb(3, 91, 3);
+        border-radius: 3px;
+        padding: 5px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 7px;
+    }
+
+    input[type="file"] {
+        display: block;
+        width: 40%;
+        margin-left: auto;
+        margin-right: auto;
+        border: none;
+        margin-bottom: 0;
+    }
+
+    #submit {
+        margin-top: 20px;
+        background-color: rgb(3, 91, 3);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+
+    .center-content {
+        text-align: center;
+    }
+
 </style>
 
 <div class="form-container">
 <br><img src="/static/createpost.png" alt="create a post" class="logosmall"><br>
 
 <form action="/create_post" method="POST" enctype="multipart/form-data">
-    <div class="form-group">
+    <div>
         <label for="title">Title</label>
         <input type="text" id="title" name="title" required>
     </div>
 
-    <div class="form-group">
+    <div>
         <label for="price">Price</label>
         <input type="number" id="price" name="price" required>
     </div>
 
-
-    <!-- <div class="form-group">
-        <label for="hashtags">Hashtags</label>
-        <input type="text" id="hashtags" name="hashtags" required>
-    </div> -->
-
-    <div class="form-group">
+    <div>
         <label for="condition">Condition</label>
         <select id="condition" name="condition" required>
             <option value="new">New</option>
@@ -124,17 +152,18 @@
             <option value="poor">Poor</option>
         </select>
     </div>
-    
 
-    <div class="form-group">
+    <div>
         <label for="description">Description</label>
-        <textarea id="description" name="description" style="width: 300px; height: 150px;" placeholder="Tell us more..." required></textarea>
+        <textarea id="description" name="description" style="height: 100px" placeholder="Tell us more..." required></textarea>
     </div>
 
-    <input type="file" id="myFile" name="myFile">
-    <div id="file-list" class="file-list"></div><br><br>
+    <input class="center-content" type="file" id="myFile" name="myFile">
+    <div id="file-list" class="file-list"></div>
 
-    <input type="submit" value="Submit" style="background-color: green; color: white; border: none; border-radius: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer;"><br><br><br>
+    <div class="center-content">
+        <button id="submit" type="submit" class="btn btn-primary">Submit</button>
+    </div>
 </form>
 </div>
 {% endblock %}
