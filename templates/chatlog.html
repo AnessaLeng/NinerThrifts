@@ -85,7 +85,19 @@
         border-radius: 50%;
         margin-right: 10px;
     }
+    .fa-search {
+        color: grey;
+        left: 225px;
+        top: 10px;
+    }
+
+    .fa-chevron-left {
+        color: grey;
+        left: 190px;
+        top: 12px;
+    }
 </style>
+<a href="/directmessages"> <i class="fas fa-chevron-left"></i></a> 
 <h1>Chat with {{ recipient.username }}</h1>
 <div class="recipient-info">
     <img src="{{ recipient.profile_picture }}" alt="{{ recipient.username }}">
