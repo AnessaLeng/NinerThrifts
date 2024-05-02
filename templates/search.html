@@ -77,8 +77,8 @@
     <div class="row row-cols-4">
         {% for result in search_result %}
         <div class="col">
-            <a href="/individual_post">
-                <img src="{{ search_result.image_url }}" height="250px" width="250px">
+            <a href="/individual_post?post_id={{ result.post_id }}">
+                <img src="{{ result.image_url }}" height="250px" width="250px">
             </a>
         </div>
         {% endfor %}
