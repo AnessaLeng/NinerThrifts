@@ -27,11 +27,24 @@ users = {}
 
     
 ##Jaidens profile page
-@app.get('/profile')
-def show_profile():
+# @app.get('/profile')
+# def show_profile():
+#     if 'email' not in session:
+#         return redirect(url_for('login'))
+
+#     # Fetch profile information for the user whose profile is being viewed
+#     profile = profile_repo.get_profile_by_username(username)
+
+#     # Fetch posts associated with the user whose profile is being viewed
+#     posts = post_repo.get_posts_by_username(username)
+
+#     return render_template('profile.html', profile=profile, posts=posts)
+
+@app.get('/profile/<username>')
+def show_profile(username):
     if 'email' not in session:
         return redirect(url_for('login'))
-
+    
     # Fetch profile information for the user whose profile is being viewed
     profile = profile_repo.get_profile_by_username(username)
 
@@ -39,7 +52,6 @@ def show_profile():
     posts = post_repo.get_posts_by_username(username)
 
     return render_template('profile.html', profile=profile, posts=posts)
-
 
 # Anessa's signup/login feature
 @app.route('/')
