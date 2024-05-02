@@ -32,7 +32,7 @@ users = {}
 def show_profile(username):
     if 'email' not in session:
         return redirect(url_for('login'))
-
+    
     # Fetch profile information for the user whose profile is being viewed
     profile = profile_repo.get_profile_by_username(username)
 
@@ -40,6 +40,39 @@ def show_profile(username):
     posts = post_repo.get_posts_by_username(username)
 
     return render_template('profile.html', profile=profile, posts=posts)
+
+@app.route('/update_profile', methods=['GET', 'POST'])
+def updated_profile():
+    if(request.method == 'POST'):
+        email = session['email']
+        new_username = request.form.get('new_username')
+        new_bio = request.form.get('new_bio')
+
+        if 'profile_picture' in request.files:
+            profile_image = request.files['profile_picture']
+            api_key = os.getenv('API_KEY')
+            upload_url = 'https://api.imgbb.com/1/upload'
+            data = {
+                    'key': api_key,
+                    'image': base64.b64encode(profile_image.read())
+                }
+            response = requests.post(upload_url, data=data)
+            if response.status_code == 200:
+                json_response = response.json()
+                new_image_url = json_response['data']['url']
+                profile_repo.update_profile(email, new_username, new_bio, new_image_url)
+            else:
+                flash('Failed to upload new image for post', 'error')
+        else:
+            profile_repo.update_profile(email, new_username, new_bio)
+        
+        updated_profile = profile_repo.get_profile_by_email(email)
+        if updated_profile:
+            session['username'] = updated_profile.get('username')
+            session['bio'] = updated_profile.get('biography')
+            session['profile_picture'] = updated_profile.get('profile_picture')
+        return redirect(url_for('show_profile', username=session['username']))
+    return render_template('edit_profile.html')
 
 
 # Anessa's signup/login feature
@@ -142,7 +175,6 @@ def create_listing():
             create_post(username, title, body, price, condition, json_response['data']['url'])
             return redirect(url_for('show_profile', username=username))
     return render_template('create_post.html')
-
 
 # Edit post route
 @app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
@@ -261,8 +293,6 @@ def favorites():
         return redirect(url_for('login'))
 
 #Cayla's DM Feature
-
-
 @app.route('/directmessages', methods=['GET'])
 def direct_messages():
     if 'username' not in session:
@@ -286,13 +316,14 @@ def chatlog(recipient_username):
     print("User is in session")
     # Get the logged-in user's ID
     sender_username = session.get('username')
+    current_username = sender_username  # Establish current_username
     # Fetch messages for the specified thread ID
     thread_id = message_repo.get_or_create_thread(sender_username,recipient_username)
     messages = message_repo.get_messages_for_thread(thread_id)
     sender = user_repo.get_user_by_username(sender_username)
     recipient = user_repo.get_user_by_username(recipient_username)
     # Render template to display messages
-    return render_template('chatlog.html', messages=messages, sender=sender, recipient=recipient)
+    return render_template('chatlog.html', messages=messages, sender=sender, recipient=recipient, current_username=current_username)
 
 @socketio.on("connect")
 def handle_connect():
