@@ -28,10 +28,11 @@ users = {}
     
 ##Jaidens profile page
 @app.get('/profile/<username>')
-def show_profile(username):
+def show_profile(username=None):
     if 'email' not in session:
         return redirect(url_for('login'))
-    
+    if username is None:
+        username = session['username']
     # Fetch profile information for the user whose profile is being viewed
     profile = profile_repo.get_profile_by_username(username)
 
@@ -47,8 +48,8 @@ def updated_profile():
         new_username = request.form.get('new_username')
         new_bio = request.form.get('new_bio')
 
-        if 'profile_picture' in request.files:
-            profile_image = request.files['profile_picture']
+        if 'new_profile_picture' in request.files:
+            profile_image = request.files['new_profile_picture']
             api_key = os.getenv('API_KEY')
             upload_url = 'https://api.imgbb.com/1/upload'
             data = {
@@ -67,10 +68,13 @@ def updated_profile():
         
         updated_profile = profile_repo.get_profile_by_email(email)
         if updated_profile:
+            new_username = updated_profile.get('username')
             session['username'] = updated_profile.get('username')
-            session['bio'] = updated_profile.get('biography')
-            session['profile_picture'] = updated_profile.get('profile_picture')
-        return redirect(url_for('show_profile', username=session['username']))
+            return redirect(url_for('show_profile', username=new_username))
+        else:
+            flash('Failed to update profile', 'error')
+            username = session["username"]
+            return redirect(url_for('show_profile', username=username))
     return render_template('edit_profile.html')
 
 
