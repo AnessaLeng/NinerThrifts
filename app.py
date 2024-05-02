@@ -1,5 +1,6 @@
 import os
-from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session
+from flask import session
+from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session, flash
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
@@ -30,17 +31,15 @@ users = {}
 def show_profile():
     if 'email' not in session:
         return redirect(url_for('login'))
-    email = session['email']
-    posts = []
-    profile = profile_repo.get_profile_by_email(email)
-    # all_posts = post_repo.get_all_posts()
-    # for post in all_posts:
-    #     if(post['email'] == email):
-    #         posts.append(post)
-    user = user_repo.get_logged_in_user()
-    username = user['username']
+    
+    # Fetch profile information for the user whose profile is being viewed
+    profile = profile_repo.get_profile_by_username(username)
+
+    # Fetch posts associated with the user whose profile is being viewed
     posts = post_repo.get_posts_by_username(username)
-    return render_template('profile.html', profile = profile, posts = posts)
+
+    return render_template('profile.html', profile=profile, posts=posts)
+
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -140,10 +139,68 @@ def create_listing():
             json_response = response.json()
             print(json_response)
             create_post(username, title, body, price, condition, json_response['data']['url'])
-            return redirect(url_for('explore'))
+            return redirect(url_for('show_profile', username=username))
     return render_template('create_post.html')
 
-#Varsha individual post feature
+# Edit post route
+@app.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
+def edit_post(post_id):
+    post = post_repo.get_post_by_id(post_id)
+    if request.method == 'POST':
+        new_title = request.form['title']
+        new_body = request.form['body']
+        new_price = request.form['price']
+        new_condition = request.form['condition']
+        
+        # updating image but not really working rn
+        if 'myFile' in request.files:
+            post_image = request.files['myFile']
+            api_key = os.getenv('API_KEY')
+            upload_url = 'https://api.imgbb.com/1/upload'
+            data = {
+                    'key': api_key,
+                    'image': base64.b64encode(post_image.read())
+                }
+            response = requests.post(upload_url, data=data)
+            if response.status_code == 200:
+                json_response = response.json()
+                new_image_url = json_response['data']['url']
+                post_repo.update_post(post_id, new_title, new_body, new_price, new_condition, new_image_url)
+            else:
+                flash('Failed to upload new image for post', 'error')
+        else:
+            # If no new image is provided, update post without changing the image URL
+            post_repo.update_post(post_id, new_title, new_body, new_price, new_condition)
+        
+        flash('Post updated successfully', 'success')
+        return redirect(url_for('show_individual_post', post_id=post_id))
+    return render_template('edit_post.html', post=post)
+
+
+# Delete post route
+@app.route('/delete_post/<int:post_id>', methods=['POST'])
+def delete_post(post_id):
+    # Check if the request method is POST
+    if request.method == 'POST':
+        # Fetch the post being deleted
+        post = post_repo.get_post_by_id(post_id)
+
+        # Check if the post exists
+        if post:
+            # Delete the post from the database
+            post_repo.delete_post(post_id)
+            flash('Post deleted successfully', 'success')
+            return redirect(url_for('show_profile', username=session['username']))
+        else:
+            # If the post does not exist, display an error message
+            flash('Post not found', 'error')
+            return redirect(url_for('explore'))  # Redirect to the explore page
+    else:
+        # If the request method is not POST, redirect to an error page
+        flash('Invalid request method', 'error')
+        return redirect(url_for('explore'))  # Redirect to the explore page
+
+
 @app.route('/individual_post')
 def show_individual_post():
     post_id = request.args.get('post_id')
@@ -164,40 +221,25 @@ def search():
     search_result = post_repo.get_searched_posts(value)
     return render_template("search.html", search_result = search_result)
 
-
-# @app.route('/favorites', methods=["GET"])
-# def favorites():
-#     # will change this after pulling posts from database
-#     postGrid = {}
-#     post = "static/blankpost.jpg"
-#     post_id = "post id"
-#     posts = ["static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", 
-#             "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg", "static/blankpost.jpg"]
-#     postGrid[post_id] = []
-#     postGrid[post_id].append(post)
-#     return render_template("favorites.html", postGrid = postGrid, posts = posts)
-
-
 # Cindy's favorites feature
-# @app.route('/favorites')
-# def favorites():
-#     all_favorites = get_all_favorites()
-#     return render_template("favorites.html", favorites=all_favorites)
+@app.route('/add_favorite', methods=['POST'])
+def add_favorite():
+    if 'username' not in session:
+        return redirect(url_for('login'))  # Redirect if user is not logged in
 
-# @app.route('/add_favorite', methods=['POST'])
-# def add_favorite():
-#     if request.method == 'POST':
-#         username = request.form.get('username')
-#         post_id = request.form.get('post_id')
-#         add_favorite(username, post_id)
-#         return redirect(url_for('favorites'))
+    if request.method == 'POST':
+        post_id = request.form.get('post_id')
+
+        post_repo.add_favorite(session['username'], post_id)
+
+        return redirect(url_for('favorites'))
 
 # @app.route('/remove_favorite', methods=['POST'])
 # def remove_favorite():
 #     if request.method == 'POST':
-#         username = request.form.get('username')
+#         user_id = request.form.get('user_id')
 #         post_id = request.form.get('post_id')
-#         remove_favorite(username, post_id)
+#         remove_favorite(user_id, post_id)
 #         return redirect(url_for('favorites'))
 
 #Cayla's DM Feature
