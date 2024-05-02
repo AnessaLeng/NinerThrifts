@@ -71,12 +71,14 @@
   <button id="search-button">Search</button>
   <ul id="user-list">
     {% for user in users %}
+      {% if user.username != session.get('username') %}
       <li>
         <a href="/chatlog/{{ user.username }}" class="user-link">
           <img src="{{ user.profile_picture }}" alt="profile picture">
           {{ user.username }}
         </a>
       </li>
+      {% endif %}
     {% endfor %}
   </ul>
   {% if not users %}

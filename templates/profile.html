@@ -22,7 +22,12 @@
     <div class="row">
         <div class="col-8">
             <div><p style="font-weight: bold; font-size: 1.1em;">{{ profile.username }}</p></div>
-            <div> <p>{{ profile.biography }}</p> </div>
+            <div> <p>{{ profile.biography }}</p></div>
+            <div>
+                {% if profile.username != session.get('username') %}
+                    <a href="{{ url_for('chatlog', recipient_username=profile.username) }}" class="btn btn-primary">Message</a>
+                {% endif %}
+            </div>
         </div>
         <div class="col-4">
         </div>
