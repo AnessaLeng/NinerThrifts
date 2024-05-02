@@ -66,11 +66,14 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="/signup">Sign Up</a></li>
-                        <li><a class="dropdown-item" href="/profile">Profile</a></li>
                         <li><a class="dropdown-item" href="/explore">Explore</a></li>
+                        {% if 'username' in session %}
+                        <li><a class="dropdown-item" href="/profile/{{ session['username'] }}">Profile</a></li>
                         <li><a class="dropdown-item" href="/create_post">Create a Listing</a></li>
+                        <li><a class="dropdown-item" href="/favorites">Favorites</a></li>
                         <li><a class="dropdown-item" href="/directmessages">Messages</a></li>
                         <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                        {% endif %}
                     </ul>
                 </li>
             </ul>
