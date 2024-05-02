@@ -61,12 +61,11 @@
 .login-form, .signup-form {
     background-image: url('../static/abstract_bg1.jpg');
     background-repeat: no-repeat;
-    background-size: 100% 100%;
+    background-size: cover;
     border: 1px solid rgba(0, 0, 0, 0.479);
     color: black;
-    padding-bottom: 100px; /* Increase the padding on bottom */
-    padding-left: 450px;
-    padding-right: 450px; /* Adjust padding on left and right as needed */
+    padding-left: 500px;
+    padding-right: 250px; 
     justify-content: center;
     width: 100%;
     font-size: 1em;
@@ -85,8 +84,6 @@
 
 .signup {
     display: block;
-    margin: 0 auto 20px 0;
-    height: auto;
     width: 250px;
 }
 
@@ -120,7 +117,7 @@
             <label for="username">Username</label><br>
             <input type="text" name="username" id="username" class="w-50" required><br><br>
             <label for="password">Password</label><br>
-            <input type="password" name="password" id="password" class="w-50" required minLength="8"><br><br>
+            <input type="password" name="password" id="password" class="w-50" required minLength="8" maxlength="64"><br><br>
             <label for="email">Email</label><br>
             <input type="email" name="email" id="email" class="w-50" required><br><br>
             <label for="dob">Date of Birth</label><br>

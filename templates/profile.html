@@ -45,10 +45,13 @@
 <div class="container">
     <div class="row"> 
         <div class="col-4">
-            <p><img class="profile" alt="profile_picture" src="{{ profile.profile_picture }}" height="200px" width="200px"></p>
+                <p><img class="profile" alt="profile_picture" src="{{ profile.profile_picture }}" height="200px" width="200px"></p>
             <br>
-            {% if profile.username == session.get('username') %}
-                <button class="edit"><a href="{{ url_for('updated_profile') }}">Edit Profile</a></button>
+            {% if 'username' in session and session['username'] == profile.username %}
+            <button class="edit"><a href="{{ url_for('updated_profile') }}">Edit Profile</a></button>
+            <form action="{{ url_for('delete_user', username=profile.username) }}" method="post">
+                <button type="submit" onclick="return confirm('Are you sure you want to delete your account?');" class="edit mt-3 btn-danger">Delete Account</button>
+            </form>
             {% endif %}
         </div>
         <div class="col-8">

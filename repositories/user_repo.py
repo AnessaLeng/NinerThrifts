@@ -94,11 +94,56 @@ def get_username_from_user(user: dict[str, Any]) -> str:
 
 def get_logged_in_user():
     email = session.get('email')
-    print(email)
     if email is None:
         return None
     user = get_user_by_email(email)
     return user
+
+def delete_user_by_username(username: str) -> bool:
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            try:
+                cur.execute('''
+                            DELETE FROM 
+                                posts
+                            WHERE 
+                                username = %s;
+                        ''', [username])
+                
+                cur.execute('''
+                            DELETE FROM 
+                                messages
+                            WHERE 
+                                sender_username = %s OR recipient_username = %s;
+                        ''', [username, username])
+                
+                cur.execute('''
+                            DELETE FROM 
+                                favorites
+                            WHERE 
+                                username = %s;
+                        ''', [username])
+                
+                cur.execute('''
+                            DELETE FROM 
+                                message_threads
+                            WHERE 
+                                sender_username = %s OR recipient_username = %s;
+                        ''', [username, username])
+                
+                cur.execute('''
+                            DELETE FROM 
+                                users
+                            WHERE 
+                                username = %s;
+                        ''', [username])
+                conn.commit()
+                return True
+            except Exception as err:
+                print(f"Error deleting user: {err}")
+                return False
+
 
 # Needed for DMs
 
