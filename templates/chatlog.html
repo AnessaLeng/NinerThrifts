@@ -1,5 +1,201 @@
 {% extends "_layout.html" %}
-{% block title %}Create a Listing{% endblock %}
+{% block title %}Chat with {{ recipient.username }}{% endblock %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.min.js"></script>
+<script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
 {% block body %}
+<style>
+    #message-form {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+      }
+      
+      #message-input {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      
+      #send-button {
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: 10px;
+      }
+      
+      #send-button:hover {
+        background-color: #45a049;
+      }
+    #chat-log {
+        height: 500px;
+        overflow-y: scroll;
+        background-color: #eee;
+    }
 
+    .message {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .sent {
+        align-items: flex-end;
+    }
+
+    .message-content {
+        background-color: #dcf8c6;
+        border-radius: 10px;
+        padding: 10px;
+        max-width: 80%;
+        display: inline-block;
+        position: relative;
+        margin: 10px;
+    }
+
+    .sent .message-content {
+        background-color: #4cd137;
+    }
+
+    .message-content::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: -10px;
+        width: 10px;
+        height: 10px;
+        background-color: #dcf8c6;
+        border-radius: 50%;
+        transform: translateY(-50%);
+    }
+
+    .sent .message-content::before {
+        background-color: #4cd137;
+    }
+
+    .message-timestamp {
+        font-size: 12px;
+        color: #888;
+        margin-top: 5px;
+    }
+
+    .recipient-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .recipient-info img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+</style>
+<h1>Chat with {{ recipient.username }}</h1>
+<div class="recipient-info">
+    <img src="{{ recipient.profile_picture }}" alt="{{ recipient.username }}">
+    <p>{{ recipient.username }}</p>
+</div>
+<div id="chat-log">
+
+    {% for message in messages %}
+        <div class="message {% if message.sender_username == current_user_username %}sent{% else %}received{% endif %}">
+            <div class="message-content">
+                {{ message.message_content }}
+            </div>
+            <div class="message-timestamp">
+                {{ message.sent_at.strftime('%Y-%m-%d %H:%M') }}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<form id="message-form">
+    <input type="hidden" id="recipient-username" value="{{ recipient.username }}">
+    <input type="text" id="message-input" placeholder="Type your message here...">
+    <button id="send-button" type="submit">Send</button>
+</form>
+
+<script>
+    const socket = io();
+    
+    window.addEventListener('DOMContentLoaded', function() {
+        const recipient_username = {{ recipient.username }};
+        socket.connect();
+        
+        socket.on('connect', function() {
+            fetchExistingMessages(recipient_username);
+        
+            socket.on('receive_message', function(data) {
+                const chatLog = document.getElementById('chat-log');
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.innerHTML = `<div class="sender">${data.sender_username === current_user_username? 'You' : recipient.username}:</div><div class="content">${data.message_content}</div>`;
+                chatLog.appendChild(messageDiv);
+                chatLog.scrollTop = chatLog.scrollHeight;
+        
+                fetchExistingMessages(recipient_username);
+            });
+        });
+    });
+    
+    function fetchExistingMessages(recipient_username) {
+        fetch(`/chatlogs/${recipient_username}`)
+           .then(response => response.json())
+           .then(messages => {
+                messages.forEach(message => {
+                    appendMessage(message.message_content, message.sender_username === current_user_username, recipient_username);
+                });
+            })
+           .catch(error => {
+                console.error('Error fetching existing messages:', error);
+            });
+    }
+    
+    function appendMessage(message, isSent, thread_id) {
+        const chatLog = document.getElementById('chat-log');
+        const messageDiv = document.createElement('div');
+        messageDiv.textContent = message;
+        messageDiv.classList.add('message');
+        if (isSent) {
+            messageDiv.classList.add('sent');
+        } else {
+            messageDiv.classList.add('received');
+        }
+        chatLog.appendChild(messageDiv);
+        chatLog.scrollTop = chatLog.scrollHeight;
+    
+        const recipient_username = document.getElementById('recipient-username');
+        recipient_username.value = thread_id;
+    }
+    
+    function sendMessage() {
+        const messageInput = document.getElementById('message-input');
+        const messageContent = messageInput.value.trim();
+        if (messageContent === '') {
+            console.error('Cannot send empty message.');
+            return;
+        }
+        const recipient_username = document.getElementById('recipient-username').value;
+        socket.emit('new_message', { recipient_username: recipient_username, message_content: messageContent });
+        messageInput.value = '';
+    }
+    
+    const messageForm = document.getElementById('message-form');
+    messageForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        sendMessage();
+    });
+    
+    const messageInput = document.getElementById('message-input');
+    messageInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    });
+</script>
 {% endblock %}
