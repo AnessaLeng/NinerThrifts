@@ -55,6 +55,16 @@ def show_profile(username):
 
     return render_template('profile.html', profile=profile, posts=posts)
 
+@app.get('/edit_profile')
+def edit_profile():
+    return render_template('edit_profile.html')
+
+@app.get('/updated_profile')
+def updated_profile():
+    user = user_repo.get_logged_in_user()
+    username = user['username']
+    return redirect(url_for('show_profile', username=username))
+
 
 # Anessa's signup/login feature
 @app.route('/')

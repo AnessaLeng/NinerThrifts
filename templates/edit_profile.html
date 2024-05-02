@@ -2,7 +2,21 @@
 {% block title %}Niner Thrift | Profile{% endblock %}
 
 {% block body %}
-<h1>Hi</h1>
+<h1>Edit Profile</h1>
+<br>
+<br>
+<form>
+    <label>New Username:</label>
+    <input type="text" id="new_username" name="new_username" placeholder="Enter new username">
+    <br><br>
+    <label>New Bio:</label>
+    <input>
+    <br><br>
+    <label for="profile_picture">New Profile Image:</label>
+    <input type="file" name="profile_picture" id="profile_picture" class="w-50" required>
+    <br><br>
+    <a class="btn btn-primary" href="/updated_profile">Save Changes</a>
+</form>
 
 
 {% endblock %}
