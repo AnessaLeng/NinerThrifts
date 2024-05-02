@@ -110,14 +110,24 @@ def delete_user_by_username(username: str) -> bool:
                             WHERE 
                                 username = %s;
                         ''', [username])
-                
+                cur.execute('''
+                            DELETE FROM 
+                                favorites
+                            WHERE 
+                                username = %s;
+                        ''', [username])
                 cur.execute('''
                             DELETE FROM 
                                 messages
                             WHERE 
                                 sender_username = %s OR recipient_username = %s;
                         ''', [username, username])
-                
+                cur.execute('''
+                            DELETE FROM 
+                                message_threads
+                            WHERE 
+                                sender_username = %s OR recipient_username = %s;
+                        ''', [username, username])
                 cur.execute('''
                             DELETE FROM 
                                 users

@@ -2,21 +2,91 @@
 {% block title %}Niner Thrift | Profile{% endblock %}
 
 {% block body %}
-<h1>Edit Profile</h1>
-<br>
-<br>
-<form action="{{ url_for('updated_profile') }}" method="POST" enctype="multipart/form-data">
-    <label>New Username:</label>
-    <input type="text" id="new_username" name="new_username" placeholder="Enter new username">
-    <br><br>
-    <label>New Bio:</label>
-    <input type="text" id="new_bio" name="new_bio" placeholder="Enter a new bio">
-    <br><br>
-    <label for="profile_picture">New Profile Image:</label>
-    <input type="file" name="new_profile_picture" id="new_profile_picture" class="w-50" required>
-    <br><br>
-    <button class="btn btn-primary">Save Changes</button>
-</form>
+<style>
+    .edit-container {
+        background-image: url('../static/abstract_bg1.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        min-height: 80vh;
+        width: 90%;
+        display: block;
+        align-items: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
+    label {
+        display: block;
+        width: 40%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 7px;
+        font-weight: bold;
+    }
+
+    input, select, textarea {
+        display: block;
+        width: 40%;
+        box-sizing: border-box;
+        border: 2px solid rgb(3, 91, 3);
+        border-radius: 3px;
+        padding: 5px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 7px;
+    }
+
+    .center-content {
+        text-align: center;
+    }
+
+    #submit {
+        margin-top: 20px;
+        background-color: rgb(3, 91, 3);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+        cursor: pointer;
+    }
+
+    input[type="file"] {
+        display: block;
+        width: 40%;
+        margin-left: 29.5%;
+        margin-right: auto;
+        border: none;
+        margin-bottom: 0;
+    }
+
+    .logosmall {
+        display: block; 
+        margin: 0 auto; 
+        height: auto;
+        width: 350px;
+    }
+</style>
+
+<div class="edit-container">
+    <br><br><img src="/static/profile.png" alt="explore" class="logosmall"><br><br>
+    <form action="{{ url_for('updated_profile') }}" method="POST" enctype="multipart/form-data">
+        <div>
+            <label>New Username</label>
+            <input type="text" id="new_username" name="new_username" placeholder="Enter new username">
+        </div>
+        <div>
+            <label>New Bio</label>
+            <input type="text" id="new_bio" name="new_bio" placeholder="Enter a new bio">
+        </div>
+        <div>
+            <label for="profile_picture">New Profile Image</label>
+            <input type="file" name="new_profile_picture" id="new_profile_picture" class="w-50" required>
+        </div>
+        <div class="center-content">
+            <button id="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+    </form>
+</div>
 
 {% endblock %}

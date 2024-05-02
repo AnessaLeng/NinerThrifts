@@ -48,7 +48,6 @@ def get_profile_by_username(username):
                             ''',[username])
             return cursor.fetchone()
         
-
 def update_profile(email, username=None, bio=None, img_url=None):
     pool = get_pool()
     with pool.connection() as conn:
