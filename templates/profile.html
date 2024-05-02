@@ -9,27 +9,36 @@
         height: 150px;
         object-fit: cover; 
     }
+    .col-8{
+        padding-top: 50px;
+    }
+    .col-4{
+        width:240px;
+    }
+    .username{
+        font-weight:bold;
+    }
+    .edit{
+        width: 220px;
+    }
 </style>
-
 <br>
 <div class="container">
     <div class="row"> 
-        <p><img class="profile-picture" alt="profile_picture" src="{{ profile.profile_picture }}"></p>
+        <div class="col-4">
+            <p><img class="profile" alt="profile_picture" src="{{ profile.profile_picture }}" height="200px" width="200px"></p>
+            <br>
+            <button class="edit"><a href="{{ url_for('updated_profile') }}">Edit Profile</a></button>
+        </div>
+        <div class="col-8">
+            <div class="username"><p>{{ profile.username }}</p></div>
+            <div class="bio"> <p>{{ profile.biography }}</p> </div>
+        </div>
     </div>
 </div>
 <br>
-<div class="container">
-    <div class="row">
-        <div class="col-8">
-            <div><p style="font-weight: bold; font-size: 1.1em;">{{ profile.username }}</p></div>
-            <div> <p>{{ profile.biography }}</p> </div>
-        </div>
-        <div class="col-4">
-        </div>
-    </div>
-</div>
-<br><br>
-<h3 style="font-size: 2em; font-weight: bold;">Listings</h3>
+<br>
+<h3>Listings</h3>
 <br>
 <div class="container">
 <div class="row row-cols-4">
