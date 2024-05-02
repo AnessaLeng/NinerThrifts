@@ -92,7 +92,7 @@
                 <p class="post-info"><strong>Date Posted:</strong> {{ post.posted_date }}</p>
                 <p class="post-info"><strong>Posted By: <a href="/profile/{{ post.username }}" class="link-button" target="_blank" class="user-link">{{ post.username }}</a></strong></p><br>
                 <form method="POST" action="/add_favorite">
-                    <input type="hidden" name="post_id" value="{{ post_id }}">
+                    <input type="hidden" name="post_id" value="{{ post.post_id }}">
                     <button type="submit" class="round-button">Add to Favorites</button>
                 </form>
             </div>

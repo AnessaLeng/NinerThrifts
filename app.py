@@ -207,11 +207,13 @@ def delete_post(post_id):
             flash('Post deleted successfully', 'success')
             return redirect(url_for('show_profile', username=session['username']))
         else:
+            # If the post does not exist, display an error message
             flash('Post not found', 'error')
-            return redirect(url_for('explore'))  
+            return redirect(url_for('explore'))  # Redirect to the explore page
     else:
+        # If the request method is not POST, redirect to an error page
         flash('Invalid request method', 'error')
-        return redirect(url_for('explore')) 
+        return redirect(url_for('explore'))  # Redirect to the explore page
 
 
 @app.route('/individual_post')
@@ -238,13 +240,15 @@ def search():
 @app.route('/add_favorite', methods=['POST'])
 def add_favorite():
     if 'username' not in session:
-        return redirect(url_for('login'))  
+        return redirect(url_for('login'))  # Redirect if user is not logged in
 
     if request.method == 'POST':
         post_id = request.form.get('post_id')
+
         post_repo.add_favorite(session['username'], post_id)
+
         return redirect(url_for('favorites'))
-    
+
     return redirect(url_for('explore'))
 
 
@@ -268,6 +272,8 @@ def favorites():
         return render_template('favorites.html', favorite_posts=favorite_posts)
     else:
         return redirect(url_for('login'))
+
+
 
 #Cayla's DM Feature
 
