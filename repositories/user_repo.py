@@ -80,6 +80,18 @@ def get_username_by_email(email: str) -> dict[str, Any] | None:
             else:
                 None
 
+def get_username_from_user(user: dict[str, Any]) -> str:
+    """
+    Retrieves the username from a user dictionary.
+    
+    Parameters:
+        user (Dict[str, Any]): A dictionary representing user attributes.
+        
+    Returns:
+        str: The username of the user.
+    """
+    return user.get("username", "")
+
 def get_logged_in_user():
     email = session.get('email')
     print(email)
@@ -133,13 +145,7 @@ def get_user_by_username(username: str) -> dict[str, Any] | None:
             return user
 
 
-def get_user_by_username(username: str) -> dict:
-    pool = get_pool()
-    with pool.connection() as conn:
-        with conn.cursor(row_factory=dict_row) as cur:
-            cur.execute("SELECT * FROM users WHERE username = %s", (str(username),))
-            user = cur.fetchone()
-            return user
+
 
 def update_user_status(username: str, status: str):
     pool = get_pool()
