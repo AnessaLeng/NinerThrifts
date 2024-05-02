@@ -1,5 +1,4 @@
 import os
-from flask import session
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session, flash
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
@@ -28,20 +27,12 @@ users = {}
     
 ##Jaidens profile page
 @app.get('/profile')
-def show_profile():
+@app.get('/profile/<username>')
+def show_profile(username=None):
     if 'email' not in session:
         return redirect(url_for('login'))
-    username = session['username']
-    # Fetch profile information for the user whose profile is being viewed
-    profile = profile_repo.get_profile_by_username(username)
-
-    # Fetch posts associated with the user whose profile is being viewed
-    posts = post_repo.get_posts_by_username(username)
-
-    return render_template('profile.html', profile=profile, posts=posts)
-
-@app.get('/profile/<username>')
-def show_user_profile(username):
+    if username is None:
+        username = session['username']
     # Fetch profile information for the user whose profile is being viewed
     profile = profile_repo.get_profile_by_username(username)
 
@@ -78,9 +69,12 @@ def updated_profile():
         updated_profile = profile_repo.get_profile_by_email(email)
         if updated_profile:
             new_username = updated_profile.get('username')
+            session['username'] = new_username
             return redirect(url_for('show_profile', username=new_username))
         else:
-            return redirect(url_for('show_profile', username=new_username))
+            flash('Failed to update profile', 'error')
+            username = session["username"]
+            return redirect(url_for('show_profile', username=username))
     return render_template('edit_profile.html')
 
 # Anessa's signup/login feature
@@ -97,20 +91,20 @@ def signup():
     if 'email' in session:
         return redirect(url_for('show_profile'))
     if request.method == 'POST':
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
-        username = request.form.get('username')
-        password = request.form.get('password')
-        email = request.form.get('email')
+        first_name = request.form.get('first_name').strip()
+        last_name = request.form.get('last_name').strip()
+        username = request.form.get('username').strip()
+        password = request.form.get('password').strip()
+        email = request.form.get('email').strip()
         dob = request.form.get('dob')
-        bio = request.form.get('biography')
+        bio = request.form.get('biography').strip()
 
         if user_repo.does_email_exist(email):
             return render_template('error.html', error_message='409: Email already exists.'), 409
 
         if 'profile_picture' not in request.files:
             return render_template('error.html', error_message='400: No profile image provided.'), 400
-        
+
         profile_picture = request.files['profile_picture']
         api_key = os.getenv('API_KEY')
         upload_url = 'https://api.imgbb.com/1/upload'
@@ -138,8 +132,8 @@ def signup():
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+        email = request.form.get('email').strip()
+        password = request.form.get('password').strip()
         if not email or not password:
             error_message = "Invalid email or password"
             return render_template('index.html', is_user=1, error=True, error_message=error_message)
@@ -156,6 +150,18 @@ def logout():
         return render_template('error.html', error_message='400: You must login.'), 400
     session.clear()
     return redirect(url_for('index'))
+
+@app.post('/profile/<username>/delete')
+def delete_user(username):
+    if 'email' not in session:
+        return render_template('error.html', error_message='400: You must login.'), 400
+    if session['username'] != username:
+        return render_template('error.html', error_message='403: Cannot delete an account that is not your own.'), 403
+    if user_repo.delete_user_by_username(username):
+        session.clear()
+        return redirect(url_for('index'))
+    else:
+        return render_template('error.html', error_message=f'500: Error deleting user {username}'), 500
 
 # Cindy's create a post feature
 #adding some logic for images -varsha

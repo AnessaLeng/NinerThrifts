@@ -55,9 +55,13 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">
-            <img src="/static/logo.png" alt="Niner Thrift Logo" width="300" height="auto">
-        </a>
+        {% if 'username' not in session %}
+            <a class="navbar-brand" href="/">
+        {% else %}
+            <a class="navbar-brand" href="/explore"></a>
+        {% endif %}
+                <img src="/static/logo.png" alt="Niner Thrift Logo" width="300" height="auto">
+            </a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item dropdown">
@@ -65,7 +69,9 @@
                         <span class="navbar-toggler-icon"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        {% if 'username' not in session %}
                         <li><a class="dropdown-item" href="/signup">Sign Up</a></li>
+                        {% endif %}
                         <li><a class="dropdown-item" href="/explore">Explore</a></li>
                         {% if 'username' in session %}
                         <li><a class="dropdown-item" href="/profile/{{ session['username'] }}">Profile</a></li>
