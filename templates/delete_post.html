@@ -1,14 +1,15 @@
-{% extends "_layout.html" %}
 
-{% block title %}Delete Post{% endblock %}
+{% extends "_layout.html" %}
+{% block title %}Delete Confirmation{% endblock %}
 
 {% block body %}
 <div class="container">
-    <h2>Delete Post</h2>
-    <p>Are you sure you want to delete the post "{{ post.title }}"?</p>
-    <form action="{{ url_for('delete_post', post_id=post.post_id) }}" method="post">
+    <h2>Confirm Deletion</h2>
+    <p>Are you sure you want to delete this item?</p>
+    <form action="{{ delete_url }}" method="POST">
         <button type="submit" class="btn btn-danger">Delete</button>
-        <a href="{{ url_for('show_individual_post', post_id=post.post_id) }}" class="btn btn-secondary">Cancel</a>
+        <a href="{{ cancel_url }}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 {% endblock %}
+

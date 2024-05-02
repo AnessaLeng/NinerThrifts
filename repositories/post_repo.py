@@ -1,5 +1,8 @@
 from repositories.db import get_pool
 from psycopg.rows import dict_row
+from flask import redirect, url_for
+from flask import Flask, session
+
 
 
 #for Nhu's explore feature
@@ -146,7 +149,7 @@ def update_post(post_id, title, body, price=None, condition=None, image_url=None
             conn.commit()
 
 
-# not used rn
+
 def delete_post(post_id):
     pool = get_pool()
     with pool.connection() as conn:
@@ -156,3 +159,6 @@ def delete_post(post_id):
                 WHERE post_id = %s
             ''', (post_id,))
             conn.commit()
+    # Redirect back to the profile page after deleting the post
+    return redirect(url_for('show_profile', username=session['username']))
+

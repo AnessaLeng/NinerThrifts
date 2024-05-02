@@ -1,4 +1,5 @@
 import os
+from flask import session
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for, abort, session, flash
 from flask_socketio import SocketIO, emit
 from dotenv import load_dotenv
@@ -8,7 +9,6 @@ from repositories.create_repo import create_post
 import base64
 import requests
 from io import BytesIO
-
 
 
 load_dotenv()
@@ -168,7 +168,7 @@ def create_listing():
             json_response = response.json()
             print(json_response)
             create_post(username, title, body, price, condition, json_response['data']['url'])
-            return redirect(url_for('explore'))
+            return redirect(url_for('show_profile', username=username))
     return render_template('create_post.html')
 
 # editing and deleting a post test
@@ -208,11 +208,30 @@ def edit_post(post_id):
 
 
 # Delete post route
+
+
 @app.route('/delete_post/<int:post_id>', methods=['POST'])
-def delete_post_route(post_id):
-    post_repo.delete_post(post_id)
-    flash('Post deleted successfully', 'success')
-    return redirect(url_for('profile')) 
+def delete_post(post_id):
+    # Check if the request method is POST
+    if request.method == 'POST':
+        # Fetch the post being deleted
+        post = post_repo.get_post_by_id(post_id)
+
+        # Check if the post exists
+        if post:
+            # Delete the post from the database
+            post_repo.delete_post(post_id)
+            flash('Post deleted successfully', 'success')
+            return redirect(url_for('show_profile', username=session['username']))
+        else:
+            # If the post does not exist, display an error message
+            flash('Post not found', 'error')
+            return redirect(url_for('explore'))  # Redirect to the explore page
+    else:
+        # If the request method is not POST, redirect to an error page
+        flash('Invalid request method', 'error')
+        return redirect(url_for('explore'))  # Redirect to the explore page
+
 
 @app.route('/individual_post')
 def show_individual_post():
