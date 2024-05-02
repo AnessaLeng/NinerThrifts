@@ -40,6 +40,15 @@ def show_profile():
 
     return render_template('profile.html', profile=profile, posts=posts)
 
+@app.get('/profile/<username>')
+def show_user_profile(username):
+    # Fetch profile information for the user whose profile is being viewed
+    profile = profile_repo.get_profile_by_username(username)
+
+    # Fetch posts associated with the user whose profile is being viewed
+    posts = post_repo.get_posts_by_username(username)
+
+    return render_template('profile.html', profile=profile, posts=posts)
 
 # Anessa's signup/login feature
 @app.route('/')
@@ -107,6 +116,7 @@ def login():
             session['username'] = user['username']
             return redirect(url_for('show_profile', username=user['username']))
     return render_template('index.html', is_user=1, error=False)
+
 @app.route('/logout')
 def logout():
     if 'email' not in session:
