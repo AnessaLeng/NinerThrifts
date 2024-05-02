@@ -48,7 +48,7 @@ def updated_profile():
         new_username = request.form.get('new_username')
         new_bio = request.form.get('new_bio')
 
-        if 'profile_picture' in request.files:
+        if 'new_profile_picture' in request.files:
             profile_image = request.files['new_profile_picture']
             api_key = os.getenv('API_KEY')
             upload_url = 'https://api.imgbb.com/1/upload'
