@@ -27,8 +27,9 @@ users = {}
 
     
 ##Jaidens profile page
-@app.get('/profile')
-def show_profile():
+#changes to work with username - varsha
+@app.get('/profile/<username>')
+def show_profile(username):
     if 'email' not in session:
         return redirect(url_for('login'))
 
@@ -201,6 +202,7 @@ def delete_post(post_id):
         flash('Invalid request method', 'error')
         return redirect(url_for('explore'))  # Redirect to the explore page
 
+#varsha's individual psot route
 @app.route('/individual_post')
 def show_individual_post():
     post_id = request.args.get('post_id')
