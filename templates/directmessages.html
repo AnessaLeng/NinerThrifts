@@ -110,10 +110,23 @@
 document.addEventListener('DOMContentLoaded', function() {
   var searchBar = document.getElementById('search-bar');
   var searchButton = document.getElementById('search-button');
-  searchButton.addEventListener('click', function() {
+  
+  // Function to perform search
+  function performSearch() {
     var searchText = searchBar.value.toLowerCase();
     window.location.href = '/directmessages?q=' + encodeURIComponent(searchText);
+  }
+
+  // Event listener for search button click
+  searchButton.addEventListener('click', performSearch);
+
+  // Event listener for Enter key press in search bar
+  searchBar.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      performSearch();
+    }
   });
+
   connectSocketIO();
 });
 </script>
