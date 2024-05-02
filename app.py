@@ -26,9 +26,8 @@ users = {}
 
 
     
-##Jaidens profile page
-@app.get('/profile')
-def show_profile():
+@app.get('/profile/<username>')
+def show_profile(username):
     if 'email' not in session:
         return redirect(url_for('login'))
     
@@ -200,7 +199,6 @@ def delete_post(post_id):
         flash('Invalid request method', 'error')
         return redirect(url_for('explore'))  # Redirect to the explore page
 
-
 @app.route('/individual_post')
 def show_individual_post():
     post_id = request.args.get('post_id')
@@ -234,13 +232,29 @@ def add_favorite():
 
         return redirect(url_for('favorites'))
 
-# @app.route('/remove_favorite', methods=['POST'])
-# def remove_favorite():
-#     if request.method == 'POST':
-#         user_id = request.form.get('user_id')
-#         post_id = request.form.get('post_id')
-#         remove_favorite(user_id, post_id)
-#         return redirect(url_for('favorites'))
+    return redirect(url_for('explore'))
+
+
+@app.route('/remove_favorite/<post_id>', methods=['POST'])
+def remove_favorite(post_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))  
+
+    if request.method == 'POST':
+        # Remove the post from favorites for the logged-in user
+        post_repo.remove_favorite(session['username'], post_id)
+
+        # Redirect to the favorites page
+        return redirect(url_for('favorites'))
+    return redirect(url_for('explore'))
+
+@app.route('/favorites')
+def favorites():
+    if 'username' in session:
+        favorite_posts = post_repo.get_favorite_posts_by_username(session['username'])
+        return render_template('favorites.html', favorite_posts=favorite_posts)
+    else:
+        return redirect(url_for('login'))
 
 #Cayla's DM Feature
 
